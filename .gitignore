@@ -1,2 +1,4 @@
 node_modules
 .tanstack
+.env
+.dev.vars

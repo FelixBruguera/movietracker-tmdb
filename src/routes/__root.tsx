@@ -6,6 +6,8 @@ import {
   HeadContent,
   Scripts,
 } from '@tanstack/react-router'
+import css from '../styles/app.css?url'
+import { Toaster } from "@/components/ui/sonner"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -21,6 +23,7 @@ export const Route = createRootRoute({
         title: 'TanStack Start Starter',
       },
     ],
+    links: [{ rel: 'stylesheet', href: css }],
   }),
   component: RootComponent,
 })
@@ -41,6 +44,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         {children}
+        <Toaster />
         <Scripts />
       </body>
     </html>

@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1756041557755,
+      "tag": "0000_tearful_zzzax",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1756041849301,
+      "tag": "0001_hard_praxagora",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1756045955476,
+      "tag": "0002_even_expediter",
+      "breakpoints": true
+    }
+  ]
+}
