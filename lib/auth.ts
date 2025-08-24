@@ -4,9 +4,10 @@ import { drizzle } from "drizzle-orm/d1";
 import { reactStartCookies } from "better-auth/react-start";
 import { username } from "better-auth/plugins"
 import { user, account, session, verification } from "../src/db/schema"
- 
-const db = drizzle(process.env.DB)
+import { getBindings } from "src/utils/bindings";
 
+const env = getBindings()
+const db = drizzle(env.DB)
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
@@ -28,4 +29,4 @@ export const auth = betterAuth({
     	enabled: true,
     	autoSignIn: false
   },
-});
+})

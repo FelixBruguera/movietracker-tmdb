@@ -14,7 +14,7 @@ function SignUp() {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
   if (session) {
-    navigate.to("/")
+    navigate({ to: "/" })
     toast("Already signed in")
   }
   const onSubmit = async (e) => {
@@ -26,10 +26,9 @@ function SignUp() {
         password: data.password.value,
         email: data.email.value,
         image: `https://www.gravatar.com/avatar/${data.username.value}?d=identicon&s=200&r=pg`,
-        reviews: 0,
       },
       {
-        onError: (response) => toast(response.error.message || "Someting went wrong"),
+        onError: (response) => toast(response.error.message || "Something went wrong"),
       },
     )
   }

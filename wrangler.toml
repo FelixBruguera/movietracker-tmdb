@@ -8,12 +8,8 @@ compatibility_flags = ["nodejs_compat"]
 binding = "ASSETS"
 directory = "./.output/public"
 
-secrets_store_secrets = [
-  { binding = "database_id", store_id= env.STORE_ID, secret_name = "movietracker_db_id" }
-]
-
 [[ d1_databases ]]
 binding = "DB"
 database_name = "movietracker"
-database_id = env.DB_ID
+database_id = "8e4c24eb-3c24-4da6-b630-958be192ec45"
 migrations_dir = "drizzle"

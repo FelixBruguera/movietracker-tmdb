@@ -12,10 +12,10 @@ export const Route = createFileRoute('/users/login')({
 })
 
 function Login() {
-  const navigate = useNavigate
+  const navigate = useNavigate()
   const { data: session } = authClient.useSession()
   if (session) {
-    navigate.navigate("/")
+    navigate({ to: "/" })
     toast("Already signed in")
   }
   const onSubmit = async (e) => {
@@ -27,7 +27,7 @@ function Login() {
       },
       {
         onRequest: () => toast("Signing you in..."),
-        onError: (response) => toast(response.error.message),
+        onError: (response) => toast(response.error.message || "Something went wrong"),
       },
     )
   }
