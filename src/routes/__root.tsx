@@ -8,6 +8,9 @@ import {
 } from '@tanstack/react-router'
 import css from '../styles/app.css?url'
 import { Toaster } from "@/components/ui/sonner"
+import Header from  "../../src/components/Header"
+import { ThemeProvider } from "../../app/components/ui/theme-provider"
+
 
 export const Route = createRootRoute({
   head: () => ({
@@ -20,7 +23,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Movie Tracker',
       },
     ],
     links: [{ rel: 'stylesheet', href: css }],
@@ -30,9 +33,9 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
   )
 }
 
@@ -42,10 +45,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body>
-        {children}
-        <Toaster />
-        <Scripts />
+      <body className='!min-w-full'>
+        <ThemeProvider>
+          <Header />
+              {children}
+          <Toaster />
+          <Scripts />
+        </ThemeProvider>
       </body>
     </html>
   )
