@@ -48,7 +48,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body className='!min-w-full'>
         <ThemeProvider>
           <Header />
-              {children}
+            {children}
           <Toaster />
           <Scripts />
         </ThemeProvider>

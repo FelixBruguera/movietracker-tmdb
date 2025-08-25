@@ -1,0 +1,47 @@
+{
+  "languages": [
+    "All",
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Russian",
+    "Italian",
+    "Japanese",
+    "Mandarin",
+    "Arabic"
+  ],
+  "genres": [
+    "All",
+    "Action",
+    "Adventure",
+    "Animation",
+    "Biography",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "History",
+    "Horror",
+    "Music",
+    "Musical",
+    "Mystery",
+    "News",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Sport",
+    "Talk-Show",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "ranges": {
+    "released": "Release  year",
+    "imdb.rating": "IMDB Rating",
+    "runtime": "Runtime"
+  }
+}
