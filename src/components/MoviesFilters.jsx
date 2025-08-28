@@ -14,16 +14,29 @@ import FiltersField from "./FiltersField"
 import RangeField from "./RangeField"
 import SelectWrapper from "./SelectWrapper"
 import TextInput from "./TextInput"
-import { useRouter } from "@tanstack/react-router"
+import { useSearchParams } from "react-router"
+import { useMemo, useState } from "react"
+import CheckboxWrapper from "./CheckboxWrapper"
+import NumberField from "./NumberField"
+import PopoverTriggerWrap from "./PopoverTriggerWrap"
+import { Popover, PopoverContent } from "../../app/components/ui/popover"
+import { toast } from "sonner"
+import moviesSchema from "../utils/moviesSchema"
 
 const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
-  const router = useRouter()
-  const { search, cast, directors, genre, language, type, released_min, 
-    released_max, runtime_min, runtime_max} = router.latestLocation.search
+  const [searchParams, setsearchParams] = useSearchParams()
+  const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
+  const genreIds = useMemo(() => genres.map(genre => genre.id), [genres])
+  const [selectedGenres, setSelectedGenres] = useState(searchParams.get("with_genres")?.split(',') || genreIds)
+  const [minRating, setMinRating] = useState(searchParams.get("vote_average.gte") || "1")
+  const [maxRating, setMaxRating] = useState(searchParams.get("vote_average.lte") || "10")
+  const [voteCount, setVouteCount] = useState(searchParams.get("vote_count.gte") || "1")
+  const [minDate, setMinDate] = useState(searchParams.get("release_date.gte") || "1850")
+  const [maxDate, setMaxDate] = useState(searchParams.get("release_date.lte") || maxYear)
   const languages = filtersData.languages
   const types = ["All", "Movie", "Series"]
-  const { page, ...query } = router.latestLocation.search
+  const { page, ...query } = searchParams
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
       <SheetTrigger asChild>
@@ -42,88 +55,120 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
         </SheetHeader>
         <form
           id="filters"
-          className="w-9/10 mx-auto flex flex-col items-start justify-center gap-3"
+          className="w-9/10 mx-auto flex flex-col items-center justify-center gap-3"
           onSubmit={(e) => {
             e.preventDefault()
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
-            console.log(data)
+            data.with_genres = selectedGenres
+            data["vote_count.gte"] = voteCount
+            data["vote_average.gte"] = minRating
+            data["vote_average.lte"] = maxRating
+            data["primary_release_date.gte"] = minDate
+            data["primary_release_date.lte"] = maxDate
+            const validation = moviesSchema.safeParse(data)
+            if (!validation.success) {
+              return toast("Invalid input")
+            }
             return handleFilter(data)
           }}
         >
-          <TextInput
-            labelText="Search"
-            name="search"
-            defaultValue={search || ""}
+          {/* <TextInput
+            labelText="query"
+            name="query"
+            defaultValue={searchParams.get('query') || ""}
           />
           <TextInput
             labelText="Search by actor"
-            name="cast"
-            defaultValue={cast || ""}
+            name="with_cast"
+            defaultValue={searchParams.get('with_cast') || ""}
           />
           <TextInput
             labelText="Search by director"
-            name="directors"
-            defaultValue={directors || ""}
-          />
-          <FiltersField labelText="Genre" labelFor="genres">
-            <SelectWrapper
-              name="genres"
-              defaultValue={genre || "All"}
-              title="Genre"
+            name="with_people"
+            defaultValue={searchParams.get('with_people') || ""}
+          /> */}
+          <FiltersField labelText="Genres" labelFor="with_genres">
+            <CheckboxWrapper
+              title="Genres"
               items={genres}
+              selected={selectedGenres}
+              setSelected={setSelectedGenres}
+              selectAll={() => setSelectedGenres(genreIds)}
             />
           </FiltersField>
-          <FiltersField labelText="Language" labelFor="languages">
+          <FiltersField labelText="Language" labelFor="with_languages">
             <SelectWrapper
-              name="languages"
-              defaultValue={language || "All"}
-              title="Language"
+              name="with_original_language"
+              defaultValue={searchParams.get('with_original_language') || "All"}
+              title="Languages"
               items={languages}
             />
           </FiltersField>
-          <FiltersField labelText="Type" labelFor="type">
+          {/* <FiltersField labelText="Type" labelFor="type">
             <SelectWrapper
               name="type"
-              defaultValue={type || "All"}
+              defaultValue={searchParams.get('type || "All"}
               title="Type"
               items={types}
             />
-          </FiltersField>
+          </FiltersField> */}
           <RangeField
             labelText="Release year"
-            fieldName="released"
-            min={1896}
-            max={2016}
-            defaultMin={released_min || 1896}
-            defaultMax={released_max || 2016}
+            fieldName="primary_release_date"
+            min={0}
+            max={maxYear}
+            minValue={minDate}
+            maxValue={maxDate}
+            setMin={setMinDate}
+            setMax={setMaxDate}
           />
           <RangeField
-            labelText="IMDB Rating"
-            fieldName="imdb.rating"
+            labelText="TMDB Average Rating (1-10)"
+            fieldName="vote_average"
             min={1}
             max={10}
-            defaultMin={ 1}
-            defaultMax={10}
+            minValue={minRating}
+            maxValue={maxRating}
+            setMin={setMinRating}
+            setMax={setMaxRating}
           />
-          <RangeField
+          <FiltersField labelText="TMDB Vote Count" labelFor="vote_count">
+                <Popover>
+      <PopoverTriggerWrap>
+        {voteCount}
+      </PopoverTriggerWrap>
+      <PopoverContent>
+            <NumberField
+              className="w-1/3"
+              fieldName="vote_count"
+              title="Min"
+              denomination="gte"
+              min={1}
+              value={voteCount}
+              onChange={(newValue) => setVouteCount(newValue)}
+            />
+      </PopoverContent>
+    </Popover>
+          </FiltersField>
+          {/* <RangeField
             labelText="Runtime (Minutes)"
-            fieldName="runtime"
+            fieldName="with_runtime"
             min={1}
             max={1256}
-            defaultMin={runtime_min || 1}
-            defaultMax={runtime_max || 1256}
-          />
+            defaultMin={searchParams.get('with_runtime.gte') || 1}
+            defaultMax={searchParams.get('with_runtime.lte') || 1256}
+          /> */}
         </form>
-        <SheetFooter>
-          <Button type="submit" form="filters">
-            Submit
-          </Button>
-          <SheetClose asChild>
-            <Button
+         <SheetFooter>
+            <Button type="submit" form="filters">
+              Submit
+            </Button>
+           <SheetClose asChild>
+             <Button
               type="button"
               variant="outline"
-              onClick={() => router.updateLatestLocation({ query: {} })}
+              onClick={() => setsearchParams('')}
             >
               Clear filters
             </Button>

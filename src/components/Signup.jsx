@@ -1,20 +1,16 @@
-import { authClient } from "../../../lib/auth-client.ts"
-import AuthInput from "../../../src/components/AuthInput"
-import { Button } from "../../../app/components/ui/button"
-import AuthForm from "../../../src/components/AuthForm"
+import { authClient } from "../../lib/auth-client.ts"
+import AuthInput from "./AuthInput.jsx"
+import { Button } from "../../app/components/ui/button.tsx"
+import AuthForm from "./AuthForm.jsx"
 import { toast } from "sonner"
-import { useNavigate } from "@tanstack/react-router"
-import { createFileRoute } from '@tanstack/react-router'
+import { useNavigate } from "react-router"
 
-export const Route = createFileRoute('/users/signup')({
-  component: SignUp,
-})
 
-function SignUp() {
+const Signup = () => {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
   if (session) {
-    navigate({ to: "/" })
+    navigate("/")
     toast("Already signed in")
   }
   const onSubmit = async (e) => {
@@ -51,3 +47,5 @@ function SignUp() {
     </AuthForm>
   )
 }
+
+export default Signup

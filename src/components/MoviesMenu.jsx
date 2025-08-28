@@ -4,25 +4,29 @@ import filtersData from "../../lib/filters.json"
 import SelectSortBy from "./SelectSortBy"
 import SortOrderToggle from "./SortOrderToggle"
 import { useState } from "react"
-import { useRouter, useRouterState } from "@tanstack/react-router"
+import { useSearchParams } from "react-router"
 
 const MoviesMenu = () => {
-  const router = useRouter()
-  const routerState = useRouterState()
-  const { sortBy } = routerState.location.search
-  const currentGenre = "All"
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentGenre = "All" || searchParams.genres
   const [filterOpen, setFilterOpen] = useState(false)
   const handleGenre = (newValue) => {
-    if (router.query.genres === newValue) {
-      const { genres, ...newQuery } = router.query
-      router.push({ query: { ...newQuery, page: 1 } })
+    if (searchParams.genres === newValue) {
+      setSearchParams(params => {
+        params.delete("genres")
+        params.set("page", 1)
+        return params
+      })
     } else {
-      router.push({ query: { ...router.query, genres: newValue, page: 1 } })
+        setSearchParams(params => {
+          params.set("genres", newValue)
+          params.set("page", 1)
+          return params
+      })
     }
   }
   const ranges = filtersData.ranges
-  console.log(sortBy)
-  const sort = sortBy || "imdb.rating"
+  const sort = searchParams.get("sort_by") || "popularity.desc"
   const genres = [
     "Drama",
     "Comedy",
@@ -34,14 +38,13 @@ const MoviesMenu = () => {
     "Animation",
   ]
   const handleFilter = (data) => {
-    router.navigate({ search: (prev) => {
-        return { ...prev, ...data, page: 1 } 
-    } })
+    console.log([data, new URLSearchParams(data).toString()])
+    setSearchParams(new URLSearchParams(data).toString())
     setFilterOpen(false)
   }
   return (
     <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row items-center justify-between w-full px-9 mx-auto">
-      <ul className="hidden lg:flex w-full lg:w-full flex-wrap items-center justify-start lg:gap-5">
+      {/* <ul className="hidden lg:flex w-full lg:w-full flex-wrap items-center justify-start lg:gap-5">
         {genres.map((genre) => (
           <li key={genre}>
             <MoviesMenuItem
@@ -51,8 +54,8 @@ const MoviesMenu = () => {
             />
           </li>
         ))}
-      </ul>
-      <div className="flex items-start justify-end gap-2 w-full lg:w-3/10">
+      </ul> */}
+      <div className="flex items-start justify-end gap-2 w-full">
         <MoviesFilters
           handleFilter={handleFilter}
           filterOpen={filterOpen}

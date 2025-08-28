@@ -1,21 +1,17 @@
-import { Button } from "../../../app/components/ui/button"
-import AuthInput from "../../../src/components/AuthInput"
-import { authClient } from "../../../lib/auth-client.ts"
+import { Button } from "../../app/components/ui/button.tsx"
+import AuthInput from "./AuthInput.jsx"
+import { authClient } from "../../lib/auth-client.ts"
 import { toast } from "sonner"
-import AuthForm from "../../../src/components/AuthForm"
-import { useNavigate, createFileRoute } from "@tanstack/react-router"
+import AuthForm from "./AuthForm.jsx"
 import { useEffect } from "react"
-import { Link } from "@tanstack/react-router"
+import { Link } from "react-router"
+import { useNavigate } from "react-router"
 
-export const Route = createFileRoute('/users/login')({
-  component: Login,
-})
-
-function Login() {
+const Login = () => {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
   if (session) {
-    navigate({ to: "/" })
+    navigate("/")
     toast("Already signed in")
   }
   const onSubmit = async (e) => {
@@ -54,9 +50,11 @@ function Login() {
       <div className="flex items-center justify-evenly">
         <Button type="submit">Send</Button>
         <Button asChild>
-          <Link href="/users/signup">Sign up</Link>
+          <Link to="/users/signup">Sign up</Link>
         </Button>
       </div>
     </AuthForm>
   )
 }
+
+export default Login

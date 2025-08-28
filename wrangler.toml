@@ -1,12 +1,8 @@
 # wrangler.toml
 name = "movietracker"
-main = "./.output/server/index.mjs"
-compatibility_date = "2025-04-01"
-compatibility_flags = ["nodejs_compat"]
-
-[assets]
-binding = "ASSETS"
-directory = "./.output/public"
+compatibility_date = "2025-08-26"
+main = "./src/api/index.jsx"
+compatibility_flags = [ "nodejs_compat" ]
 
 [[ d1_databases ]]
 binding = "DB"

@@ -1,17 +1,17 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react"
 import { Button } from "../../app/components/ui/button"
 import { memo } from "react"
-import { useRouter, useRouterState } from "@tanstack/react-router"
+import { useSearchParams } from "react-router"
 
 const SortOrderToggle = memo(() => {
-  const router = useRouter()
-  const routerState = useRouterState()
-  const { sortOrder } = routerState.location.search
-  const isAscending = sortOrder === 1
+  const [searchParams, setSearchParams] = useSearchParams()
+  const isAscending = searchParams.sortOrder === 1
   const handleSortOrder = () => {
     const newValue = isAscending ? -1 : 1
-    router.navigate({ search: (prev) => {
-        return { ...prev, sortOrder: newValue, page: 1 } }
+    setSearchParams(params => {
+      params.set("sortOrder", newValue)
+      params.set("page", 1)
+      return params
     })
   }
   return (

@@ -7,15 +7,16 @@ import {
 import { authClient } from "../../lib/auth-client.ts"
 import { Button } from "../../app/components/ui/button"
 import { ChevronDown, User, LogIn, LogOut, CircleUserRound } from "lucide-react"
-import { Link } from "@tanstack/react-router"
+import { Link } from "react-router"
 
 const UserDropdown = () => {
   const { data: session } = authClient.useSession()
+  console.log(session)
   const logout = async () => await authClient.signOut()
   if (!session) {
     return (
       <Button asChild aria-label="Login">
-        <Link href="/users/login">
+        <Link to="/users/login">
           <LogIn aria-label="Log in" />
           <p className="hidden lg:block">Login</p>
         </Link>
@@ -35,7 +36,7 @@ const UserDropdown = () => {
       <DropdownMenuContent>
         <DropdownMenuItem className="p-0">
           <Link
-            href={`/users/${session.user.id}`}
+            to={`/users/${session.user.id}`}
             className="flex items-center gap-2 w-full px-2 py-1.5"
           >
             <CircleUserRound />

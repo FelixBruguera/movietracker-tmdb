@@ -1,64 +1,63 @@
 import FiltersField from "./FiltersField"
 import { Input } from "../../app/components/ui//input"
 import { Label } from "../../app/components/ui//label"
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { Popover, PopoverContent, PopoverTrigger } from "../../app/components/ui/popover"
+import PopoverTriggerWrap from "./PopoverTriggerWrap"
+import NumberField from "./NumberField"
 
 const RangeField = ({
   labelText,
   fieldName,
+  minValue,
+  maxValue,
   min,
   max,
-  defaultMin,
-  defaultMax,
+  setMin,
+  setMax
 }) => {
-  const [minValue, setMinValue] = useState(parseInt(defaultMin))
-  const [maxValue, setMaxValue] = useState(parseInt(defaultMax))
-  const onMinChange = (newValue) => {
-    setMinValue(newValue)
-  }
-  const onMaxChange = (newValue) => {
-    setMaxValue(newValue)
+  // const onMinChange = (newValue) => {
+  //   const parsedNewValue = parseInt(newValue)
+  //   const parsedMaxValue = parseInt(maxValue)
+  //   if (parsedNewValue < min || parsedNewValue > max) {
+  //     return null
+  //   }
+  //   else if (parsedNewValue >= parsedMaxValue) {
+  //     setMin(parsedNewValue)
+  //     setMax(parsedNewValue)
+  //   }
+  //   else {
+  //     setMin(parsedNewValue || "")
+  //   }
+  // }
+  const onChange = (newValue, otherValue, setFunction, type) => {
+    const parsedNewValue = parseInt(newValue)
+    const parsedOtherValue = parseInt(otherValue)
+    const crossover = type === "max" ? parsedNewValue <= parsedOtherValue : parsedNewValue >= parsedOtherValue
+    if (parsedNewValue < min || parsedNewValue > max) {
+      return null
+    }
+    else if (crossover) {
+      setMax(parsedNewValue)
+      setMin(parsedNewValue)
+    }
+    else {
+      setFunction(parsedNewValue || "")
+    }
   }
   return (
     <FiltersField labelText={labelText} className="flex flex-row">
-      <div className="flex">
-        <div className="flex w-2/4 justify-evenly">
-          <Label
-            className="text-muted-foreground text-xs lg:text-sm"
-            htmlFor={`${fieldName}_min`}
-          >
-            More than
-          </Label>
-          <Input
-            name={`${fieldName}_min`}
-            type="number"
-            className="w-4/9 text-sm border-1 border-border"
-            min={min}
-            max={maxValue}
-            value={minValue}
-            onChange={(e) => onMinChange(e.target.value)}
-            required
-          ></Input>
-        </div>
-        <div className="flex w-2/4 justify-evenly">
-          <Label
-            className="text-muted-foreground text-xs lg:text-sm"
-            htmlFor={`${fieldName}_max`}
-          >
-            Less than
-          </Label>
-          <Input
-            name={`${fieldName}_max`}
-            type="number"
-            className="w-4/9 text-sm border-1 border-border"
-            min={minValue}
-            max={max}
-            value={maxValue}
-            onChange={(e) => onMaxChange(e.target.value)}
-            required
-          ></Input>
-        </div>
-      </div>
+    <Popover>
+      <PopoverTriggerWrap>
+        {minValue} - {maxValue}
+      </PopoverTriggerWrap>
+      <PopoverContent>
+          <div className="flex">
+            <NumberField fieldName={fieldName} value={minValue} onChange={setMin} title="Min" denomination="gte" min={min} max={max}/>
+            <NumberField fieldName={fieldName} value={maxValue} onChange={setMax} title="Max" denomination="lte" min={min} max={max} />
+          </div>
+      </PopoverContent>
+    </Popover>
     </FiltersField>
   )
 }

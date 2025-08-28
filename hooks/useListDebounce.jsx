@@ -1,16 +1,19 @@
-import { useRouter } from "@tanstack/react-router"
 import { useEffect } from "react"
+import { useSearchParams } from "react-router"
 
 export default function useListDebounce(search) {
-  const router = useRouter()
+  const [searchParams, setSearchParams] = useSearchParams()
   useEffect(() => {
     let timeout = null
-    if (router.query.search !== undefined || search != "") {
+    if (searchParams.search !== undefined || search != "") {
       timeout = setTimeout(
         () =>
-          router.push({ query: { ...router.query, search: search, page: 1 } }),
-        500,
-      )
+          setSearchParams(params => {
+            params.set("search", search)
+            params.set("page", 1)
+            return params
+        }, 500
+      ))
     }
     return () => clearTimeout(timeout)
   }, [search])

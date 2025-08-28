@@ -1,4 +1,3 @@
-import { useRouter } from "@tanstack/react-router"
 import {
   Select,
   SelectContent,
@@ -8,12 +7,16 @@ import {
 } from "../../app/components/ui/select"
 import { ArrowDownUp } from "lucide-react"
 import { memo, useCallback } from "react"
+import { useSearchParams } from "react-router"
 
 const SelectSortBy = memo(({ value, selectedValue, title, options }) => {
-  const router = useRouter()
+  const [searchParams, setSearchParams] = useSearchParams()
   const onValueChange = useCallback((newValue) => {
-    router.navigate({ search: (prev) => {
-        return { ...prev, sortBy: newValue, page: 1 } }
+    console.log(newValue)
+    setSearchParams(params => {
+      params.set("sort_by", newValue)
+      params.set("page", 1)
+      return params
     })
   })
   return (

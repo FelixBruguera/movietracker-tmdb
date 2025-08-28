@@ -7,15 +7,15 @@ import {
 } from "../../app/components/ui/pagination"
 import { Button } from "../../app/components/ui/button"
 import { memo } from "react"
-import { useRouter } from "@tanstack/react-router"
+import { useSearchParams } from "react-router"
 
-const PaginationWrap = memo(({ totalPages, scrollTarget = "" }) => {
-  const router = useRouter()
-  const page = parseInt(router.query.page) || 1
+const PaginationWrap = memo(({ currentPage, totalPages, scrollTarget = "" }) => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const handleChange = (newPage) => {
-    router.push({
-      hash: scrollTarget,
-      query: { ...router.query, page: newPage },
+    setSearchParams(params => {
+      params.set("page", newPage)
+      console.log([newPage, params.toString()])
+      return params
     })
   }
   return (
@@ -23,14 +23,14 @@ const PaginationWrap = memo(({ totalPages, scrollTarget = "" }) => {
       <PaginationContent className="gap-10">
         <PaginationItem>
           <PaginationPrevious
-            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${page <= 1 ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
+            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${currentPage <= 1 ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
             href=""
             onClick={(e) => {
               e.preventDefault()
-              handleChange(page - 1)
+              handleChange(currentPage - 1)
             }}
-            ariaDisabled={page <= 1}
-            tabIndex={page <= 1 ? 1 : 0}
+            ariaDisabled={currentPage <= 1}
+            tabIndex={currentPage <= 1 ? 1 : 0}
           />
         </PaginationItem>
         <form
@@ -42,9 +42,9 @@ const PaginationWrap = memo(({ totalPages, scrollTarget = "" }) => {
         >
           <span className="flex h-8/10 items-center justify-center gap-1">
             <input
-              key={page}
+              key={currentPage}
               type="number"
-              defaultValue={page}
+              defaultValue={currentPage}
               min={1}
               max={totalPages}
               name="page"
@@ -61,14 +61,14 @@ const PaginationWrap = memo(({ totalPages, scrollTarget = "" }) => {
         </form>
         <PaginationItem>
           <PaginationNext
-            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${page >= totalPages ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
+            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${currentPage >= totalPages ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
             href=""
             onClick={(e) => {
               e.preventDefault()
-              handleChange(page + 1)
+              handleChange(currentPage + 1)
             }}
-            ariaDisabled={page >= totalPages}
-            tabIndex={page >= totalPages ? 1 : 0}
+            ariaDisabled={currentPage >= totalPages}
+            tabIndex={currentPage >= totalPages ? 1 : 0}
           />
         </PaginationItem>
       </PaginationContent>
