@@ -8,10 +8,7 @@ const moviesSchema = baseSchema.extend({
     with_people: z.string().max(20).optional(),
     with_genres: z.union([z.array(z.string()).max(50), z.string().max(80).transform(genres => genres?.split(",").join("|"))]).optional(),
     with_original_language: z.string().max(2).transform(lang => lang === "xx" ? undefined : lang).optional(),
-    type: z
-    .literal(["Movie", "Series", "All"])
-    .transform((type) => type.toLowerCase())
-    .optional(),
+    with_keywords: z.string().optional(),
     "vote_count.gte": z.coerce.number().min(1).optional(),
     "vote_average.gte": z.coerce.number().min(1).max(10).default(1),
     "vote_average.lte": z.coerce.number().min(1).max(10).default(10),

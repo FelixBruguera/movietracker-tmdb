@@ -43,6 +43,27 @@ app.get('/api/movies/:id', async (c) => {
 	console.log(id)
 	const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}?append_to_response=credits,keywords`,{ headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
 	console.log(response.request)
+	response.data.credits = response.data.credits.cast.slice(0,20)
+	return c.json(response.data)
+})
+
+app.get('/api/movies/keyword/:keyword', async (c) => {
+	const query = c.req.query()
+	const parsedQuery = moviesSchema.parse(query)
+	console.log(c.req)
+	parsedQuery.with_keywords = c.req.param('keyword')
+	const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`,{params: {...parsedQuery}, headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+	console.log(response.request)
+	return c.json(response.data)
+})
+
+app.get('/api/movies/cast/:cast', async (c) => {
+	const query = c.req.query()
+	const parsedQuery = moviesSchema.parse(query)
+	console.log(c.req)
+	parsedQuery.with_cast = c.req.param('cast')
+	const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`,{params: {...parsedQuery}, headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+	console.log(response.request)
 	return c.json(response.data)
 })
 

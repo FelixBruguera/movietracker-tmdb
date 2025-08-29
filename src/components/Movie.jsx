@@ -15,7 +15,8 @@ import MovieDescription from "./MovieDescription"
 import axios from "axios"
 import MovieRating from "./MovieRating"
 import { useParams } from "react-router"
-import MovieLinkList from "./MovieLinkList.jsx"
+import MovieListTitle from "./MovieListTitle.jsx"
+import PersonLink from "./PersonLink.jsx"
 
 export default function MoviePage() {
   const { id } = useParams()
@@ -127,8 +128,27 @@ export default function MoviePage() {
               <p>{movie.overview}</p>
             )}
           </div>
-          {movie.credits.cast?.length > 0 && (
-            <MovieLinkList title="Cast" items={movie.credits.cast.slice(0,20)} param="with_people" />
+          {movie.credits?.length > 0 && (
+            <div>
+              <MovieListTitle title="Main Cast" />
+              <ul className="flex overflow-x-auto overflow-y-hidden h-45 justify-start items-center scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 dark:scrollbar-thumb-muted">
+                {movie.credits.map((item) => (
+                  <PersonLink name={item.name} id={item.id} image={item.profile_path}/>
+                ))}
+              </ul>
+            </div>
+          )}
+          {movie.keywords.keywords?.length > 0 && (
+            <div>
+              <MovieListTitle title="Keywords" />
+              <ul className="flex flex-wrap gap-2">
+                {movie.keywords.keywords.map((keyword) => (
+                  <MovieDetailLink href={`/movies/keyword/${keyword.id}`}>
+                    {keyword.name}
+                  </MovieDetailLink>
+                ))}
+              </ul>
+            </div>
           )}
           {/* {movie.directors?.length > 0 && (
             <MovieLinkList

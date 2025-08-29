@@ -28,7 +28,10 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
   const genreIds = useMemo(() => genres.map(genre => genre.id), [genres])
+  const platforms = filtersData.providers
+  const platformIds = useMemo(() => platforms.map(platform => platform.id), [platforms])
   const [selectedGenres, setSelectedGenres] = useState(searchParams.get("with_genres")?.split(',') || genreIds)
+  const [selectedPlatforms, setSelectedPlatforms] = useState(searchParams.get("with_watch_providers")?.split(',') || platformIds)
   const [minRating, setMinRating] = useState(searchParams.get("vote_average.gte") || "1")
   const [maxRating, setMaxRating] = useState(searchParams.get("vote_average.lte") || "10")
   const [voteCount, setVouteCount] = useState(searchParams.get("vote_count.gte") || "1")
@@ -95,6 +98,15 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               selected={selectedGenres}
               setSelected={setSelectedGenres}
               selectAll={() => setSelectedGenres(genreIds)}
+            />
+          </FiltersField>
+          <FiltersField labelText="Platforms" labelFor="with_watch_providers">
+            <CheckboxWrapper
+              title="Platforms"
+              items={platforms}
+              selected={selectedPlatforms}
+              setSelected={setSelectedPlatforms}
+              selectAll={() => setSelectedPlatforms(platformIds)}
             />
           </FiltersField>
           <FiltersField labelText="Language" labelFor="with_languages">

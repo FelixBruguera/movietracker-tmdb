@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router"
+import { Link, useSearchParams, useParams } from "react-router"
 import PaginationWrap from "./PaginationWrap"
 import MoviesMenu from "./MoviesMenu"
 import MoviesSkeleton from "./MoviesSkeleton"
@@ -8,14 +8,16 @@ import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
 import MovieList from "./MovieList"
 
-const Movies = () => {
+const MoviesWithParam = ( { name, endpoint, title, titleBeforeParam } ) => {
     const [searchParams, setSearchParams] = useSearchParams()
-    const page = searchParams.get("page")
+    const params = useParams()
+    const param = params[name]
     const { data, isLoading, isError } = useQuery({
         queryKey: ["movies", searchParams.toString()],
-        queryFn: () => axios.get("/api/movies", { params: searchParams}).then(response => response.data)
+        queryFn: () => axios.get(`/api/movies/${endpoint}/${param}`, { params: searchParams}).then(response => response.data)
     })
     console.log(data)
+    const formattedTitle = titleBeforeParam ? `${title} ${param}` : `${param} ${title}`
 
   if (isLoading) {
     return (
@@ -34,11 +36,11 @@ const Movies = () => {
 
   return (
     <div className="flex flex-col justify-between">
-      <MoviesMenu />
+      <MoviesMenu title={formattedTitle}/>
       <MovieList movies={movies} />
       {totalPages > 1 && <PaginationWrap currentPage={data.page} totalPages={totalPages} />}
     </div>
   )
 }
 
-export default Movies
+export default MoviesWithParam
