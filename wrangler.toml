@@ -4,6 +4,9 @@ compatibility_date = "2025-08-26"
 main = "./src/api/index.jsx"
 compatibility_flags = [ "nodejs_compat" ]
 
+[assets]
+not_found_handling = "single-page-application"
+
 [[ d1_databases ]]
 binding = "DB"
 database_name = "movietracker"
