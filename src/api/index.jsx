@@ -40,4 +40,13 @@ app.get('/api/movies', async (c) => {
 	return c.json(response.data)
 })
 
+app.get('/api/movies/:id', async (c) => {
+	console.log(c.req)
+	const id = c.req.param('id')
+	console.log(id)
+	const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}`,{ headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+	console.log(response.request)
+	return c.json(response.data)
+})
+
 export default app

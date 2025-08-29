@@ -6,7 +6,7 @@ const moviesSchema = baseSchema.extend({
     query: z.string().max(100).optional(),
     with_cast: z.string().max(50).optional(),
     with_people: z.string().max(20).optional(),
-    with_genres: z.union([z.array(z.string()).max(50).optional(), z.string().max(80).transform(genres => genres?.split(",").join("|")).optional()]),
+    with_genres: z.union([z.array(z.string()).max(50), z.string().max(80).transform(genres => genres?.split(",").join("|"))]).optional(),
     with_original_language: z.string().max(2).transform(lang => lang === "xx" ? undefined : lang).optional(),
     type: z
     .literal(["Movie", "Series", "All"])
@@ -25,7 +25,7 @@ const moviesSchema = baseSchema.extend({
     include_adult: z.literal(false).default(false),
     language: z.literal("en-US").default("en-US")
 })
-.refine((data) => data["vote_average.gte"] < data["vote_average.lte"])
-.refine((data) => data["primary_release_date.gte"] < data["primary_release_date.lte"])
+ .refine((data) => data["vote_average.gte"] && data["vote_average.lte"] ? data["vote_average.gte"] < data["vote_average.lte"] : true)
+.refine((data) => data["primary_release_date.gte"] && data["primary_release_date.gte"] ? data["primary_release_date.gte"] < data["primary_release_date.lte"] : true)
 
 export default moviesSchema

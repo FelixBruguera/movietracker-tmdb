@@ -4,6 +4,7 @@ import "./styles/app.css"
 import Login from './components/Login'
 import Movies from './components/Movies'
 import Signup from './components/Signup'
+import Movie from './components/Movie'
 
 const Test = () => {
     return (
@@ -36,6 +37,7 @@ const App = () => {
         <Header />
         <Routes>
             <Route element={<Movies />} index={true} />
+            <Route path='movies/:id' element={<Movie />} />
             <Route path='/users/login' element={<Login />} />
             <Route path='/users/signup' element={<Signup />} />
         </Routes>
