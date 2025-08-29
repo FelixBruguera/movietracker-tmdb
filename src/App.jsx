@@ -8,7 +8,7 @@ import Movie from './components/Movie'
 
 const App = () => {
   return (
-    <div>
+    <div className='max-w-500 mx-auto'>
         <Header />
         <Routes>
             <Route element={<Movies />} index={true} />

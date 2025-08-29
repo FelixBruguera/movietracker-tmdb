@@ -25,9 +25,9 @@ const Movies = () => {
     )
   }
 
-  // if (isError) {
-  //   return <ErrorMessage />
-  // }
+  if (isError) {
+    return <ErrorMessage />
+  }
   const movies = data.results
   const totalPages = data.total_pages
 

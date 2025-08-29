@@ -48,7 +48,7 @@ export default function MoviePage() {
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
     <div className="mx-auto p-4">
-      <div className="flex flex-col lg:flex-row gap-8 max-w-400">
+      <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-3/4 mx-auto lg:w-1/3">
           <Poster src={movie.poster_path} alt={movie.title} size="large" />
         </div>
