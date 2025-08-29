@@ -6,9 +6,6 @@ import moviesSchema from "../utils/moviesSchema";
  
 const app = new Hono()
 
-app.get('/', (c) => {
-  return c.json({message: "Hello, Cloudflare Pages!"})
-})
 app.use(
 	"/api/auth/*", 
 	cors({

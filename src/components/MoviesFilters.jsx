@@ -36,7 +36,7 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const [maxDate, setMaxDate] = useState(searchParams.get("release_date.lte") || maxYear)
   const languages = filtersData.languages
   const types = ["All", "Movie", "Series"]
-  const { page, ...query } = searchParams
+  const { page, ...query } = Object.fromEntries(searchParams.entries())
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
       <SheetTrigger asChild>
@@ -100,7 +100,7 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
           <FiltersField labelText="Language" labelFor="with_languages">
             <SelectWrapper
               name="with_original_language"
-              defaultValue={searchParams.get('with_original_language') || "All"}
+              defaultValue={searchParams.get('with_original_language') || "xx"}
               title="Languages"
               items={languages}
             />

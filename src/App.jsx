@@ -6,32 +6,7 @@ import Movies from './components/Movies'
 import Signup from './components/Signup'
 import Movie from './components/Movie'
 
-const Test = () => {
-    return (
-        <h1 className='bg-red-700'>Movie Tracker</h1>
-    )
-}
-
 const App = () => {
-//   const [user, userService] = useAuth()
-
-//   if (user.id === null) {
-//     return (
-//       <div className="px-10 h-screen">
-//         <Nav />
-//         <Routes>
-//           <Route
-//             index
-//             path="/"
-//             element={<Login handleLogin={userService.login} />}
-//           />
-//           <Route path="/signup" element={<Signup />} />
-//         </Routes>
-//         <Notification />
-//       </div>
-//     )
-//   }
-
   return (
     <div>
         <Header />
