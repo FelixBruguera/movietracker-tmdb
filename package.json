@@ -50,6 +50,7 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",
     "drizzle-kit": "^0.31.4",
+    "tailwind-scrollbar": "^4.0.2",
     "tsx": "^4.20.5",
     "tw-animate-css": "^1.3.7",
     "typescript": "^5.9.2",

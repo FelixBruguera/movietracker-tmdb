@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import MovieSkeleton from "./MovieSkeleton"
-import { Calendar, Clock4, LibraryBig, Trophy } from "lucide-react"
+import { Calendar, Clock4, Languages, LibraryBig, Trophy } from "lucide-react"
 import MovieDetail from "./MovieDetail"
 import MovieDetailLink from "./MovieDetailLink"
 import MovieDetailsList from "./MovieDetailsList"
 // import Reviews from "src/components/Reviews"
-// import MovieLinkList from "src/components/MovieLinkList"
 import Poster from "./Poster"
 import ErrorMessage from "./ErrorMessage"
 // import LogManager from "src/components/LogManager"
@@ -16,6 +15,7 @@ import MovieDescription from "./MovieDescription"
 import axios from "axios"
 import MovieRating from "./MovieRating"
 import { useParams } from "react-router"
+import MovieLinkList from "./MovieLinkList.jsx"
 
 export default function MoviePage() {
   const { id } = useParams()
@@ -86,7 +86,12 @@ export default function MoviePage() {
             <MovieRating
               source="TMDB"
               value={movie.vote_average.toFixed(2)}
-              logo="/public/tmdb_short.svg"
+              logo="/tmdb_short.svg"
+            />
+            <MovieRating
+              source="TMDB"
+              value={`${movie.vote_count} votes`}
+              logo="/tmdb_short.svg"
             />
             {/* <MovieRating
               source="Rotten Tomatoes"
@@ -102,6 +107,12 @@ export default function MoviePage() {
               <Trophy fill="goldenrod" color="goldenrod" />
               {movie.awards.wins} Awards
             </MovieDetail> */}
+            {movie.spoken_languages?.map((lang) => (
+              <MovieDetailLink href={`/?with_original_language=${lang.iso_639_1}`}>
+                <Languages />
+                {lang.english_name}
+              </MovieDetailLink>
+            ))}
             {movie.genres?.map((genre) => (
               <MovieDetailLink href={`/?with_genres=${genre.id}`}>
                 <LibraryBig />
@@ -116,10 +127,10 @@ export default function MoviePage() {
               <p>{movie.overview}</p>
             )}
           </div>
-          {/* {movie.cast?.length > 0 && (
-            <MovieLinkList title="Cast" items={movie.cast} param="cast" />
+          {movie.credits.cast?.length > 0 && (
+            <MovieLinkList title="Cast" items={movie.credits.cast.slice(0,20)} param="with_people" />
           )}
-          {movie.directors?.length > 0 && (
+          {/* {movie.directors?.length > 0 && (
             <MovieLinkList
               title="Directors"
               items={movie.directors}
