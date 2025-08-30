@@ -14,8 +14,8 @@ const App = () => {
         <Routes>
             <Route element={<Movies />} index={true} />
             <Route path='movies/:id' element={<Movie />} />
-            <Route path='movies/keyword/:keyword' element={<MoviesWithParam name="keyword" endpoint="keyword" title="Movies" titleBeforeParam={false} />} />
-            <Route path='movies/cast/:cast' element={<MoviesWithParam name="cast" endpoint="cast" title="Movies with" titleBeforeParam={true} />} />
+            <Route path='movies/keyword/:keyword' element={<MoviesWithParam name="keyword" title="Movies" titleBeforeParam={false} />} />
+            <Route path='movies/people/:people' element={<MoviesWithParam name="people" title="Movies with" titleBeforeParam={true} />} />
             <Route path='/users/login' element={<Login />} />
             <Route path='/users/signup' element={<Signup />} />
         </Routes>

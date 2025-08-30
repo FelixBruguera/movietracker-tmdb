@@ -14,7 +14,7 @@ const MovieList = ({ movies }) => {
         ) : (
             movies.map((movie) => (
             <li key={movie.id}>
-                <Link to={`/movies/${movie.id}`} className="text-center">
+                <Link to={`/movies/${movie.id}`} className="text-center" preventScrollReset={true}>
                 <Poster src={movie.poster_path} alt={movie.title} />
                 </Link>
             </li>

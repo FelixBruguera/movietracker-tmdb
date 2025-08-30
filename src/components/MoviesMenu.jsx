@@ -5,6 +5,8 @@ import SelectSortBy from "./SelectSortBy"
 import SortOrderToggle from "./SortOrderToggle"
 import { useState } from "react"
 import { useSearchParams } from "react-router"
+import MovieDetail from "./MovieDetail"
+import MoviesWithParamTitle from "./MoviesWithParamTitle"
 
 const MoviesMenu = ({ title = null }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -55,7 +57,7 @@ const MoviesMenu = ({ title = null }) => {
           </li>
         ))}
       </ul> */}
-      { title && ( <h3> {title} </h3> ) }
+      { title && ( <MoviesWithParamTitle title={title}/> ) }
       <div className="flex items-start justify-end gap-2 w-full">
         <MoviesFilters
           handleFilter={handleFilter}

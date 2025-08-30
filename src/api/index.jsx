@@ -43,7 +43,8 @@ app.get('/api/movies/:id', async (c) => {
 	console.log(id)
 	const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}?append_to_response=credits,keywords`,{ headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
 	console.log(response.request)
-	response.data.credits = response.data.credits.cast.slice(0,20)
+	response.data.credits.cast = response.data.credits.cast.slice(0,20)
+	response.data.credits.crew = response.data.credits.crew.slice(0,10)
 	return c.json(response.data)
 })
 
@@ -57,12 +58,26 @@ app.get('/api/movies/keyword/:keyword', async (c) => {
 	return c.json(response.data)
 })
 
-app.get('/api/movies/cast/:cast', async (c) => {
+app.get('/api/keyword/:keyword', async (c) => {
+	const keyword = c.req.param('keyword')
+	const response = await axios.get(`https://api.themoviedb.org/3/keyword/${keyword}`,{headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+	console.log(response.request)
+	return c.json(response.data)
+})
+
+app.get('/api/movies/people/:person', async (c) => {
 	const query = c.req.query()
 	const parsedQuery = moviesSchema.parse(query)
 	console.log(c.req)
-	parsedQuery.with_cast = c.req.param('cast')
+	parsedQuery.with_people = c.req.param('person')
 	const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`,{params: {...parsedQuery}, headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+	console.log(response.request)
+	return c.json(response.data)
+})
+
+app.get('/api/people/:person', async (c) => {
+	const person = c.req.param('person')
+	const response = await axios.get(`https://api.themoviedb.org/3/person/${person}`,{headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
 	console.log(response.request)
 	return c.json(response.data)
 })

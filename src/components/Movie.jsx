@@ -128,12 +128,22 @@ export default function MoviePage() {
               <p>{movie.overview}</p>
             )}
           </div>
-          {movie.credits?.length > 0 && (
+          {movie.credits.cast?.length > 0 && (
             <div>
               <MovieListTitle title="Main Cast" />
-              <ul className="flex overflow-x-auto overflow-y-hidden h-45 justify-start items-center scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 dark:scrollbar-thumb-muted">
-                {movie.credits.map((item) => (
+              <ul className="flex overflow-x-auto overflow-y-hidden py-2 justify-start items-center scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 dark:scrollbar-thumb-muted">
+                {movie.credits.cast.map((item) => (
                   <PersonLink name={item.name} id={item.id} image={item.profile_path}/>
+                ))}
+              </ul>
+            </div>
+          )}
+          {movie.credits.crew?.length > 0 && (
+            <div>
+              <MovieListTitle title="Main Crew" />
+              <ul className="flex overflow-x-auto overflow-y-hidden py-2 justify-start items-center scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 dark:scrollbar-thumb-muted">
+                {movie.credits.crew.map((item) => (
+                  <PersonLink name={item.name} id={item.id} image={item.profile_path} role={item.job}/>
                 ))}
               </ul>
             </div>
