@@ -3,6 +3,7 @@ import { getAuth } from "../../lib/auth.server"
 import { Hono } from "hono"
 import { cors } from "hono/cors";
 import moviesSchema from "../utils/moviesSchema";
+import stringify from "json-stable-stringify"
  
 const app = new Hono()
 
@@ -30,11 +31,19 @@ app.get('/api/movies', async (c) => {
 	query.language = "en-US"
   	const parsedQuery = moviesSchema.parse(query)
 	console.log(query)
-	console.log(parsedQuery)
-	const response = 
-	await axios.get(`https://api.themoviedb.org/3/discover/movie`,{params: {...parsedQuery}, headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
-	console.log(response.request)
-	return c.json(response.data)
+	const key = stringify(parsedQuery)
+	const cacheHit = await c.env.KV.get(key)
+	if (cacheHit) {
+		console.log(`cache response`)
+		return c.json(JSON.parse(cacheHit))
+	}
+	else {
+		const response = 
+		await axios.get(`https://api.themoviedb.org/3/discover/movie`,{params: {...parsedQuery}, headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`})
+		console.log(response.request)
+		c.env.KV.put(key, JSON.stringify(response.data))
+		return c.json(response.data)
+	}
 })
 
 app.get('/api/movies/:id', async (c) => {
