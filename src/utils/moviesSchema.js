@@ -20,7 +20,8 @@ const moviesSchema = baseSchema.extend({
     .enum(["popularity.asc", "popularity.desc", "vote_average.asc", "vote_average.desc", "vote_count.asc", "vote_count.desc"])
     .default("popularity.desc"),
     include_adult: z.literal(false).default(false),
-    language: z.literal("en-US").default("en-US")
+    language: z.literal("en-US").default("en-US"),
+    without_keywords: z.literal("155477,1664,190370,267122,171341,229706,251175").default("155477,1664,190370,267122,171341,229706,251175"),
 })
  .refine((data) => data["vote_average.gte"] && data["vote_average.lte"] ? data["vote_average.gte"] < data["vote_average.lte"] : true)
 .refine((data) => data["primary_release_date.gte"] && data["primary_release_date.gte"] ? data["primary_release_date.gte"] < data["primary_release_date.lte"] : true)
