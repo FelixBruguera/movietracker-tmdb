@@ -27,16 +27,36 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const [searchParams, setsearchParams] = useSearchParams()
   const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
-  const genreIds = useMemo(() => genres.map(genre => genre.id), [genres])
-  const [selectedGenres, setSelectedGenres] = useState(searchParams.get("with_genres")?.split(',') || genreIds)
-  const [minRating, setMinRating] = useState(searchParams.get("vote_average.gte") || "1")
-  const [maxRating, setMaxRating] = useState(searchParams.get("vote_average.lte") || "10")
-  const [voteCount, setVouteCount] = useState(searchParams.get("vote_count.gte") || "1")
-  const [minDate, setMinDate] = useState(searchParams.get("release_date.gte") || "1850")
-  const [maxDate, setMaxDate] = useState(searchParams.get("release_date.lte") || maxYear)
+  const genreIds = useMemo(() => genres.map((genre) => genre.id), [genres])
+  const platforms = filtersData.providers
+  const platformIds = useMemo(
+    () => platforms.map((platform) => platform.id),
+    [platforms],
+  )
+  const [selectedGenres, setSelectedGenres] = useState(
+    searchParams.get("with_genres")?.split(",") || genreIds,
+  )
+  const [selectedPlatforms, setSelectedPlatforms] = useState(
+    searchParams.get("with_watch_providers")?.split(",") || platformIds,
+  )
+  const [minRating, setMinRating] = useState(
+    searchParams.get("vote_average.gte") || "1",
+  )
+  const [maxRating, setMaxRating] = useState(
+    searchParams.get("vote_average.lte") || "10",
+  )
+  const [voteCount, setVouteCount] = useState(
+    searchParams.get("vote_count.gte") || "1",
+  )
+  const [minDate, setMinDate] = useState(
+    searchParams.get("primary_release_date.gte") || "1850",
+  )
+  const [maxDate, setMaxDate] = useState(
+    searchParams.get("primary_release_date.lte") || maxYear,
+  )
   const languages = filtersData.languages
   const types = ["All", "Movie", "Series"]
-  const { page, ...query } = searchParams
+  const { page, ...query } = Object.fromEntries(searchParams.entries())
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
       <SheetTrigger asChild>
@@ -97,10 +117,19 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               selectAll={() => setSelectedGenres(genreIds)}
             />
           </FiltersField>
+          <FiltersField labelText="Platforms" labelFor="with_watch_providers">
+            <CheckboxWrapper
+              title="Platforms"
+              items={platforms}
+              selected={selectedPlatforms}
+              setSelected={setSelectedPlatforms}
+              selectAll={() => setSelectedPlatforms(platformIds)}
+            />
+          </FiltersField>
           <FiltersField labelText="Language" labelFor="with_languages">
             <SelectWrapper
               name="with_original_language"
-              defaultValue={searchParams.get('with_original_language') || "All"}
+              defaultValue={searchParams.get("with_original_language") || "xx"}
               title="Languages"
               items={languages}
             />
@@ -134,22 +163,20 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             setMax={setMaxRating}
           />
           <FiltersField labelText="TMDB Vote Count" labelFor="vote_count">
-                <Popover>
-      <PopoverTriggerWrap>
-        {voteCount}
-      </PopoverTriggerWrap>
-      <PopoverContent>
-            <NumberField
-              className="w-1/3"
-              fieldName="vote_count"
-              title="Min"
-              denomination="gte"
-              min={1}
-              value={voteCount}
-              onChange={(newValue) => setVouteCount(newValue)}
-            />
-      </PopoverContent>
-    </Popover>
+            <Popover>
+              <PopoverTriggerWrap>{voteCount}</PopoverTriggerWrap>
+              <PopoverContent>
+                <NumberField
+                  className="w-1/3"
+                  fieldName="vote_count"
+                  title="Min"
+                  denomination="gte"
+                  min={1}
+                  value={voteCount}
+                  onChange={(newValue) => setVouteCount(newValue)}
+                />
+              </PopoverContent>
+            </Popover>
           </FiltersField>
           {/* <RangeField
             labelText="Runtime (Minutes)"
@@ -160,15 +187,15 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             defaultMax={searchParams.get('with_runtime.lte') || 1256}
           /> */}
         </form>
-         <SheetFooter>
-            <Button type="submit" form="filters">
-              Submit
-            </Button>
-           <SheetClose asChild>
-             <Button
+        <SheetFooter>
+          <Button type="submit" form="filters">
+            Submit
+          </Button>
+          <SheetClose asChild>
+            <Button
               type="button"
               variant="outline"
-              onClick={() => setsearchParams('')}
+              onClick={() => setsearchParams("")}
             >
               Clear filters
             </Button>

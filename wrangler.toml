@@ -3,6 +3,10 @@ name = "movietracker"
 compatibility_date = "2025-08-26"
 main = "./src/api/index.jsx"
 compatibility_flags = [ "nodejs_compat" ]
+kv_namespaces = [ {binding = "KV", id = "f0158924cb54404690ef2627acf2baea"} ]
+
+[assets]
+not_found_handling = "single-page-application"
 
 [[ d1_databases ]]
 binding = "DB"

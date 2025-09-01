@@ -4,46 +4,46 @@
       "id": "xx",
       "name": "All"
     },
-      {
-    "id": "en",
-    "name": "English"
-  },
     {
-    "id": "es",
-    "name": "Spanish"
-  },
+      "id": "en",
+      "name": "English"
+    },
     {
-    "id": "fr",
-    "name": "French"
-  },
+      "id": "es",
+      "name": "Spanish"
+    },
     {
-    "id": "de",
-    "name": "German"
-  },
+      "id": "fr",
+      "name": "French"
+    },
     {
-    "id": "ru",
-    "name": "Russian"
-  },
+      "id": "de",
+      "name": "German"
+    },
     {
-    "id": "it",
-    "name": "Italian"
-  },
+      "id": "ru",
+      "name": "Russian"
+    },
     {
-    "id": "ja",
-    "name": "Japanese"
-  },
+      "id": "it",
+      "name": "Italian"
+    },
     {
-    "id": "zh",
-    "name": "Mandarin"
-  },
+      "id": "ja",
+      "name": "Japanese"
+    },
     {
-    "id": "ar",
-    "name": "Arabic"
-  },
+      "id": "zh",
+      "name": "Mandarin"
+    },
     {
-    "id": "hi",
-    "name": "Hindi"
-  }
+      "id": "ar",
+      "name": "Arabic"
+    },
+    {
+      "id": "hi",
+      "name": "Hindi"
+    }
   ],
   "genres": [
     {
@@ -124,11 +124,268 @@
     }
   ],
   "ranges": {
-    "popularity.asc": "Less popular", 
+    "popularity.asc": "Less popular",
     "popularity.desc": "Most popular",
     "vote_average.asc": "Worst average rating",
     "vote_average.desc": "Best average rating",
     "vote_count.asc": "Less votes",
     "vote_count.desc": "Most votes"
-  }
+  },
+  "providers": [
+    {
+      "display_priority": 2,
+      "logo_path": "/9ghgSC0MA082EL6HLCW3GalykFD.jpg",
+      "provider_name": "Apple TV",
+      "provider_id": 2
+    },
+    {
+      "display_priority": 1,
+      "logo_path": "/8z7rC8uIDaTM91X0ZfkRf04ydj2.jpg",
+      "provider_name": "Google Play Movies",
+      "provider_id": 3
+    },
+    {
+      "display_priorities": {
+        "US": 35
+      },
+      "display_priority": 35,
+      "logo_path": "/19fkcOz0xeUgCVW8tO85uOYnYK9.jpg",
+      "provider_name": "Fandango At Home",
+      "provider_id": 7
+    },
+    {
+      "display_priority": 4,
+      "logo_path": "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg",
+      "provider_name": "Netflix",
+      "provider_id": 8
+    },
+    {
+      "display_priority": 2,
+      "logo_path": "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+      "provider_name": "Amazon Prime Video",
+      "provider_id": 9
+    },
+    {
+      "display_priority": 4,
+      "logo_path": "/seGSXajazLMCKGB5hnRCidtjay1.jpg",
+      "provider_name": "Amazon Video",
+      "provider_id": 10
+    },
+    {
+      "display_priority": 9,
+      "logo_path": "/fj9Y8iIMFUC6952HwxbGixTQPb7.jpg",
+      "provider_name": "MUBI",
+      "provider_id": 11
+    },
+    {
+      "display_priority": 6,
+      "logo_path": "/bxBlRPEPpMVDc4jMhSrTf2339DW.jpg",
+      "provider_name": "Hulu",
+      "provider_id": 15
+    },
+    {
+      "display_priority": 14,
+      "logo_path": "/jlyafDbXLyNXNNFZbIgB9VrlScW.jpg",
+      "provider_name": "NetMovies",
+      "provider_id": 19
+    },
+    {
+      "display_priority": 16,
+      "logo_path": "/cBN4jd4wPq6on0kESiTlevqvlnL.jpg",
+      "provider_name": "maxdome Store",
+      "provider_id": 20
+    },
+    {
+      "display_priority": 8,
+      "logo_path": "/sSfxJXq7s8oHf3XWd0FtqagPDsF.jpg",
+      "provider_name": "Stan",
+      "provider_id": 21
+    },
+    {
+      "display_priority": 48,
+      "logo_path": "/45lSM3J7Ts4TXTtDv0EuTPL0eH5.jpg",
+      "provider_name": "Fandor",
+      "provider_id": 25
+    },
+    {
+      "display_priority": 24,
+      "logo_path": "/4bKgwiotEIN6wiZNQhQfjp7qPCk.jpg",
+      "provider_name": "Netzkino",
+      "provider_id": 28
+    },
+    {
+      "display_priority": 6,
+      "logo_path": "/kAZkQcIxMxTmlwdgSB05fqtymp0.jpg",
+      "provider_name": "Sky Go",
+      "provider_id": 29
+    },
+    {
+      "display_priority": 9,
+      "logo_path": "/9r5zFWuYnwjzO1JrNjSbLQwUc3P.jpg",
+      "provider_name": "WOW",
+      "provider_id": 30
+    },
+    {
+      "display_priority": 20,
+      "logo_path": "/m0zZQjEHcp8np3lkMdMZE9QRwjA.jpg",
+      "provider_name": "Alleskino",
+      "provider_id": 33
+    },
+    {
+      "display_priority": 51,
+      "logo_path": "/ctiRpS16dlaTXQBSsiFncMrgWmh.jpg",
+      "provider_name": "MGM Plus",
+      "provider_id": 34
+    },
+    {
+      "display_priority": 4,
+      "logo_path": "/bZvc9dXrXNly7cA0V4D9pR8yJwm.jpg",
+      "provider_name": "Rakuten TV",
+      "provider_id": 35
+    },
+    {
+      "display_priority": 12,
+      "logo_path": "/nc8Tpsr8SqCbsTUogPDD06gGzB3.jpg",
+      "provider_name": "BBC iPlayer",
+      "provider_id": 38
+    },
+    {
+      "display_priority": 10,
+      "logo_path": "/g0E9h3JAeIwmdvxlT73jiEuxdNj.jpg",
+      "provider_name": "Now TV",
+      "provider_id": 39
+    },
+    {
+      "display_priority": 18,
+      "logo_path": "/1LuvKw01c2KQCt6DqgAgR06H2pT.jpg",
+      "provider_name": "ITVX",
+      "provider_id": 41
+    },
+    {
+      "display_priority": 38,
+      "logo_path": "/yIKwylTLP1u8gl84Is7FItpYLGL.jpg",
+      "provider_name": "Starz",
+      "provider_id": 43
+    },
+    {
+      "display_priority": 4,
+      "logo_path": "/9HhIlyFlilVtx0sMTcPbhs5qR31.jpg",
+      "provider_name": "Looke",
+      "provider_id": 47
+    },
+    {
+      "display_priority": 5,
+      "logo_path": "/4JswJbaxqZhut2TpJ3IPUBnNdy8.jpg",
+      "provider_name": "BoxOffice",
+      "provider_id": 54
+    },
+    {
+      "display_priority": 7,
+      "logo_path": "/ilR8XFZOr3e3wETQ4ZXLjXQXrts.jpg",
+      "provider_name": "ShowMax",
+      "provider_id": 55
+    },
+    {
+      "display_priority": 8,
+      "logo_path": "/cAUTwxqoI7zc9XtYr1SMtWZEsXg.jpg",
+      "provider_name": "Canal VOD",
+      "provider_id": 58
+    },
+    {
+      "display_priority": 17,
+      "logo_path": "/s7mg9n4UHrcdJQL78JmaU6oAdHt.jpg",
+      "provider_name": "Bbox VOD",
+      "provider_id": 59
+    },
+    {
+      "display_priority": 11,
+      "logo_path": "/9Fyo6njYvroAIxAzTBbLgnjgYga.jpg",
+      "provider_name": "Orange VOD",
+      "provider_id": 61
+    },
+    {
+      "display_priority": 13,
+      "logo_path": "/oN6g8QorcoYo3mx4BulU22ghKq4.jpg",
+      "provider_name": "Atres Player",
+      "provider_id": 62
+    },
+    {
+      "display_priority": 22,
+      "logo_path": "/kO2SWXvDCHAquaUuTJBuZkTBAuU.jpg",
+      "provider_name": "Filmin",
+      "provider_id": 63
+    },
+    {
+      "display_priority": 23,
+      "logo_path": "/ozZU2vSlyL11rFGEkq1HE0yxIJq.jpg",
+      "provider_name": "Filmin Plus",
+      "provider_id": 64
+    },
+    {
+      "display_priority": 10,
+      "logo_path": "/aNlqB4iEoh7BQKaKj72iiC4WmkN.jpg",
+      "provider_name": "Nuestro Cine MX",
+      "provider_id": 66
+    },
+    {
+      "display_priority": 7,
+      "logo_path": "/lnOkJKyFl87mzqNebAbE8ADdHoB.jpg",
+      "provider_name": "Pathé Thuis",
+      "provider_id": 71
+    },
+    {
+      "display_priority": 6,
+      "logo_path": "/qN7uDYanT47WI0MmbwOr5HFFot.jpg",
+      "provider_name": "Videoland",
+      "provider_id": 72
+    },
+    {
+      "display_priority": 43,
+      "logo_path": "/zLYr7OPvpskMA4S79E3vlCi71iC.jpg",
+      "provider_name": "Tubi TV",
+      "provider_id": 73
+    },
+    {
+      "display_priority": 6,
+      "logo_path": "/bnoTnLzz2MAhK3Yc6P9KXe5drIz.jpg",
+      "provider_name": "Viaplay",
+      "provider_id": 76
+    },
+    {
+      "display_priority": 50,
+      "logo_path": "/6hFf3sIdmXSAczy3i6tLSmy6gwK.jpg",
+      "provider_name": "NBC",
+      "provider_id": 79
+    },
+    {
+      "display_priority": 46,
+      "logo_path": "/92Kx25Od0habmgRBTqT6XWgwgKt.jpg",
+      "provider_name": "AMC",
+      "provider_id": 80
+    },
+    {
+      "display_priority": 20,
+      "logo_path": "/8fIieu3ZfmTPu8eozZbtgATcPO5.jpg",
+      "provider_name": "10",
+      "provider_id": 82
+    },
+    {
+      "display_priority": 33,
+      "logo_path": "/spcwROYevucLluqZZ8Fv75UuTBt.jpg",
+      "provider_name": "The CW",
+      "provider_id": 83
+    },
+    {
+      "display_priority": 2,
+      "logo_path": "/a5T7vNaGvoeckYO6rQkHolvyYf4.jpg",
+      "provider_name": "U-NEXT",
+      "provider_id": 84
+    },
+    {
+      "display_priority": 57,
+      "logo_path": "/doCc555FPPgGtuaZJxf9QZVpIp5.jpg",
+      "provider_name": "Acorn TV",
+      "provider_id": 87
+    }
+  ]
 }

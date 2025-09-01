@@ -13,7 +13,7 @@ const SelectSortBy = memo(({ value, selectedValue, title, options }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const onValueChange = useCallback((newValue) => {
     console.log(newValue)
-    setSearchParams(params => {
+    setSearchParams((params) => {
       params.set("sort_by", newValue)
       params.set("page", 1)
       return params

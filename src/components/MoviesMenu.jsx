@@ -5,23 +5,25 @@ import SelectSortBy from "./SelectSortBy"
 import SortOrderToggle from "./SortOrderToggle"
 import { useState } from "react"
 import { useSearchParams } from "react-router"
+import MovieDetail from "./MovieDetail"
+import MoviesWithParamTitle from "./MoviesWithParamTitle"
 
-const MoviesMenu = () => {
+const MoviesMenu = ({ title = null }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const currentGenre = "All" || searchParams.genres
   const [filterOpen, setFilterOpen] = useState(false)
   const handleGenre = (newValue) => {
     if (searchParams.genres === newValue) {
-      setSearchParams(params => {
+      setSearchParams((params) => {
         params.delete("genres")
         params.set("page", 1)
         return params
       })
     } else {
-        setSearchParams(params => {
-          params.set("genres", newValue)
-          params.set("page", 1)
-          return params
+      setSearchParams((params) => {
+        params.set("genres", newValue)
+        params.set("page", 1)
+        return params
       })
     }
   }
@@ -55,6 +57,7 @@ const MoviesMenu = () => {
           </li>
         ))}
       </ul> */}
+      {title && <MoviesWithParamTitle title={title} />}
       <div className="flex items-start justify-end gap-2 w-full">
         <MoviesFilters
           handleFilter={handleFilter}

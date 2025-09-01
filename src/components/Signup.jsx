@@ -5,7 +5,6 @@ import AuthForm from "./AuthForm.jsx"
 import { toast } from "sonner"
 import { useNavigate } from "react-router"
 
-
 const Signup = () => {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
@@ -24,7 +23,8 @@ const Signup = () => {
         image: `https://www.gravatar.com/avatar/${data.username.value}?d=identicon&s=200&r=pg`,
       },
       {
-        onError: (response) => toast(response.error.message || "Something went wrong"),
+        onError: (response) =>
+          toast(response.error.message || "Something went wrong"),
       },
     )
   }

@@ -6,14 +6,13 @@ export default function useListDebounce(search) {
   useEffect(() => {
     let timeout = null
     if (searchParams.search !== undefined || search != "") {
-      timeout = setTimeout(
-        () =>
-          setSearchParams(params => {
-            params.set("search", search)
-            params.set("page", 1)
-            return params
-        }, 500
-      ))
+      timeout = setTimeout(() =>
+        setSearchParams((params) => {
+          params.set("search", search)
+          params.set("page", 1)
+          return params
+        }, 500),
+      )
     }
     return () => clearTimeout(timeout)
   }, [search])

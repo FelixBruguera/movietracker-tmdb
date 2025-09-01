@@ -8,7 +8,7 @@ const SortOrderToggle = memo(() => {
   const isAscending = searchParams.sortOrder === 1
   const handleSortOrder = () => {
     const newValue = isAscending ? -1 : 1
-    setSearchParams(params => {
+    setSearchParams((params) => {
       params.set("sortOrder", newValue)
       params.set("page", 1)
       return params

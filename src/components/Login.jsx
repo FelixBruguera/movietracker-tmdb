@@ -23,7 +23,8 @@ const Login = () => {
       },
       {
         onRequest: () => toast("Signing you in..."),
-        onError: (response) => toast(response.error.message || "Something went wrong"),
+        onError: (response) =>
+          toast(response.error.message || "Something went wrong"),
       },
     )
   }

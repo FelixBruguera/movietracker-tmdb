@@ -21,18 +21,9 @@ const Header = () => {
       </Link>
       <div className="flex gap-0 items-center justify-between w-full lg:w-8/10">
         <div className="flex items-center justify-evenly w-full">
-          <NavLinkWrapper
-            to={"/"}
-            title="Movies"
-          />
-          <NavLinkWrapper
-            to={"/lists"}
-            title="Lists"
-          />
-          <NavLinkWrapper
-            to={"/users"}
-            title="Users"
-          />
+          <NavLinkWrapper to={"/"} title="Movies" />
+          <NavLinkWrapper to={"/lists"} title="Lists" />
+          <NavLinkWrapper to={"/users"} title="Users" />
         </div>
         <div className="flex items-center lg:justify-between justify-evenly w-8/10 lg:w-3/10">
           {session && (

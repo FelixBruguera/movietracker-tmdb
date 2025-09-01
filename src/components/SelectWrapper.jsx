@@ -6,7 +6,6 @@ import {
   SelectValue,
 } from "../../app/components/ui/select"
 
-
 const SelectWrapper = ({ name, defaultValue, title, items, className }) => {
   return (
     <div className="flex items-center justify-center">
