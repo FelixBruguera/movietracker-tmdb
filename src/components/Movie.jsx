@@ -49,6 +49,7 @@ export default function MoviePage() {
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
     <div className="mx-auto p-4">
+      <title>{movie.title}</title>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-3/4 mx-auto lg:w-1/3">
           <Poster src={movie.poster_path} alt={movie.title} size="large" />
@@ -159,12 +160,14 @@ export default function MoviePage() {
               </ul>
             </div>
           )}
-          {movie.keywords.keywords?.length > 0 && (
+          {movie.keywords?.keywords?.length > 0 && (
             <div>
               <MovieListTitle title="Keywords" />
               <ul className="px-3 lg:px-0 flex flex-wrap gap-2">
                 {movie.keywords.keywords.map((keyword) => (
-                  <MovieDetailLink href={`/movies/keyword/${keyword.id}`}>
+                  <MovieDetailLink
+                    href={`/?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
+                  >
                     {keyword.name}
                   </MovieDetailLink>
                 ))}

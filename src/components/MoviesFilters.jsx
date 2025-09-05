@@ -13,49 +13,53 @@ import filtersData from "../../lib/filters.json"
 import FiltersField from "./FiltersField"
 import RangeField from "./RangeField"
 import SelectWrapper from "./SelectWrapper"
-import TextInput from "./TextInput"
 import { useSearchParams } from "react-router"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import CheckboxWrapper from "./CheckboxWrapper"
 import NumberField from "./NumberField"
-import PopoverTriggerWrap from "./PopoverTriggerWrap"
-import { Popover, PopoverContent } from "../../app/components/ui/popover"
+import TriggerWrap from "./TriggerWrap"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../app/components/ui/popover"
 import { toast } from "sonner"
 import moviesSchema from "../utils/moviesSchema"
+import KeywordSearch from "./KeywordSearch"
+import ServicesCommand from "./ServicesCommand"
+import useRegion from "../stores/region"
 
 const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const [searchParams, setsearchParams] = useSearchParams()
+  const region = useRegion((state) => state.details.code)
   const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
   const genreIds = useMemo(() => genres.map((genre) => genre.id), [genres])
-  const platforms = filtersData.providers
-  const platformIds = useMemo(
-    () => platforms.map((platform) => platform.id),
-    [platforms],
-  )
+  const initialServices = searchParams.get("with_watch_providers")
+    ? new Set(
+        searchParams
+          .get("with_watch_providers")
+          .split(",")
+          .map((item) => parseInt(item)),
+      )
+    : new Set()
+  const initialKeywords = searchParams.get("with_keywords")
+    ? JSON.parse(decodeURIComponent(searchParams.get("with_keywords")))
+    : []
   const [selectedGenres, setSelectedGenres] = useState(
     searchParams.get("with_genres")?.split(",") || genreIds,
   )
-  const [selectedPlatforms, setSelectedPlatforms] = useState(
-    searchParams.get("with_watch_providers")?.split(",") || platformIds,
-  )
-  const [minRating, setMinRating] = useState(
-    searchParams.get("vote_average.gte") || "1",
-  )
-  const [maxRating, setMaxRating] = useState(
-    searchParams.get("vote_average.lte") || "10",
-  )
-  const [voteCount, setVouteCount] = useState(
-    searchParams.get("vote_count.gte") || "1",
-  )
-  const [minDate, setMinDate] = useState(
-    searchParams.get("primary_release_date.gte") || "1850",
-  )
-  const [maxDate, setMaxDate] = useState(
-    searchParams.get("primary_release_date.lte") || maxYear,
-  )
+  const [selectedServices, setSelectedServices] = useState(initialServices)
+  const isInitialMount = useRef(true)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+    } else {
+      setSelectedServices(new Set())
+    }
+  }, [region])
+  const [selectedKeywords, setSelectedKeywords] = useState(initialKeywords)
   const languages = filtersData.languages
-  const types = ["All", "Movie", "Series"]
   const { page, ...query } = Object.fromEntries(searchParams.entries())
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
@@ -80,34 +84,22 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             e.preventDefault()
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
+            console.log(data)
             data.with_genres = selectedGenres
-            data["vote_count.gte"] = voteCount
-            data["vote_average.gte"] = minRating
-            data["vote_average.lte"] = maxRating
-            data["primary_release_date.gte"] = minDate
-            data["primary_release_date.lte"] = maxDate
+            data.watch_region = region
+            data.with_watch_providers = [...selectedServices]
+            data.with_keywords = encodeURIComponent(
+              JSON.stringify(selectedKeywords),
+            )
+            data.sort_by = searchParams.get("sort_by")
             const validation = moviesSchema.safeParse(data)
             if (!validation.success) {
+              console.log(validation)
               return toast("Invalid input")
             }
             return handleFilter(data)
           }}
         >
-          {/* <TextInput
-            labelText="query"
-            name="query"
-            defaultValue={searchParams.get('query') || ""}
-          />
-          <TextInput
-            labelText="Search by actor"
-            name="with_cast"
-            defaultValue={searchParams.get('with_cast') || ""}
-          />
-          <TextInput
-            labelText="Search by director"
-            name="with_people"
-            defaultValue={searchParams.get('with_people') || ""}
-          /> */}
           <FiltersField labelText="Genres" labelFor="with_genres">
             <CheckboxWrapper
               title="Genres"
@@ -117,13 +109,16 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               selectAll={() => setSelectedGenres(genreIds)}
             />
           </FiltersField>
-          <FiltersField labelText="Platforms" labelFor="with_watch_providers">
-            <CheckboxWrapper
-              title="Platforms"
-              items={platforms}
-              selected={selectedPlatforms}
-              setSelected={setSelectedPlatforms}
-              selectAll={() => setSelectedPlatforms(platformIds)}
+          <FiltersField labelText="Services" labelFor="with_watch_providers">
+            <ServicesCommand
+              selected={selectedServices}
+              setSelected={setSelectedServices}
+            />
+          </FiltersField>
+          <FiltersField labelText="Keywords" labelFor="with_keywords">
+            <KeywordSearch
+              selected={selectedKeywords}
+              setSelected={setSelectedKeywords}
             />
           </FiltersField>
           <FiltersField labelText="Language" labelFor="with_languages">
@@ -134,58 +129,32 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               items={languages}
             />
           </FiltersField>
-          {/* <FiltersField labelText="Type" labelFor="type">
-            <SelectWrapper
-              name="type"
-              defaultValue={searchParams.get('type || "All"}
-              title="Type"
-              items={types}
-            />
-          </FiltersField> */}
           <RangeField
             labelText="Release year"
             fieldName="primary_release_date"
-            min={0}
+            min={1896}
             max={maxYear}
-            minValue={minDate}
-            maxValue={maxDate}
-            setMin={setMinDate}
-            setMax={setMaxDate}
+            defaultMin={searchParams.get("primary_release_date.gte")}
+            defaultMax={searchParams.get("primary_release_date.lte")}
           />
           <RangeField
             labelText="TMDB Average Rating (1-10)"
             fieldName="vote_average"
             min={1}
             max={10}
-            minValue={minRating}
-            maxValue={maxRating}
-            setMin={setMinRating}
-            setMax={setMaxRating}
+            defaultMin={searchParams.get("vote_average.gte")}
+            defaultMax={searchParams.get("vote_average.lte")}
           />
           <FiltersField labelText="TMDB Vote Count" labelFor="vote_count">
-            <Popover>
-              <PopoverTriggerWrap>{voteCount}</PopoverTriggerWrap>
-              <PopoverContent>
-                <NumberField
-                  className="w-1/3"
-                  fieldName="vote_count"
-                  title="Min"
-                  denomination="gte"
-                  min={1}
-                  value={voteCount}
-                  onChange={(newValue) => setVouteCount(newValue)}
-                />
-              </PopoverContent>
-            </Popover>
+            <NumberField
+              className="w-1/3"
+              fieldName="vote_count"
+              title="Min"
+              denomination="gte"
+              min={1}
+              defaultValue={searchParams.get("vote_count.gte")}
+            />
           </FiltersField>
-          {/* <RangeField
-            labelText="Runtime (Minutes)"
-            fieldName="with_runtime"
-            min={1}
-            max={1256}
-            defaultMin={searchParams.get('with_runtime.gte') || 1}
-            defaultMax={searchParams.get('with_runtime.lte') || 1256}
-          /> */}
         </form>
         <SheetFooter>
           <Button type="submit" form="filters">

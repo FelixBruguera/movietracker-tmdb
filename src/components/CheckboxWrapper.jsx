@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../../app/components/ui/popover"
-import PopoverTriggerWrap from "./PopoverTriggerWrap"
+import TriggerWrap from "./TriggerWrap"
 
 const CheckboxWrapper = ({
   title,
@@ -19,7 +19,9 @@ const CheckboxWrapper = ({
   console.log(selected)
   return (
     <Popover>
-      <PopoverTriggerWrap>{selected.length} Selected</PopoverTriggerWrap>
+      <PopoverTrigger>
+        <TriggerWrap>{selected.length} Selected</TriggerWrap>
+      </PopoverTrigger>
       <PopoverContent>
         <div>
           <div className="flex items-center justify-between gap-2 mb-1">

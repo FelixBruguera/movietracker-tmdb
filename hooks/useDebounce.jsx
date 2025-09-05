@@ -1,36 +1,22 @@
-import axios from "axios"
 import { useState, useEffect } from "react"
 
-export default function useDebounce(search) {
-  const [debounceValue, setDebounceValue] = useState([])
-  const [error, setError] = useState(false)
+export default function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     let timeout = null
-    if (search.length > 2) {
+    if (value.length > 2) {
+      timeout = setTimeout(() => {
+        setDebouncedValue(value)
+        setIsLoading(false)
+      }, delay)
       setIsLoading(true)
-      setDebounceValue([])
-      timeout = setTimeout(
-        () =>
-          axios
-            .get(`/api/movies?search=${search}`)
-            .then((response) => response.data)
-            .then((data) => {
-              setDebounceValue(data[0].movies)
-              setIsLoading(false)
-            })
-            .catch(() => {
-              setIsLoading(false)
-              setError(true)
-            }),
-        1000,
-      )
     } else {
-      setDebounceValue([])
+      setDebouncedValue("")
       setIsLoading(false)
     }
     return () => clearTimeout(timeout)
-  }, [search])
+  }, [value])
 
-  return { data: debounceValue, isLoading: isLoading, isError: error }
+  return { debouncedValue: debouncedValue, isLoading: isLoading }
 }

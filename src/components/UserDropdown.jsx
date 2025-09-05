@@ -11,7 +11,6 @@ import { Link } from "react-router"
 
 const UserDropdown = () => {
   const { data: session } = authClient.useSession()
-  console.log(session)
   const logout = async () => await authClient.signOut()
   if (!session) {
     return (

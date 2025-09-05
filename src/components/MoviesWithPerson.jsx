@@ -23,7 +23,7 @@ const MoviesWithPerson = () => {
       axios.get(`/api/people/${person}`).then((response) => response.data),
   })
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["movies", searchParams.toString()],
+    queryKey: ["movies", person, searchParams.toString()],
     queryFn: () =>
       axios
         .get(`/api/movies/people/${person}`, { params: searchParams })
@@ -49,6 +49,7 @@ const MoviesWithPerson = () => {
 
   return (
     <div className="flex flex-col justify-between">
+      <title>{personData.name}</title>
       <PersonInfo data={personData} />
       <MoviesMenu />
       <MovieList movies={movies} />

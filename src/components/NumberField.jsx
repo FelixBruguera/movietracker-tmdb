@@ -7,8 +7,7 @@ const NumberField = ({
   denomination,
   min,
   max,
-  value,
-  onChange,
+  defaultValue,
   className,
 }) => {
   return (
@@ -26,8 +25,7 @@ const NumberField = ({
         className={`w-3/5 text-sm border-1 border-border ${className}`}
         min={min}
         max={max}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        defaultValue={defaultValue || min}
         required
       ></Input>
     </div>

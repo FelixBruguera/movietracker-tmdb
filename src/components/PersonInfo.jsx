@@ -25,7 +25,7 @@ const PersonInfo = ({ data }) => {
             <MovieDescription description={data.biography} length={300} />
           </div>
         </div>
-        <div className="flex col-span-full row-start-2 items-center justify-start lg:justify-start gap-2 lg:gap-2 lg:col-start-2">
+        <div className="flex col-span-full row-start-2 items-center justify-start lg:justify-items-start lg:justify-start gap-2 lg:gap-2 lg:col-start-2">
           {data.birthday && (
             <MovieDetail title="Birthday">
               <Cake />

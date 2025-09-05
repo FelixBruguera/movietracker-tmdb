@@ -40,7 +40,6 @@ const MoviesMenu = ({ title = null }) => {
     "Animation",
   ]
   const handleFilter = (data) => {
-    console.log([data, new URLSearchParams(data).toString()])
     setSearchParams(new URLSearchParams(data).toString())
     setFilterOpen(false)
   }
@@ -60,6 +59,7 @@ const MoviesMenu = ({ title = null }) => {
       {title && <MoviesWithParamTitle title={title} />}
       <div className="flex items-start justify-end gap-2 w-full">
         <MoviesFilters
+          key={searchParams}
           handleFilter={handleFilter}
           filterOpen={filterOpen}
           setFilterOpen={setFilterOpen}

@@ -4,9 +4,10 @@ import { Hono } from "hono"
 import { cors } from "hono/cors"
 import moviesSchema from "../utils/moviesSchema"
 import stringify from "json-stable-stringify"
+import { createCacheKey } from "../utils/createCacheKey"
 
 const app = new Hono()
-
+const hourToSeconds = 3600
 app.use(
   "/api/auth/*",
   cors({
@@ -29,7 +30,7 @@ app.get("/api/movies", async (c) => {
   query.include_adult = false
   query.language = "en-US"
   const parsedQuery = moviesSchema.parse(query)
-  const key = stringify(parsedQuery)
+  const key = await createCacheKey(stringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
     console.log(`cache response`)
@@ -43,10 +44,9 @@ app.get("/api/movies", async (c) => {
       },
     )
     console.log(response.request)
-    const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: 43200,
+    await c.env.KV.put(key, JSON.stringify(response.data), {
+      expirationTtl: hourToSeconds * 12,
     })
-    console.log(cacheresult)
     return c.json(response.data)
   }
 })
@@ -65,11 +65,11 @@ app.get("/api/movies/:id", async (c) => {
       `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits,keywords`,
       { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
     )
-    console.log(response.request)
+    console.log(response)
     response.data.credits.cast = response.data.credits.cast.slice(0, 20)
     response.data.credits.crew = response.data.credits.crew.slice(0, 10)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: 86400,
+      expirationTtl: hourToSeconds * 24,
     })
     console.log(cacheresult)
     return c.json(response.data)
@@ -102,12 +102,25 @@ app.get("/api/keyword/:keyword", async (c) => {
   return c.json(response.data)
 })
 
+app.get("/api/keyword/search/:query", async (c) => {
+  const query = c.req.param("query")
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/search/keyword`,
+    {
+      params: { query: query },
+      headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
+    },
+  )
+  console.log(response.request)
+  return c.json(response.data)
+})
+
 app.get("/api/movies/people/:person", async (c) => {
   const query = c.req.query()
   const parsedQuery = moviesSchema.parse(query)
   console.log(c.req)
   parsedQuery.with_people = c.req.param("person")
-  const key = stringify(parsedQuery)
+  const key = await createCacheKey(stringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
     console.log(`cache response`)
@@ -122,7 +135,7 @@ app.get("/api/movies/people/:person", async (c) => {
     )
     console.log(response.request)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: 86400,
+      expirationTtl: hourToSeconds * 24,
     })
     console.log(cacheresult)
     return c.json(response.data)
@@ -143,7 +156,32 @@ app.get("/api/people/:person", async (c) => {
     )
     console.log(response.request)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: 604800,
+      expirationTtl: hourToSeconds * 168, // 7 days,
+    })
+    console.log(cacheresult)
+    return c.json(response.data)
+  }
+})
+
+app.get("/api/services/:region", async (c) => {
+  const region = c.req.param("region")
+  const key = `services_${region}`
+  const cacheHit = await c.env.KV.get(key, { type: "json" })
+  if (cacheHit) {
+    console.log(`cache response`)
+    return c.json(cacheHit)
+  } else {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/watch/providers/movie`,
+      {
+        params: { watch_region: region },
+        headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
+      },
+    )
+    response.data.results.forEach((result) => delete result.display_priorities)
+    console.log(response.request)
+    const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
+      expirationTtl: hourToSeconds * 168, // 7 days,
     })
     console.log(cacheresult)
     return c.json(response.data)
