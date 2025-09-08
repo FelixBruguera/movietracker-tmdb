@@ -6,27 +6,27 @@ import Poster from "./Poster"
 import ErrorMessage from "./ErrorMessage"
 import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
-import MovieList from "./MovieList"
+import PosterList from "./PosterList"
 
-const MoviesWithKeyword = () => {
+const MoviesWithParam = ({ endpoint, path = "movies" }) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { keyword } = useParams()
+  const { id } = useParams()
   const {
     data: paramData,
     isLoading: paramDataLoading,
     isError: paramDataError,
   } = useQuery({
-    queryKey: ["keyword", keyword],
+    queryKey: [endpoint, id],
     queryFn: () =>
-      axios.get(`/api/keyword/${keyword}`).then((response) => response.data),
+      axios.get(`/api/${endpoint}/${id}`).then((response) => response.data),
     staleTime: 34560 * 60000,
     gcTime: 34560 * 60000, // 24 days
   })
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["movies", searchParams.toString()],
+    queryKey: [path, id, searchParams.toString()],
     queryFn: () =>
       axios
-        .get(`/api/movies/keyword/${keyword}`, { params: searchParams })
+        .get(`/api/${path}/${endpoint}/${id}`, { params: searchParams })
         .then((response) => response.data),
   })
   console.log(data)
@@ -49,7 +49,7 @@ const MoviesWithKeyword = () => {
   return (
     <div className="flex flex-col justify-between">
       <MoviesMenu title={paramData.name} />
-      <MovieList movies={movies} />
+      <PosterList movies={movies} path={path} />
       {totalPages > 1 && (
         <PaginationWrap currentPage={data.page} totalPages={totalPages} />
       )}
@@ -57,4 +57,4 @@ const MoviesWithKeyword = () => {
   )
 }
 
-export default MoviesWithKeyword
+export default MoviesWithParam

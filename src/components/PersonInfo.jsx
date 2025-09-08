@@ -8,8 +8,12 @@ import {
 import Poster from "./Poster"
 import MovieDetail from "./MovieDetail"
 import MovieDescription from "./MovieDescription"
+import PersonInfoSkeleton from "./PersonInfoSkeleton"
 
 const PersonInfo = ({ data }) => {
+  if (!data) {
+    return <PersonInfoSkeleton />
+  }
   return (
     <div className="px-3 lg:px-9 mb-3">
       <div className="items-start gap-2 grid grid-cols-[1fr_2fr] md:grid-cols-[1fr_5fr] grid-rows-[4fr_15%] lg:w-7/10">

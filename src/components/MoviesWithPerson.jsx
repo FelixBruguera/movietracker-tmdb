@@ -6,9 +6,10 @@ import Poster from "./Poster"
 import ErrorMessage from "./ErrorMessage"
 import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
-import MovieList from "./MovieList"
+import PosterList from "./PosterList"
 import PersonInfo from "./PersonInfo"
 import PersonInfoSkeleton from "./PersonInfoSkeleton"
+import PersonMenu from "./PersonMenu"
 
 const MoviesWithPerson = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -26,7 +27,7 @@ const MoviesWithPerson = () => {
     queryKey: ["movies", person, searchParams.toString()],
     queryFn: () =>
       axios
-        .get(`/api/movies/people/${person}`, { params: searchParams })
+        .get(`/api/people/${person}/credits`, { params: searchParams })
         .then((response) => response.data),
   })
   console.log(data)
@@ -34,8 +35,8 @@ const MoviesWithPerson = () => {
   if (isLoading || personDataLoading) {
     return (
       <div className="flex flex-col justify-between">
-        <PersonInfoSkeleton />
-        <MoviesMenu />
+        <PersonInfo data={personData} />
+        <PersonMenu />
         <MoviesSkeleton />
       </div>
     )
@@ -46,13 +47,15 @@ const MoviesWithPerson = () => {
   }
   const movies = data.results
   const totalPages = data.total_pages
+  const scope = searchParams.get("scope")
+  const type = scope === "TV Shows" ? "tv" : "movies"
 
   return (
     <div className="flex flex-col justify-between">
       <title>{personData.name}</title>
       <PersonInfo data={personData} />
-      <MoviesMenu />
-      <MovieList movies={movies} />
+      <PersonMenu />
+      <PosterList movies={movies} path={type} keyPath="credit_id" />
       {totalPages > 1 && (
         <PaginationWrap currentPage={data.page} totalPages={totalPages} />
       )}

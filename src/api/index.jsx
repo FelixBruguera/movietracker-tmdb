@@ -2,9 +2,9 @@ import axios from "axios"
 import { getAuth } from "../../lib/auth.server"
 import { Hono } from "hono"
 import { cors } from "hono/cors"
-import moviesSchema from "../utils/moviesSchema"
-import stringify from "json-stable-stringify"
-import { createCacheKey } from "../utils/createCacheKey"
+import movies from "./movies"
+import people from "./people"
+import tv from "./tv"
 
 const app = new Hono()
 const hourToSeconds = 3600
@@ -25,81 +25,48 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
   return auth.handler(c.req.raw)
 })
 
-app.get("/api/movies", async (c) => {
-  const query = c.req.query()
-  query.include_adult = false
-  query.language = "en-US"
-  const parsedQuery = moviesSchema.parse(query)
-  const key = await createCacheKey(stringify(parsedQuery))
-  const cacheHit = await c.env.KV.get(key, { type: "json" })
-  if (cacheHit) {
-    console.log(`cache response`)
-    return c.json(cacheHit)
-  } else {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/discover/movie`,
-      {
-        params: { ...parsedQuery },
-        headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
-      },
-    )
-    console.log(response.request)
-    await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: hourToSeconds * 12,
-    })
-    return c.json(response.data)
-  }
-})
+app.route("/", movies)
+app.route("/", tv)
+app.route("/", people)
 
-app.get("/api/movies/:id", async (c) => {
-  console.log(c.req)
-  const id = c.req.param("id")
-  console.log(id)
-  const key = `movies_${id}`
+app.get("/api/company/:company", async (c) => {
+  const company = c.req.param("company")
+  const key = `company_${company}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
     console.log(`cache response`)
     return c.json(cacheHit)
   } else {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits,keywords`,
+      `https://api.themoviedb.org/3/company/${company}`,
       { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
     )
-    console.log(response)
-    response.data.credits.cast = response.data.credits.cast.slice(0, 20)
-    response.data.credits.crew = response.data.credits.crew.slice(0, 10)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: hourToSeconds * 24,
+      expirationTtl: hourToSeconds * 168, // 7 days,
     })
     console.log(cacheresult)
     return c.json(response.data)
   }
 })
 
-app.get("/api/movies/keyword/:keyword", async (c) => {
-  const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
-  console.log(c.req)
-  parsedQuery.with_keywords = c.req.param("keyword")
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/discover/movie`,
-    {
-      params: { ...parsedQuery },
-      headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
-    },
-  )
-  console.log(response.request)
-  return c.json(response.data)
-})
-
-app.get("/api/keyword/:keyword", async (c) => {
-  const keyword = c.req.param("keyword")
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/keyword/${keyword}`,
-    { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
-  )
-  console.log(response.request)
-  return c.json(response.data)
+app.get("/api/network/:network", async (c) => {
+  const network = c.req.param("network")
+  const key = `network_${network}`
+  const cacheHit = await c.env.KV.get(key, { type: "json" })
+  if (cacheHit) {
+    console.log(`cache response`)
+    return c.json(cacheHit)
+  } else {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/network/${network}`,
+      { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
+    )
+    const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
+      expirationTtl: hourToSeconds * 168, // 7 days,
+    })
+    console.log(cacheresult)
+    return c.json(response.data)
+  }
 })
 
 app.get("/api/keyword/search/:query", async (c) => {
@@ -113,54 +80,6 @@ app.get("/api/keyword/search/:query", async (c) => {
   )
   console.log(response.request)
   return c.json(response.data)
-})
-
-app.get("/api/movies/people/:person", async (c) => {
-  const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
-  console.log(c.req)
-  parsedQuery.with_people = c.req.param("person")
-  const key = await createCacheKey(stringify(parsedQuery))
-  const cacheHit = await c.env.KV.get(key, { type: "json" })
-  if (cacheHit) {
-    console.log(`cache response`)
-    return c.json(cacheHit)
-  } else {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/discover/movie`,
-      {
-        params: { ...parsedQuery },
-        headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
-      },
-    )
-    console.log(response.request)
-    const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: hourToSeconds * 24,
-    })
-    console.log(cacheresult)
-    return c.json(response.data)
-  }
-})
-
-app.get("/api/people/:person", async (c) => {
-  const person = c.req.param("person")
-  const key = `people_${person}`
-  const cacheHit = await c.env.KV.get(key, { type: "json" })
-  if (cacheHit) {
-    console.log(`cache response`)
-    return c.json(cacheHit)
-  } else {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/person/${person}`,
-      { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
-    )
-    console.log(response.request)
-    const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
-      expirationTtl: hourToSeconds * 168, // 7 days,
-    })
-    console.log(cacheresult)
-    return c.json(response.data)
-  }
 })
 
 app.get("/api/services/:region", async (c) => {

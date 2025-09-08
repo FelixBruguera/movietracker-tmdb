@@ -131,6 +131,21 @@
     "vote_count.asc": "Less votes",
     "vote_count.desc": "Most votes"
   },
+  "departments": [
+    "All",
+    "Acting",
+    "Art",
+    "Camera",
+    "Crew",
+    "Costume & Make-Up",
+    "Directing",
+    "Editing",
+    "Lighting",
+    "Production",
+    "Sound",
+    "Visual Effects",
+    "Writing"
+  ],
   "countries": [
     {
       "name": "Afghanistan",

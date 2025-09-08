@@ -91,7 +91,7 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             data.with_keywords = encodeURIComponent(
               JSON.stringify(selectedKeywords),
             )
-            data.sort_by = searchParams.get("sort_by")
+            data.sort_by = searchParams.get("sort_by") || "popularity.desc"
             const validation = moviesSchema.safeParse(data)
             if (!validation.success) {
               console.log(validation)

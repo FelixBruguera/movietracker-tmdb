@@ -22,6 +22,7 @@ const Header = () => {
       <div className="flex gap-0 items-center justify-between w-full lg:w-8/10">
         <div className="flex items-center justify-evenly w-full">
           <NavLinkWrapper to={"/"} title="Movies" />
+          <NavLinkWrapper to={"/tv"} title="TV" />
           <NavLinkWrapper to={"/lists"} title="Lists" />
           <NavLinkWrapper to={"/users"} title="Users" />
         </div>

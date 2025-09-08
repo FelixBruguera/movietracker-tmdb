@@ -1,7 +1,6 @@
 import { z } from "zod"
 import { baseSchema } from "./baseSchema"
 
-const maxYear = new Date().getFullYear()
 const moviesSchema = baseSchema
   .extend({
     query: z.string().max(100).optional(),
@@ -27,7 +26,9 @@ const moviesSchema = baseSchema
       .transform((providers) => providers.join("|"))
       .optional(),
     watch_region: z.string().max(2).optional(),
-    with_watch_monetization_types: z.literal("flatrate").default("flatrate"),
+    with_watch_monetization_types: z
+      .literal("flatrate|rent|buy|ads|free")
+      .default("flatrate|rent|buy|ads|free"),
     with_original_language: z
       .string()
       .max(2)
@@ -50,13 +51,13 @@ const moviesSchema = baseSchema
     "primary_release_date.gte": z.coerce
       .number()
       .min(1896)
-      .max(maxYear)
+      .max(9999)
       .transform((year) => `${year}-01-01`)
       .optional(),
     "primary_release_date.lte": z.coerce
       .number()
       .min(1896)
-      .max(maxYear)
+      .max(9999)
       .transform((year) => `${year}-12-31`)
       .optional(),
     sort_by: z

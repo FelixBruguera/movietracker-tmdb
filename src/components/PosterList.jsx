@@ -1,7 +1,12 @@
 import { Link } from "react-router"
 import Poster from "./Poster"
 
-const MovieList = ({ movies }) => {
+const PosterList = ({
+  movies,
+  size = "base",
+  path = "movies",
+  keyPath = "id",
+}) => {
   return (
     <ul
       className="p-5 flex flex-wrap justify-evenly items-center gap-y-1"
@@ -13,13 +18,17 @@ const MovieList = ({ movies }) => {
         </li>
       ) : (
         movies.map((movie) => (
-          <li key={movie.id}>
+          <li key={movie[keyPath]}>
             <Link
-              to={`/movies/${movie.id}`}
+              to={`/${path}/${movie.id}`}
               className="text-center"
               preventScrollReset={true}
             >
-              <Poster src={movie.poster_path} alt={movie.title} />
+              <Poster
+                src={movie.poster_path}
+                alt={movie.title || movie.name}
+                size={size}
+              />
             </Link>
           </li>
         ))
@@ -28,4 +37,4 @@ const MovieList = ({ movies }) => {
   )
 }
 
-export default MovieList
+export default PosterList

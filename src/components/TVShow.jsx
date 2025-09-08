@@ -7,6 +7,7 @@ import {
   Languages,
   LibraryBig,
   Trophy,
+  Tv,
 } from "lucide-react"
 import MovieDetail from "./MovieDetail"
 import MovieDetailLink from "./MovieDetailLink"
@@ -33,7 +34,7 @@ import MovieList from "./PosterList.jsx"
 import useRegion from "../stores/region.jsx"
 import MovieServices from "./MovieServices.jsx"
 
-const Movie = () => {
+const TVShow = () => {
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState("Cast")
   const region = useRegion((state) => state.details.code)
@@ -45,10 +46,10 @@ const Movie = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["movie", id, region],
+    queryKey: ["tv", id, region],
     queryFn: () =>
       axios
-        .get(`/api/movies/${id}`, { params: { region: region } })
+        .get(`/api/tv/${id}`, { params: { region: region } })
         .then((response) => response.data),
   })
 
@@ -65,27 +66,28 @@ const Movie = () => {
   }
   const tabs = [
     "Cast",
+    "Created by",
     "Crew",
     "Companies",
+    "Networks",
     "Keywords",
     "Services",
     "Similar",
-    "Videos",
   ]
   const hours = movie.runtime && Math.floor(movie.runtime / 60)
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
     <div className="mx-auto p-4">
-      <title>{movie.title}</title>
+      <title>{movie.name}</title>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-3/4 mx-auto lg:w-1/3">
-          <Poster src={movie.poster_path} alt={movie.title} size="large" />
+          <Poster src={movie.poster_path} alt={movie.name} size="large" />
         </div>
         <div className="w-full lg:w-2/3 flex flex-col gap-3">
           <div className="flex items-center justify-between w-full lg:w-11/12">
             <h1 className="text-2xl lg:text-3xl font-bold mb-2 mx-3 lg:mx-0">
-              {movie.title}
+              {movie.name}
             </h1>
             {/* <div className="flex items-center gap-4 lg:gap-2">
               {session && (
@@ -103,9 +105,17 @@ const Movie = () => {
             </div>*/}
           </div>
           <MovieDetailsList>
-            <MovieDetail title="Release year">
+            <MovieDetail title="First air date">
               <Calendar />
-              {new Date(movie.release_date).getFullYear()}
+              {new Date(movie.first_air_date).getFullYear()}
+            </MovieDetail>
+            <MovieDetail title="Seasons">
+              <Tv />
+              {movie.number_of_seasons} Seasons
+            </MovieDetail>
+            <MovieDetail title="Episodes">
+              <Tv />
+              {movie.number_of_episodes} Episodes
             </MovieDetail>
             {movie.runtime && (
               <MovieDetail title="Runtime">
@@ -123,20 +133,6 @@ const Movie = () => {
               value={`${movie.vote_count} votes`}
               logo="/tmdb_short.svg"
             />
-            {/* <MovieRating
-              source="Rotten Tomatoes"
-              value={movie.tomatoes?.critic?.rating}
-              logo="/tomatoes.png"
-            />
-            <MovieRating
-              source="Metacritic"
-              value={movie.metacritic}
-              logo="/metacritic.png"
-            />
-            <MovieDetail title="Awards">
-              <Trophy fill="goldenrod" color="goldenrod" />
-              {movie.awards.wins} Awards
-            </MovieDetail> */}
             {movie.spoken_languages?.map((lang) => (
               <MovieDetailLink
                 href={`/?with_original_language=${lang.iso_639_1}`}
@@ -182,6 +178,13 @@ const Movie = () => {
               items={movie.credits.crew}
             />
           )}
+          {activeTab === "Created by" && (
+            <MovieItemList
+              path="./credits"
+              title="Created by"
+              items={movie.created_by}
+            />
+          )}
           {activeTab === "Companies" && (
             <div>
               <MovieListTitle title="Production companies" />
@@ -190,7 +193,21 @@ const Movie = () => {
                   <CompanyLink
                     name={item.name}
                     id={item.id}
-                    image={item.logo_path}
+                    path="tv/company"
+                  />
+                ))}
+              </ul>
+            </div>
+          )}
+          {activeTab === "Networks" && (
+            <div>
+              <MovieListTitle title="Networks" />
+              <ul className="px-3 py-2 lg:px-0 flex flex-wrap gap-2">
+                {movie.networks.map((item) => (
+                  <CompanyLink
+                    name={item.name}
+                    id={item.id}
+                    path="tv/network"
                   />
                 ))}
               </ul>
@@ -200,9 +217,9 @@ const Movie = () => {
             <div>
               <MovieListTitle title="Keywords" />
               <ul className="px-3 py-2 lg:px-0 flex flex-wrap gap-2 lg:max-w-8/10">
-                {movie.keywords.keywords.map((keyword) => (
+                {movie.keywords.results.map((keyword) => (
                   <MovieDetailLink
-                    href={`/?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
+                    href={`/tv?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
                   >
                     {keyword.name}
                   </MovieDetailLink>
@@ -212,13 +229,13 @@ const Movie = () => {
           )}
           {activeTab === "Similar" && (
             <div>
-              <MovieListTitle title="Similar movies" />
+              <MovieListTitle title="Similar TV Shows" />
               <HorizontalList>
                 {movie.recommendations.results.map((item) => (
-                  <Link to={`/movies/${item.id}`} className="contents">
+                  <Link to={`/tv/${item.id}`} className="contents">
                     <Poster
                       src={item.poster_path}
-                      alt={item.title}
+                      alt={item.name}
                       size="small"
                     />
                   </Link>
@@ -228,7 +245,10 @@ const Movie = () => {
           )}
           {activeTab === "Services" && (
             <div>
-              <MovieServices data={movie["watch/providers"]?.results} />
+              <MovieServices
+                data={movie["watch/providers"]?.results}
+                path="/tv"
+              />
             </div>
           )}
           {/* {movie.directors?.length > 0 && (
@@ -245,4 +265,4 @@ const Movie = () => {
   )
 }
 
-export default Movie
+export default TVShow

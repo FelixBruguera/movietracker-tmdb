@@ -6,16 +6,15 @@ import Poster from "./Poster"
 import ErrorMessage from "./ErrorMessage"
 import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
-import MovieList from "./MovieList"
+import PosterList from "./PosterList"
 
-const Movies = () => {
+const Movies = ({ path = "movies" }) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const page = searchParams.get("page")
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["movies", searchParams.toString()],
+    queryKey: [path, searchParams.toString()],
     queryFn: () =>
       axios
-        .get("/api/movies", { params: searchParams })
+        .get(`/api/${path}`, { params: searchParams })
         .then((response) => response.data),
   })
   console.log(data)
@@ -38,7 +37,7 @@ const Movies = () => {
   return (
     <div className="flex flex-col justify-between">
       <MoviesMenu />
-      <MovieList movies={movies} />
+      <PosterList movies={movies} path={path} />
       {totalPages > 1 && (
         <PaginationWrap currentPage={data.page} totalPages={totalPages} />
       )}
