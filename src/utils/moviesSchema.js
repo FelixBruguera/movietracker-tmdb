@@ -38,11 +38,13 @@ const moviesSchema = baseSchema
       .string()
       .max(1300)
       .transform((keywords) =>
-        JSON.parse(decodeURIComponent(keywords))
-          .map((obj) => obj.id)
-          .join("|"),
+        keywords.length > 0
+          ? JSON.parse(decodeURIComponent(keywords))
+              .map((obj) => obj.id)
+              .join("|")
+          : keywords,
       )
-      .optional(),
+      .default(""),
     "vote_count.gte": z.coerce.number().min(1).optional(),
     "vote_average.gte": z.coerce.number().min(1).max(10).default(1),
     "vote_average.lte": z.coerce.number().min(1).max(10).default(10),
@@ -78,7 +80,7 @@ const moviesSchema = baseSchema
   })
   .refine((data) => data["vote_average.gte"] <= data["vote_average.lte"])
   .refine((data) =>
-    data["primary_release_date.gte"] && data["primary_release_date.gte"]
+    data["primary_release_date.gte"] && data["primary_release_date.lte"]
       ? data["primary_release_date.gte"] <= data["primary_release_date.lte"]
       : true,
   )

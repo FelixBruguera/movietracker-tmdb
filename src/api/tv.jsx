@@ -1,6 +1,6 @@
 import { Hono } from "hono"
 import axios from "axios"
-import moviesSchema from "../utils/moviesSchema"
+import tvSchema from "../utils/tvSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
 
@@ -11,7 +11,7 @@ app.get("/", async (c) => {
   const query = c.req.query()
   query.include_adult = false
   query.language = "en-US"
-  const parsedQuery = moviesSchema.parse(query)
+  const parsedQuery = tvSchema.parse(query)
   const queryKey = await createCacheKey(stableStringify(parsedQuery))
   const key = `tv_${queryKey}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
@@ -92,7 +92,7 @@ app.get("/:id/credits", async (c) => {
 
 app.get("/company/:company", async (c) => {
   const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
+  const parsedQuery = tvSchema.parse(query)
   console.log(c.req)
   parsedQuery.with_companies = c.req.param("company")
   const response = await axios.get(`https://api.themoviedb.org/3/discover/tv`, {
@@ -105,7 +105,7 @@ app.get("/company/:company", async (c) => {
 
 app.get("/network/:network", async (c) => {
   const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
+  const parsedQuery = tvSchema.parse(query)
   console.log(c.req)
   parsedQuery.with_networks = c.req.param("network")
   const response = await axios.get(`https://api.themoviedb.org/3/discover/tv`, {

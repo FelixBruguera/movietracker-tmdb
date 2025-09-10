@@ -1,4 +1,5 @@
-import { int, sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import { int, sqliteTable, text, integer, unique } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -65,12 +66,23 @@ export const verification = sqliteTable("verification", {
   ),
 });
 
+export const searches = sqliteTable("user_search", {
+  id: int().primaryKey({ autoIncrement: true }),
+  search: text({ mode: "json" }).notNull(),
+  name: text().notNull(),
+  path: text().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+}, (t) => [unique().on(t.userId, t.name)])
+
 export const reviewsTable = sqliteTable("reviews", {
   id: int().primaryKey({ autoIncrement: true }),
   text: text(),
   rating: int().notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-    userId: text("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-});
+})

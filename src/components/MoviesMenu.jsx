@@ -7,11 +7,14 @@ import { useState } from "react"
 import { useSearchParams } from "react-router"
 import MovieDetail from "./MovieDetail"
 import MoviesWithParamTitle from "./MoviesWithParamTitle"
+import SavedSearch from "./SavedSearch"
+import { authClient } from "../../lib/auth-client.ts"
 
 const MoviesMenu = ({ title = null }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const currentGenre = "All" || searchParams.genres
   const [filterOpen, setFilterOpen] = useState(false)
+  const { data: session } = authClient.useSession()
   const handleGenre = (newValue) => {
     if (searchParams.genres === newValue) {
       setSearchParams((params) => {
@@ -56,6 +59,7 @@ const MoviesMenu = ({ title = null }) => {
           </li>
         ))}
       </ul> */}
+      {session && <SavedSearch />}
       {title && <MoviesWithParamTitle title={title} />}
       <div className="flex items-start justify-end gap-2 w-full">
         <MoviesFilters

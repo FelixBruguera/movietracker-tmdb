@@ -17,7 +17,7 @@ import axios from "axios"
 import ErrorMessage from "./ErrorMessage"
 import KeywordSearchSkeleton from "./KeywordSearchSkeleton"
 
-const KeywordSearch = ({ selected, setSelected }) => {
+const KeywordSearch = ({ title, selected, setSelected }) => {
   const [searchValue, setSearchValue] = useState("")
   const { debouncedValue, isLoading } = useDebounce(searchValue, 1000)
   const {
@@ -43,6 +43,8 @@ const KeywordSearch = ({ selected, setSelected }) => {
         <Button
           variant="outline"
           className="size-fit text-accent has-[>svg]:px-0"
+          title="Remove"
+          aria-label="Remove"
           onClick={() => removeItem(keyword)}
         >
           {" "}
@@ -52,6 +54,8 @@ const KeywordSearch = ({ selected, setSelected }) => {
         <Button
           variant="outline"
           className="size-fit has-[>svg]:px-0 hover:text-accent transition-colors"
+          title="Add"
+          aria-label="Add"
           disabled={!canAddMore}
           onClick={() => addItem(keyword)}
         >
@@ -63,7 +67,7 @@ const KeywordSearch = ({ selected, setSelected }) => {
   )
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger title={title} aria-label={title}>
         <TriggerWrap>{selectedLength} Selected</TriggerWrap>
       </DialogTrigger>
       <DialogContent className="max-h-8/10 overflow-y-scroll scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground">

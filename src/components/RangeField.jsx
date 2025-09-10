@@ -27,6 +27,7 @@ const RangeField = ({
           denomination="gte"
           min={min}
           max={max}
+          ariaLabel={`${labelText} minimum`}
           defaultValue={defaultMin || min}
         />
         <NumberField
@@ -35,6 +36,7 @@ const RangeField = ({
           denomination="lte"
           min={min}
           max={max}
+          ariaLabel={`${labelText} maximum`}
           defaultValue={defaultMax || max}
         />
       </div>

@@ -29,6 +29,27 @@
       "when": 1756071869955,
       "tag": "0003_sparkling_grey_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1757356083808,
+      "tag": "0004_colossal_prodigy",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1757368386018,
+      "tag": "0005_reflective_gunslinger",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1757423161795,
+      "tag": "0006_happy_miss_america",
+      "breakpoints": true
     }
   ]
 }

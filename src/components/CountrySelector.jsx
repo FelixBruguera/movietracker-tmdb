@@ -21,7 +21,8 @@ const CountrySelector = () => {
         onClick={() => setOpen(true)}
         variant="ghost"
         className="hover:cursor-pointer hover:bg-transparent dark:hover:bg-transparent"
-        title={region.name}
+        title="Your region"
+        aria-label="Your region"
       >
         <img src={region.flag} alt={region.name} className="w-8" />
       </Button>

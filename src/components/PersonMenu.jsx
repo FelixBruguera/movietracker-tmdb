@@ -32,9 +32,10 @@ const PersonMenu = ({ title = null }) => {
   const currentSort = searchParams.get("sort_by") || "Most recent"
   const handleChange = (newValue, field) => {
     console.log(newValue)
-    setSearchParams((prev) => {
-      prev.set(field, newValue)
-      return prev
+    setSearchParams((params) => {
+      params.set(field, newValue)
+      params.set("page", "1")
+      return params
     })
   }
 

@@ -6,8 +6,8 @@ import { user, account, session, verification } from "../src/db/schema"
 import { getBindings } from "src/utils/bindings"
 
 // const env = getBindings()
-export function getAuth(env) {
-  const db = drizzle(env.DB)
+export function getAuth(binding) {
+  const db = drizzle(binding)
   return betterAuth({
     database: drizzleAdapter(db, {
       provider: "sqlite",

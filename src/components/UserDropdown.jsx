@@ -16,7 +16,7 @@ const UserDropdown = () => {
     return (
       <Button asChild aria-label="Login">
         <Link to="/users/login">
-          <LogIn aria-label="Log in" />
+          <LogIn aria-label="Login" />
           <p className="hidden lg:block">Login</p>
         </Link>
       </Button>

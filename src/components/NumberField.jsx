@@ -9,6 +9,7 @@ const NumberField = ({
   max,
   defaultValue,
   className,
+  ariaLabel,
 }) => {
   return (
     <div className="flex w-full justify-evenly">
@@ -26,6 +27,7 @@ const NumberField = ({
         min={min}
         max={max}
         defaultValue={defaultValue || min}
+        aria-label={ariaLabel}
         required
       ></Input>
     </div>

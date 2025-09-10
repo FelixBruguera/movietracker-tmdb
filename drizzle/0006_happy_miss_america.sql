@@ -1,0 +1,1 @@
+ALTER TABLE `user_search` ADD `path` text NOT NULL;

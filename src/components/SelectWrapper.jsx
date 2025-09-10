@@ -13,6 +13,7 @@ const SelectWrapper = ({ name, defaultValue, title, items, className }) => {
         <SelectTrigger
           className={`w-full border-1 border-border ${className}`}
           title={title}
+          aria-label={title}
         >
           <SelectValue />
         </SelectTrigger>

@@ -13,7 +13,7 @@ import filtersData from "../../lib/filters.json"
 import FiltersField from "./FiltersField"
 import RangeField from "./RangeField"
 import SelectWrapper from "./SelectWrapper"
-import { useSearchParams } from "react-router"
+import { useLocation, useSearchParams } from "react-router"
 import { useEffect, useMemo, useRef, useState } from "react"
 import CheckboxWrapper from "./CheckboxWrapper"
 import NumberField from "./NumberField"
@@ -28,10 +28,12 @@ import moviesSchema from "../utils/moviesSchema"
 import KeywordSearch from "./KeywordSearch"
 import ServicesCommand from "./ServicesCommand"
 import useRegion from "../stores/region"
+import tvSchema from "../utils/tvSchema"
 
 const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const [searchParams, setsearchParams] = useSearchParams()
   const region = useRegion((state) => state.details.code)
+  const location = useLocation()
   const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
   const genreIds = useMemo(() => genres.map((genre) => genre.id), [genres])
@@ -61,6 +63,8 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const [selectedKeywords, setSelectedKeywords] = useState(initialKeywords)
   const languages = filtersData.languages
   const { page, ...query } = Object.fromEntries(searchParams.entries())
+  const isTV = location.pathname.includes("tv")
+  const dateField = isTV ? "first_air_date" : "primary_release_date"
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
       <SheetTrigger asChild>
@@ -92,7 +96,9 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               JSON.stringify(selectedKeywords),
             )
             data.sort_by = searchParams.get("sort_by") || "popularity.desc"
-            const validation = moviesSchema.safeParse(data)
+            const validation = isTV
+              ? tvSchema.safeParse(data)
+              : moviesSchema.safeParse(data)
             if (!validation.success) {
               console.log(validation)
               return toast("Invalid input")
@@ -111,12 +117,14 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
           </FiltersField>
           <FiltersField labelText="Services" labelFor="with_watch_providers">
             <ServicesCommand
+              title="Services"
               selected={selectedServices}
               setSelected={setSelectedServices}
             />
           </FiltersField>
           <FiltersField labelText="Keywords" labelFor="with_keywords">
             <KeywordSearch
+              title="Keywords"
               selected={selectedKeywords}
               setSelected={setSelectedKeywords}
             />
@@ -131,11 +139,11 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
           </FiltersField>
           <RangeField
             labelText="Release year"
-            fieldName="primary_release_date"
+            fieldName={dateField}
             min={1896}
             max={maxYear}
-            defaultMin={searchParams.get("primary_release_date.gte")}
-            defaultMax={searchParams.get("primary_release_date.lte")}
+            defaultMin={searchParams.get(`${dateField}.gte`)}
+            defaultMax={searchParams.get(`${dateField}.lte`)}
           />
           <RangeField
             labelText="TMDB Average Rating (1-10)"
@@ -152,6 +160,7 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               title="Min"
               denomination="gte"
               min={1}
+              ariaLabel="TMDB Vote Count minimum"
               defaultValue={searchParams.get("vote_count.gte")}
             />
           </FiltersField>

@@ -19,7 +19,7 @@ const CheckboxWrapper = ({
   console.log(selected)
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger title={title} aria-label={title}>
         <TriggerWrap>{selected.length} Selected</TriggerWrap>
       </PopoverTrigger>
       <PopoverContent>

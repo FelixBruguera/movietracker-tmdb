@@ -11,7 +11,7 @@ import KeywordSearchSkeleton from "./KeywordSearchSkeleton"
 import useRegion from "../stores/region"
 import ServiceList from "./ServiceList"
 
-const ServicesCommand = ({ selected, setSelected }) => {
+const ServicesCommand = ({ title, selected, setSelected }) => {
   console.log(selected)
   const [searchValue, setSearchValue] = useState("")
   const region = useRegion((state) => state.details.code)
@@ -39,7 +39,12 @@ const ServicesCommand = ({ selected, setSelected }) => {
       : items?.results
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)}>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        title={title}
+        aria-label={title}
+      >
         <TriggerWrap>{selected.size} Selected</TriggerWrap>
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
