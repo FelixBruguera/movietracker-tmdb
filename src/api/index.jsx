@@ -6,6 +6,8 @@ import movies from "./movies"
 import people from "./people"
 import tv from "./tv"
 import user from "./user"
+import search from "./search"
+import reviews from "./reviews"
 
 const app = new Hono()
 const hourToSeconds = 3600
@@ -30,6 +32,8 @@ app.route("/", movies)
 app.route("/", tv)
 app.route("/", people)
 app.route("/", user)
+app.route("/", search)
+app.route("/", reviews)
 
 app.get("/api/company/:company", async (c) => {
   const company = c.req.param("company")

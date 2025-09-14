@@ -50,6 +50,90 @@
       "when": 1757423161795,
       "tag": "0006_happy_miss_america",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1757611745652,
+      "tag": "0007_bizarre_skin",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1757611905718,
+      "tag": "0008_lean_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1757612081346,
+      "tag": "0009_small_kid_colt",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1757614368138,
+      "tag": "0010_ordinary_betty_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1757619904259,
+      "tag": "0011_brief_ultimo",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1757625299940,
+      "tag": "0012_charming_living_lightning",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1757759255759,
+      "tag": "0013_perfect_zeigeist",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1757847923670,
+      "tag": "0014_strong_ricochet",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1757853393063,
+      "tag": "0015_round_whiplash",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1757860210179,
+      "tag": "0016_mixed_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1757876629567,
+      "tag": "0017_amazing_impossible_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1757877897545,
+      "tag": "0018_ambitious_killraven",
+      "breakpoints": true
     }
   ]
 }

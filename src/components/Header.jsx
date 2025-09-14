@@ -1,15 +1,14 @@
 import { ModeToggle } from "../../app/components/ui/mode-toggle"
-import { authClient } from "../../lib/auth-client.ts"
-import { Clapperboard } from "lucide-react"
-import { NavLink, Link } from "react-router"
+import { Clapperboard, Search as SearchIcon } from "lucide-react"
+import { Link } from "react-router"
 import DialogWrapper from "./DialogWrapper"
 import NavLinkWrapper from "./NavLinkWrapper.jsx"
 // import NewLog from "./NewLog"
 import UserDropdown from "./UserDropdown"
 import CountrySelector from "./CountrySelector.jsx"
+import Search from "./Search"
 
 const Header = () => {
-  const { data: session } = authClient.useSession()
   return (
     <nav className="flex flex-col lg:flex-row items-center justify-around h-30 lg:h-20 p-2 mb-2 w-dvw lg:w-full">
       <Link
@@ -20,18 +19,21 @@ const Header = () => {
         <h1>Movie Tracker</h1>
       </Link>
       <div className="flex gap-0 items-center justify-between w-full lg:w-8/10">
-        <div className="flex items-center justify-evenly w-full">
+        <div className="flex items-center justify-evenly w-7/10">
           <NavLinkWrapper to={"/"} title="Movies" />
           <NavLinkWrapper to={"/tv"} title="TV" />
           <NavLinkWrapper to={"/lists"} title="Lists" />
           <NavLinkWrapper to={"/users"} title="Users" />
         </div>
         <div className="flex items-center lg:justify-between justify-evenly w-8/10 lg:w-3/10">
-          {session && (
-            <DialogWrapper title="New Log" label="Add a new log">
-              {/* <NewLog /> */}
-            </DialogWrapper>
-          )}
+          <DialogWrapper
+            title="Search Movies, TV Shows and People"
+            label="Search"
+            Icon={SearchIcon}
+            contentClass="overflow-y-scroll min-w-2/4"
+          >
+            <Search />
+          </DialogWrapper>
           <ModeToggle />
           <CountrySelector />
           <UserDropdown />

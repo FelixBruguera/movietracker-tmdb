@@ -1,11 +1,4 @@
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../app/components/ui/select"
 import { Button } from "../../app/components/ui/button"
 import { Edit, Plus, Trash } from "lucide-react"
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
@@ -130,8 +123,10 @@ const NewSearch = () => {
       })
       setOpen(false)
     },
-    onError: (error) =>
-      toast(error.response.data) || toast("Something went wrong"),
+    onError: (error) => {
+      console.log(error)
+      toast(error.response.data) || toast("Something went wrong")
+    },
   })
   return (
     <Dialog open={open} onOpenChange={setOpen}>

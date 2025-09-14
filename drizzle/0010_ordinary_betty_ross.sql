@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `peopleToMovies_movie_id_person_id_isDirector_unique` ON `peopleToMovies` (`movie_id`,`person_id`,`isDirector`);

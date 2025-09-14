@@ -22,7 +22,7 @@ const SelectSortBy = memo(({ value, selectedValue, title, options }) => {
   return (
     <Select value={value} onValueChange={(e) => onValueChange(e)}>
       <SelectTrigger
-        className="text-xs lg:text-sm w-40 bg-muted dark:bg-card border-1 border-border"
+        className="text-xs lg:text-sm w-35 lg:w-40 bg-muted dark:bg-card border-1 border-border"
         name={title}
         title={title}
         aria-label={title}

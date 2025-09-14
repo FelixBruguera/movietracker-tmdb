@@ -15,7 +15,7 @@ const CreditsList = ({ title, list }) => {
             name={item.name}
             id={item.id}
             image={item.profile_path}
-            role={item.job}
+            role={item.job || item.character}
           />
         ))}
       </ul>

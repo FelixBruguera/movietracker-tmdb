@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../app/components/ui/dialog"
-import MovieSearch from "./MovieSearch"
+import Search from "./Search"
 import { Plus } from "lucide-react"
 import { useState, createContext } from "react"
 import SelectedMovie from "./SelectedMovie"
@@ -15,31 +15,22 @@ export const DialogContext = createContext()
 
 const DialogWrapper = (props) => {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState(props.movie || "")
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger aria-label={props.label}>
+      <DialogTrigger aria-label={props.label} title={props.label}>
         <TriggerButton>
-          <Plus />
+          <props.Icon />
         </TriggerButton>
       </DialogTrigger>
-      <DialogContent className="overflow-y-scroll lg:min-w-3/5">
+      <DialogContent
+        className={`scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground ${props.contentClass}`}
+      >
         <DialogHeader>
           <DialogTitle>{props.title}</DialogTitle>
         </DialogHeader>
-        {selected ? (
-          <>
-            <DialogContext.Provider value={{ selected, setSelected, setOpen }}>
-              <SelectedMovie
-                movie={selected}
-                unselect={() => setSelected("")}
-              />
-              {props.children}
-            </DialogContext.Provider>
-          </>
-        ) : (
-          <MovieSearch setSelected={setSelected} />
-        )}
+        <DialogContext.Provider value={{ setOpen }}>
+          {props.children}
+        </DialogContext.Provider>
       </DialogContent>
     </Dialog>
   )

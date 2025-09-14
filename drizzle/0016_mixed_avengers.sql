@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS `reviews_user_id_media_id_unique` ON `reviews` (`user_id`,`media_id`);

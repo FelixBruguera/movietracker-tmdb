@@ -1,6 +1,6 @@
 const AuthForm = (props) => {
   return (
-    <div className="flex flex-col items-center justify-center gap-5 my-5">
+    <div className="flex flex-col items-center justify-center gap-5 my-5 2xl:pt-30">
       <h2 className="font-bold text-xl">{props.title}</h2>
       <form
         onSubmit={(e) => props.onSubmit(e)}

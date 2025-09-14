@@ -23,6 +23,10 @@ const Signup = () => {
         image: `https://www.gravatar.com/avatar/${data.username.value}?d=identicon&s=200&r=pg`,
       },
       {
+        onSuccess: () => {
+          navigate("/users/login")
+          toast("Succesfully signed up")
+        },
         onError: (response) =>
           toast(response.error.message || "Something went wrong"),
       },

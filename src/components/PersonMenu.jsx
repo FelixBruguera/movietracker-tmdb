@@ -17,6 +17,17 @@ import {
 import { ArrowDownUp, Briefcase, Film } from "lucide-react"
 import { Label } from "../../app/components/ui/label"
 
+const SelectTriggerWrapper = (props) => (
+  <SelectTrigger
+    className="text-xs lg:text-sm w-30 lg:w-40 bg-muted dark:bg-card border-1 border-border"
+    name={props.name}
+    title={props.name}
+    aria-label={props.name}
+  >
+    <SelectValue>{props.children}</SelectValue>
+  </SelectTrigger>
+)
+
 const PersonMenu = ({ title = null }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   console.log(searchParams)
@@ -42,24 +53,17 @@ const PersonMenu = ({ title = null }) => {
   return (
     <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row items-center justify-between w-full px-9 mx-auto">
       <div className="flex items-start justify-end gap-2 w-full">
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-wrap lg:flex-nowrap items-center justify-start lg:justify-end gap-3">
           <div className="flex flex-col items-start gap-2">
             <Label htmlFor="Credits type">Type</Label>
             <Select
               value={currentScope}
               onValueChange={(e) => handleChange(e, "scope")}
             >
-              <SelectTrigger
-                className="text-xs lg:text-sm w-40 bg-muted dark:bg-card border-1 border-border"
-                name="Credits type"
-                title="Credits type"
-                aria-label="Credits type"
-              >
-                <SelectValue>
-                  <Film />
-                  {currentScope}
-                </SelectValue>
-              </SelectTrigger>
+              <SelectTriggerWrapper name="Credits type">
+                <Film />
+                {currentScope}
+              </SelectTriggerWrapper>
               <SelectContent>
                 {scopes.map((scope) => (
                   <SelectItem key={scope} value={scope}>
@@ -75,17 +79,10 @@ const PersonMenu = ({ title = null }) => {
               value={currentDepartment}
               onValueChange={(e) => handleChange(e, "department")}
             >
-              <SelectTrigger
-                className="text-xs lg:text-sm w-40 bg-muted dark:bg-card border-1 border-border"
-                name="Department"
-                title="Department"
-                aria-label="Department"
-              >
-                <SelectValue>
-                  <Briefcase />
-                  {currentDepartment}
-                </SelectValue>
-              </SelectTrigger>
+              <SelectTriggerWrapper name="Department">
+                <Briefcase />
+                {currentDepartment}
+              </SelectTriggerWrapper>
               <SelectContent>
                 {departments.map((department) => (
                   <SelectItem key={department} value={department}>

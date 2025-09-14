@@ -11,12 +11,13 @@ const AvailabilityList = ({ title, services, path = "/" }) => {
     services && (
       <div className="flex items-center py-3  border-b-2 border-b-input dark:border-b-muted">
         <h2 className="w-30 font-semibold text-lg">{title}</h2>
-        <ul className="flex items-center justify-start overflow-x-auto">
+        <HorizontalList>
           {services.map((service) => (
             <li key={service.provider_id}>
               <Link
                 to={`${path}?watch_region=${region}&&with_watch_providers=${service.provider_id}`}
-                className="flex flex-col items-center justify-center w-35 gap-2"
+                className="flex flex-col items-center justify-center w-25 lg:w-40 gap-2 mb-2"
+                title={service.provider_name}
               >
                 <Poster
                   src={service.logo_path}
@@ -29,7 +30,7 @@ const AvailabilityList = ({ title, services, path = "/" }) => {
               </Link>
             </li>
           ))}
-        </ul>
+        </HorizontalList>
       </div>
     )
   )

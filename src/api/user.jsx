@@ -1,7 +1,6 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
 import { searches } from "../db/schema"
-import { getAuth } from "../../lib/auth.server"
 import { eq, sql, and } from "drizzle-orm"
 import * as schema from "../db/schema"
 import {
@@ -10,34 +9,28 @@ import {
   searchSchema,
 } from "../utils/searchSchema"
 import { HTTPException } from "hono/http-exception"
+import auth from "./middleware/auth"
 
 const app = new Hono().basePath("/api/user")
+app.use(auth)
 
 app.get("/searches", async (c) => {
-  const session = await getAuth(c.env.DB).api.getSession({
-    headers: c.req.header(),
-  })
-  if (session) {
-    const db = drizzle(c.env.DB, { schema: schema })
-    const searchList = await db
-      .select({
-        id: searches.id,
-        search: searches.search,
-        path: searches.path,
-        name: searches.name,
-      })
-      .from(searches)
-    return c.json(searchList)
-  }
+  const session = c.get("session")
+  const db = drizzle(c.env.DB, { schema: schema })
+  const searchList = await db
+    .select({
+      id: searches.id,
+      search: searches.search,
+      path: searches.path,
+      name: searches.name,
+    })
+    .from(searches)
+    .where(eq(session.user.id, searches.userId))
+  return c.json(searchList)
 })
 
 app.post("/searches", async (c) => {
-  const session = await getAuth(c.env.DB).api.getSession({
-    headers: c.req.header(),
-  })
-  if (!session) {
-    throw new HTTPException(401)
-  }
+  const session = c.get("session")
   const body = await c.req.json()
   console.log(body)
   const parsedBody = searchSchema.parse(body)
@@ -75,12 +68,7 @@ app.post("/searches", async (c) => {
 })
 
 app.patch("/searches/:id", async (c) => {
-  const session = await getAuth(c.env.DB).api.getSession({
-    headers: c.req.header(),
-  })
-  if (!session) {
-    throw new HTTPException(401)
-  }
+  const session = c.get("session")
   const id = c.req.param("id")
   const body = await c.req.json()
   const { name } = searchSchema.parse(body)
@@ -96,7 +84,11 @@ app.patch("/searches/:id", async (c) => {
         search: searches.search,
         path: searches.path,
       })
-    return c.json(result[0])
+    if (result.length > 0) {
+      return c.json(result[0])
+    } else {
+      return c.newResponse(null, 404)
+    }
   } catch (e) {
     console.log(e.cause.message)
     if (e.cause.message.includes("UNIQUE constraint failed")) {
@@ -108,21 +100,15 @@ app.patch("/searches/:id", async (c) => {
 })
 
 app.delete("/searches/:id", async (c) => {
-  const session = await getAuth(c.env.DB).api.getSession({
-    headers: c.req.header(),
-  })
-  if (!session) {
-    throw new HTTPException(401)
-  }
+  const session = c.get("session")
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
   const result = await db
     .delete(searches)
     .where(and(eq(searches.id, id), eq(searches.userId, session.user.id)))
   console.log(result)
-  if (result.success) {
-    c.status(204)
-    return c.text()
+  if (result.meta.changes > 0) {
+    return c.newResponse(null, 204)
   } else {
     console.log(result)
     throw new HTTPException(404)

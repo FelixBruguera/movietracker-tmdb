@@ -3,7 +3,14 @@ import moviesSchema from "./moviesSchema"
 
 export const searchSchema = z.object({
   name: z.string().min(3).max(100),
-  path: z.enum(["/", "/tv"]).default("/"),
+  path: z
+    .union([
+      z.enum(["/", "/tv"]),
+      z.string().regex(/^\/tv\/network\/\d+$/),
+      z.string().regex(/^\/tv\/company\/\d+$/),
+      z.string().regex(/^\/movies\/company\/\d+$/),
+    ])
+    .default("/"),
 })
 
 export const searchQuerySchema = moviesSchema

@@ -6,12 +6,13 @@ import {
   Clock4,
   Languages,
   LibraryBig,
+  Star,
   Trophy,
 } from "lucide-react"
 import MovieDetail from "./MovieDetail"
 import MovieDetailLink from "./MovieDetailLink"
 import MovieDetailsList from "./MovieDetailsList"
-// import Reviews from "src/components/Reviews"
+import Reviews from "./Reviews"
 import Poster from "./Poster"
 import ErrorMessage from "./ErrorMessage"
 // import LogManager from "src/components/LogManager"
@@ -32,6 +33,10 @@ import CompanyLink from "./CompanyLink.jsx"
 import MovieList from "./PosterList.jsx"
 import useRegion from "../stores/region.jsx"
 import MovieServices from "./MovieServices.jsx"
+import ActiveTab from "./ActiveTab.jsx"
+import MovieDescriptionContainer from "./MovieDescriptionContainer.jsx"
+import DialogWrapper from "./DialogWrapper.jsx"
+import ReviewDialog from "./ReviewDialog.jsx"
 
 const Movie = () => {
   const { id } = useParams()
@@ -63,51 +68,44 @@ const Movie = () => {
   if (isError) {
     return <ErrorMessage />
   }
-  const tabs = [
-    "Cast",
-    "Crew",
-    "Companies",
-    "Keywords",
-    "Services",
-    "Similar",
-    "Videos",
-  ]
+  const tabs = ["Cast", "Crew", "Companies", "Keywords", "Services", "Similar"]
   const hours = movie.runtime && Math.floor(movie.runtime / 60)
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
-    <div className="mx-auto p-4">
+    <div className="mx-auto w-full 2xl:w-9/10 p-4">
       <title>{movie.title}</title>
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-3/4 mx-auto lg:w-1/3">
+        <div className="mx-auto w-8/10 lg:w-3/10 2xl:w-2/10">
           <Poster src={movie.poster_path} alt={movie.title} size="large" />
         </div>
-        <div className="w-full lg:w-2/3 flex flex-col gap-3">
+        <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">
           <div className="flex items-center justify-between w-full lg:w-11/12">
             <h1 className="text-2xl lg:text-3xl font-bold mb-2 mx-3 lg:mx-0">
               {movie.title}
             </h1>
-            {/* <div className="flex items-center gap-4 lg:gap-2">
+            <div className="flex items-center gap-4 lg:gap-2">
               {session && (
                 <>
-                  <LogManager movie={movie} />
+                  {/* <LogManager movie={movie} /> */}
                   <DialogWrapper
-                    title="New log"
-                    label="Add a new log"
-                    movie={movie}
+                    title={`Your review of ${movie.title || movie.name}`}
+                    label="Add or manage your review"
+                    Icon={Star}
+                    contentClass="min-w-1/3"
                   >
-                    <NewLog />
+                    <ReviewDialog movie={movie} />
                   </DialogWrapper>
                 </>
               )}
-            </div>*/}
+            </div>
           </div>
           <MovieDetailsList>
             <MovieDetail title="Release year">
               <Calendar />
               {new Date(movie.release_date).getFullYear()}
             </MovieDetail>
-            {movie.runtime && (
+            {movie.runtime > 0 && (
               <MovieDetail title="Runtime">
                 <Clock4 />
                 {runtime}
@@ -123,22 +121,9 @@ const Movie = () => {
               value={`${movie.vote_count} votes`}
               logo="/tmdb_short.svg"
             />
-            {/* <MovieRating
-              source="Rotten Tomatoes"
-              value={movie.tomatoes?.critic?.rating}
-              logo="/tomatoes.png"
-            />
-            <MovieRating
-              source="Metacritic"
-              value={movie.metacritic}
-              logo="/metacritic.png"
-            />
-            <MovieDetail title="Awards">
-              <Trophy fill="goldenrod" color="goldenrod" />
-              {movie.awards.wins} Awards
-            </MovieDetail> */}
             {movie.spoken_languages?.map((lang) => (
               <MovieDetailLink
+                key={lang.iso_639_1}
                 href={`/?with_original_language=${lang.iso_639_1}`}
               >
                 <Languages />
@@ -146,101 +131,30 @@ const Movie = () => {
               </MovieDetailLink>
             ))}
             {movie.genres?.map((genre) => (
-              <MovieDetailLink href={`/?with_genres=${genre.id}`}>
+              <MovieDetailLink
+                key={genre.id}
+                href={`/?with_genres=${genre.id}`}
+              >
                 <LibraryBig />
                 {genre.name}
               </MovieDetailLink>
             ))}
           </MovieDetailsList>
-          <div className="flex flex-col items-start gap-3 text-base text-slate-800 dark:text-stone-300 text-justify w-9/10 my-1 mx-3 lg:mx-0">
-            {movie.overview?.length > 1000 ? (
-              <MovieDescription description={movie.overview} />
-            ) : (
-              <p>{movie.overview}</p>
-            )}
-          </div>
+          <MovieDescriptionContainer description={movie.overview} />
           <div className="flex flex-wrap pb-3 lg:pb-0 justify-start gap-3 mx-3 lg:mx-0">
             {tabs.map((tab) => (
               <MovieTab
+                key={tab}
                 title={tab}
                 isActive={activeTab === tab}
                 setActiveTab={setActiveTab}
               />
             ))}
           </div>
-          {activeTab === "Cast" && (
-            <MovieItemList
-              path="./credits"
-              title="Main Cast"
-              items={movie.credits.cast}
-            />
-          )}
-          {activeTab === "Crew" && (
-            <MovieItemList
-              path="./credits"
-              title="Main Crew"
-              items={movie.credits.crew}
-            />
-          )}
-          {activeTab === "Companies" && (
-            <div>
-              <MovieListTitle title="Production companies" />
-              <ul className="px-3 py-2 lg:px-0 flex flex-wrap gap-2">
-                {movie.production_companies.map((item) => (
-                  <CompanyLink
-                    name={item.name}
-                    id={item.id}
-                    image={item.logo_path}
-                  />
-                ))}
-              </ul>
-            </div>
-          )}
-          {activeTab === "Keywords" && (
-            <div>
-              <MovieListTitle title="Keywords" />
-              <ul className="px-3 py-2 lg:px-0 flex flex-wrap gap-2 lg:max-w-8/10">
-                {movie.keywords.keywords.map((keyword) => (
-                  <MovieDetailLink
-                    href={`/?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
-                  >
-                    {keyword.name}
-                  </MovieDetailLink>
-                ))}
-              </ul>
-            </div>
-          )}
-          {activeTab === "Similar" && (
-            <div>
-              <MovieListTitle title="Similar movies" />
-              <HorizontalList>
-                {movie.recommendations.results.map((item) => (
-                  <Link to={`/movies/${item.id}`} className="contents">
-                    <Poster
-                      src={item.poster_path}
-                      alt={item.title}
-                      size="small"
-                    />
-                  </Link>
-                ))}
-              </HorizontalList>
-            </div>
-          )}
-          {activeTab === "Services" && (
-            <div>
-              <MovieServices data={movie["watch/providers"]?.results} />
-            </div>
-          )}
-          {/* {movie.directors?.length > 0 && (
-            <MovieLinkList
-              title="Directors"
-              items={movie.directors}
-              param="directors"
-            />
-          )} */}
+          <ActiveTab movie={movie} tab={activeTab} />
         </div>
       </div>
-      {/* <Reviews /> */}
+      <Reviews movie={movie} />
     </div>
   )
 }

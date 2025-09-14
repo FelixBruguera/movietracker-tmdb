@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "vitest test"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +46,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.12",
     "vite": "^6.3.5",
+    "vitest": "^3.2.4",
     "zod": "^4.1.3",
     "zustand": "^5.0.8"
   },

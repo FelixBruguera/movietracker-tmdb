@@ -6,6 +6,7 @@ import {
   Clock4,
   Languages,
   LibraryBig,
+  Star,
   Trophy,
   Tv,
 } from "lucide-react"
@@ -33,6 +34,10 @@ import CompanyLink from "./CompanyLink.jsx"
 import MovieList from "./PosterList.jsx"
 import useRegion from "../stores/region.jsx"
 import MovieServices from "./MovieServices.jsx"
+import MovieDescriptionContainer from "./MovieDescriptionContainer.jsx"
+import DialogWrapper from "./DialogWrapper.jsx"
+import ReviewDialog from "./ReviewDialog.jsx"
+import Reviews from "./Reviews.jsx"
 
 const TVShow = () => {
   const { id } = useParams()
@@ -89,20 +94,21 @@ const TVShow = () => {
             <h1 className="text-2xl lg:text-3xl font-bold mb-2 mx-3 lg:mx-0">
               {movie.name}
             </h1>
-            {/* <div className="flex items-center gap-4 lg:gap-2">
+            <div className="flex items-center gap-4 lg:gap-2">
               {session && (
                 <>
-                  <LogManager movie={movie} />
+                  {/* <LogManager movie={movie} /> */}
                   <DialogWrapper
-                    title="New log"
-                    label="Add a new log"
-                    movie={movie}
+                    title={`Your review of ${movie.title || movie.name}`}
+                    label="Add or manage your review"
+                    Icon={Star}
+                    contentClass="min-w-1/3"
                   >
-                    <NewLog />
+                    <ReviewDialog movie={movie} isTv={true} />
                   </DialogWrapper>
                 </>
               )}
-            </div>*/}
+            </div>
           </div>
           <MovieDetailsList>
             <MovieDetail title="First air date">
@@ -148,13 +154,7 @@ const TVShow = () => {
               </MovieDetailLink>
             ))}
           </MovieDetailsList>
-          <div className="flex flex-col items-start gap-3 text-base text-slate-800 dark:text-stone-300 text-justify w-9/10 my-1 mx-3 lg:mx-0">
-            {movie.overview?.length > 1000 ? (
-              <MovieDescription description={movie.overview} />
-            ) : (
-              <p>{movie.overview}</p>
-            )}
-          </div>
+          <MovieDescriptionContainer description={movie.overview} />
           <div className="flex flex-wrap pb-3 lg:pb-0 justify-start gap-3 mx-3 lg:mx-0">
             {tabs.map((tab) => (
               <MovieTab
@@ -260,7 +260,7 @@ const TVShow = () => {
           )} */}
         </div>
       </div>
-      {/* <Reviews /> */}
+      <Reviews movie={movie} />
     </div>
   )
 }
