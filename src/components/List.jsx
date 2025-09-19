@@ -69,7 +69,7 @@ export default function List() {
   const isFollowed = data.currentUserFollows === 1 ? true : false
 
   return (
-    <div className="px-10 py-5 w-full mx-auto">
+    <div className="p-3 lg:p-5 w-full mx-auto">
       <title>{list.name}</title>
       <meta property="og:title" content={list.name} />
       <div className="w-full flex items-start justify-between">
