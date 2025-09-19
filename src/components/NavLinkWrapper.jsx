@@ -1,7 +1,7 @@
 import { Button } from "../../app/components/ui/button"
 import { NavLink, useLocation } from "react-router"
 
-const NavLinkWrapper = ({ to, title }) => {
+const NavLinkWrapper = ({ to, title, Icon }) => {
   const location = useLocation()
   const isActive = location.pathname.includes(title.toLowerCase())
   const defaultRouteCheck = location.pathname === "/" && title === "Movies"

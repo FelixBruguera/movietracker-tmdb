@@ -6,6 +6,7 @@ import {
   Clock4,
   Languages,
   LibraryBig,
+  List,
   Star,
   Trophy,
 } from "lucide-react"
@@ -37,6 +38,7 @@ import ActiveTab from "./ActiveTab.jsx"
 import MovieDescriptionContainer from "./MovieDescriptionContainer.jsx"
 import DialogWrapper from "./DialogWrapper.jsx"
 import ReviewDialog from "./ReviewDialog.jsx"
+import ListMovieDialog from "./ListMovieDialog.jsx"
 
 const Movie = () => {
   const { id } = useParams()
@@ -68,7 +70,15 @@ const Movie = () => {
   if (isError) {
     return <ErrorMessage />
   }
-  const tabs = ["Cast", "Crew", "Companies", "Keywords", "Services", "Similar"]
+  const tabs = [
+    "Cast",
+    "Directors",
+    "Crew",
+    "Companies",
+    "Keywords",
+    "Services",
+    "Similar",
+  ]
   const hours = movie.runtime && Math.floor(movie.runtime / 60)
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
@@ -76,7 +86,7 @@ const Movie = () => {
     <div className="mx-auto w-full 2xl:w-9/10 p-4">
       <title>{movie.title}</title>
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="mx-auto w-8/10 lg:w-3/10 2xl:w-2/10">
+        <div className="mx-auto w-8/10 lg:w-3/10">
           <Poster src={movie.poster_path} alt={movie.title} size="large" />
         </div>
         <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">
@@ -95,6 +105,14 @@ const Movie = () => {
                     contentClass="min-w-1/3"
                   >
                     <ReviewDialog movie={movie} />
+                  </DialogWrapper>
+                  <DialogWrapper
+                    title={`${movie.title || movie.name} in your lists`}
+                    label="Add or remove from lists"
+                    Icon={List}
+                    contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
+                  >
+                    <ListMovieDialog movie={movie} />
                   </DialogWrapper>
                 </>
               )}

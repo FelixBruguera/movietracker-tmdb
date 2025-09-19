@@ -42,7 +42,6 @@ const ReviewDialog = ({ movie, isTv = false }) => {
   if (isLoading) {
     return <ReviewSkeleton />
   }
-  console.log("REVIEWDIALOG DATA", data)
   const sortOptions = reviewsInfo.sortOptions
   const ratingScale = reviewsInfo.ratingScale
   const review = data[0]

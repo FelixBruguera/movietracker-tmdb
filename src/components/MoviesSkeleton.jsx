@@ -1,14 +1,11 @@
-import { Skeleton } from "../../app/components/ui/skeleton"
+import StyledSkeleton from "./StyledSkeleton"
 
 const MoviesSkeleton = () => {
   const items = Array.from(Array(14).keys())
   return (
-    <div className="p-5 flex flex-wrap justify-center items-center gap-1">
+    <div className="p-5 flex flex-wrap justify-center items-center gap-3">
       {items.map((item) => (
-        <Skeleton
-          key={item}
-          className="h-60 lg:h-90 w-40 lg:w-58 rounded-sm bg-zinc-300 dark:bg-muted"
-        />
+        <StyledSkeleton key={item} styles="h-60 lg:h-90 w-40 lg:w-58" />
       ))}
     </div>
   )

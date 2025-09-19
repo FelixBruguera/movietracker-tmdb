@@ -3,15 +3,21 @@ import { test, expect } from "@playwright/test"
 test.describe("the index route", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
+    await page.getByLabel("Settings").click()
     await page.getByLabel("Your region").click()
     await page.getByPlaceholder("Search").fill("Ven")
     await page.getByText("Venezuela").click()
-    await page.getByRole("button", { name: "Close", exact: true }).click()
+    await page
+      .getByRole("button", { name: "Close", exact: true })
+      .click({ force: true })
+    await expect(page.getByText("Select your country")).not.toBeVisible()
+    await page.getByLabel("Settings").click({ force: true })
+    await expect(page.getByLabel("Your region")).not.toBeVisible()
   })
   test.describe("sorting", () => {
     test("sorting by vote count", async ({ page }) => {
       await page.getByText("Most Popular").click()
-      await page.getByText("Most votes").click()
+      await page.getByText("Most voted").click()
       const posters = page.getByRole("listitem").getByRole("img")
       await expect(posters.first()).toHaveAttribute("alt", "Inception")
     })

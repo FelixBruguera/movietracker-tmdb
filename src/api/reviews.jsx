@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
 import { searches } from "../db/schema"
-import { eq, sql, and, count, avg, asc, desc } from "drizzle-orm"
+import { eq, sql, and, count, avg, asc, desc, inArray } from "drizzle-orm"
 import * as schema from "../db/schema"
 import {
   searchQuerySchema,
@@ -22,6 +22,8 @@ import {
   likesToReviews,
   networks,
   networksToMedia,
+  lists,
+  mediaToLists,
 } from "../db/schema"
 import { newReviewSchema, reviewsSchema } from "../utils/reviewsSchema"
 import { alias } from "drizzle-orm/sqlite-core"
@@ -35,14 +37,14 @@ app.get("/:mediaId", async (c) => {
   const itemsPerPage = 10
   const mediaId = c.req.param("mediaId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_by, sortOrder, page } = reviewsSchema.parse(c.req.query())
+  const { sort_by, sort_order, page } = reviewsSchema.parse(c.req.query())
   const sortCol =
     sort_by === "date"
       ? reviews.createdAt
       : sort_by === "rating"
         ? reviews.rating
         : count(likesToReviews.reviewId)
-  const sort = sortOrder === 1 ? asc(sortCol) : desc(sortCol)
+  const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
   console.log([sort_by, sort])
   const offset = page * itemsPerPage - itemsPerPage
   const currentUserLike = alias(likesToReviews, "currentUserLike")
@@ -122,14 +124,25 @@ app.get("/user/:mediaId", async (c) => {
   return c.json(response)
 })
 
+const watchlistQuery = (db, userId, mediaId) => {
+  const deleteSubquery = db
+    .select({ id: lists.id })
+    .from(lists)
+    .where(and(eq(lists.isWatchlist, true), eq(lists.userId, userId)))
+  return db
+    .delete(mediaToLists)
+    .where(
+      and(
+        eq(mediaToLists.mediaId, mediaId),
+        inArray(mediaToLists.listId, deleteSubquery),
+      ),
+    )
+}
+
 app.post("/", auth, async (c) => {
   const session = c.get("session")
   const { movie, text, rating } = newReviewSchema.parse(await c.req.json())
-  const cast = movie.credits.cast
-  const directors = movie.credits.crew.filter(
-    (person) => person.job === "Director",
-  )
-  const moviePeople = cast.concat(directors)
+  const moviePeople = movie.cast.concat(movie.directors)
   const genres = movie.genres
   const db = drizzle(c.env.DB, { schema: schema })
   const peopleQueries = moviePeople.map((person) =>
@@ -175,6 +188,7 @@ app.post("/", auth, async (c) => {
     ...peopleQueries,
     ...peopleToMediaQueries,
     ...genreToMediaQueries,
+    watchlistQuery(db, session.user.id, movie.id),
     db.insert(reviews).values({
       text: text,
       rating: rating,
@@ -197,7 +211,7 @@ app.post("/tv", auth, async (c) => {
     text,
     rating,
   } = newReviewSchema.parse(await c.req.json())
-  const cast = show.credits.cast
+  const cast = show.cast
   const creators = show.created_by
   const showPeople = cast.concat(creators)
   const genres = show.genres
@@ -280,6 +294,7 @@ app.post("/tv", auth, async (c) => {
     ...genreToMediaQueries,
     ...networkQueries,
     ...networkToMediaQueries,
+    watchlistQuery(db, session.user.id, show.id),
     db.insert(reviews).values({
       text: text,
       rating: rating,

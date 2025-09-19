@@ -35,7 +35,7 @@ const MoviesWithPerson = () => {
   if (isLoading || personDataLoading) {
     return (
       <div className="flex flex-col justify-between">
-        <PersonInfo data={personData} />
+        <PersonInfo data={personData} isLoading={personDataLoading} />
         <PersonMenu />
         <MoviesSkeleton />
       </div>
@@ -53,12 +53,10 @@ const MoviesWithPerson = () => {
   return (
     <div className="flex flex-col justify-between">
       <title>{personData.name}</title>
-      <PersonInfo data={personData} />
+      <PersonInfo data={personData} isLoading={personDataLoading} />
       <PersonMenu />
       <PosterList movies={movies} path={type} keyPath="credit_id" />
-      {totalPages > 1 && (
-        <PaginationWrap currentPage={data.page} totalPages={totalPages} />
-      )}
+      {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}
     </div>
   )
 }

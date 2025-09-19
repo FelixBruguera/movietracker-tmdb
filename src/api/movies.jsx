@@ -54,6 +54,9 @@ app.get("/:id", async (c) => {
     )
     console.log(response)
     response.data.credits.cast = response.data.credits.cast.slice(0, 20)
+    response.data.credits.directors = response.data.credits.crew.filter(
+      (person) => person.job === "Director",
+    )
     response.data.credits.crew = response.data.credits.crew.slice(0, 10)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
       expirationTtl: hourToSeconds * 24,

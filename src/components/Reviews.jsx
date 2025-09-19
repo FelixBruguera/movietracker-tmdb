@@ -41,7 +41,7 @@ export default function Reviews({ movie }) {
   const sortBy = searchParams.get("sort_by") || "date"
   const averageRating = data.averageRating
   const totalReviews = data.totalReviews
-  const ratingColor = averageRating && ratingScale[averageRating[0]]
+  const ratingColor = averageRating && ratingScale[Math.floor(averageRating)]
   console.log(averageRating)
 
   return (

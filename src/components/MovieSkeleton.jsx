@@ -1,20 +1,21 @@
-import { Skeleton } from "../../app/components/ui/skeleton"
 import MovieDetailsList from "./MovieDetailsList"
+import StyledSkeleton from "./StyledSkeleton"
 
 const MovieSkeleton = () => {
   return (
-    <div className="container p-4 w-full">
+    <div className="container p-4 mx-auto">
       <div className="flex flex-col lg:flex-row gap-8 h-screen w-full">
-        <Skeleton className="h-100 lg:h-9/10 w-3/4 lg:w-145 mx-auto lg:mx-0 rounded-sm bg-zinc-200 dark:bg-muted" />
+        <StyledSkeleton styles="h-100 lg:h-7/10 w-3/4 lg:w-95 mx-auto lg:mx-0" />
         <div className="w-full md:w-2/3 flex flex-col gap-3">
-          <Skeleton className="h-10 w-90 lg:w-8/10 rounded-sm bg-zinc-200 dark:bg-muted p-2" />
+          <StyledSkeleton styles="h-10 w-90 lg:w-8/10 p-2" />
           <MovieDetailsList>
-            <Skeleton className="h-10 w-1/8 rounded-sm bg-zinc-200 dark:bg-muted" />
-            <Skeleton className="h-10 w-1/8 rounded-sm bg-zinc-200 dark:bg-muted" />
-            <Skeleton className="h-10 w-1/8 rounded-sm bg-zinc-200 dark:bg-muted" />
-            <Skeleton className="h-10 w-1/8 rounded-sm bg-zinc-200 dark:bg-muted" />
+            <StyledSkeleton styles="h-10 w-1/8" />
+            <StyledSkeleton styles="h-10 w-1/8" />
+            <StyledSkeleton styles="h-10 w-1/8" />
+            <StyledSkeleton styles="h-10 w-1/8" />
           </MovieDetailsList>
-          <Skeleton className="h-40 w-90 lg:w-9/10 rounded-sm bg-zinc-200 dark:bg-muted" />
+          <StyledSkeleton styles="h-20 w-90 lg:w-9/10 " />
+          <StyledSkeleton styles="h-30 w-90 lg:w-9/10 " />
         </div>
       </div>
     </div>

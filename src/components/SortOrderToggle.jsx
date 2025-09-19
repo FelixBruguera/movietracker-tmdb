@@ -5,11 +5,11 @@ import { useSearchParams } from "react-router"
 
 const SortOrderToggle = memo(() => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const isAscending = searchParams.get("sortOrder") === "1"
+  const isAscending = searchParams.get("sort_order") === "1"
   const handleSortOrder = () => {
     const newValue = isAscending ? -1 : 1
     setSearchParams((params) => {
-      params.set("sortOrder", newValue)
+      params.set("sort_order", newValue)
       params.set("page", 1)
       return params
     })

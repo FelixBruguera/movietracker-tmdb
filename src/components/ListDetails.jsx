@@ -1,0 +1,69 @@
+import { Calendar, Users, Lock, Eye } from "lucide-react"
+import { Link } from "react-router"
+import { memo } from "react"
+import Avatar from "./Avatar"
+import { format } from "date-fns"
+
+const UserLink = memo(({ user }) => {
+  return (
+    <Link
+      to={`/users/${user.id}`}
+      className="hover:text-accent transition-all w-fit"
+    >
+      <ListDetail>
+        <Avatar src={user.image} size="xs" />
+        <p className="flex">{user.username}</p>
+      </ListDetail>
+    </Link>
+  )
+})
+
+const ListDetail = (props) => {
+  return (
+    <div className="flex items-center justify-center gap-2 text-base lg:text-lg text-muted-foreground hover:text-primary transition-colors">
+      {props.children}
+    </div>
+  )
+}
+
+const ListDate = memo(({ date }) => {
+  return (
+    <ListDetail>
+      <Calendar />
+      <p className="text-sm lg:text-base" aria-label="Created at">
+        {format(new Date(date), "MMMM u")}
+      </p>
+    </ListDetail>
+  )
+})
+
+const ListDetails = ({ user, list }) => {
+  return (
+    <div className="w-fit flex items-center gap-3">
+      <UserLink user={user} />
+      <ListDate date={list.createdAt} />
+      {list.isWatchlist && (
+        <ListDetail>
+          <Eye aria-label="Watchlist" />
+        </ListDetail>
+      )}
+      <ListDetail>
+        {list.isPrivate ? (
+          <Lock aria-label="Private List" title="Private List" />
+        ) : (
+          <>
+            <Users />
+            <p
+              className="text-stone-600 dark:text-stone-200 text-sm lg:text-base"
+              aria-label="Followers"
+            >
+              {list.followers}
+            </p>
+          </>
+        )}
+      </ListDetail>
+    </div>
+  )
+}
+
+export default ListDetails

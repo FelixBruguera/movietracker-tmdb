@@ -13,15 +13,21 @@ const MovieItemList = ({ path, title, items }) => {
         <MovieListTitle title={title} />
       </Link>
       <HorizontalList>
-        {items.map((item) => (
-          <PersonLink
-            key={item.id}
-            name={item.name}
-            id={item.id}
-            image={item.profile_path}
-            role={item.job || item.character}
-          />
-        ))}
+        {items.length > 0 ? (
+          items.map((item) => (
+            <PersonLink
+              key={item.id}
+              name={item.name}
+              id={item.id}
+              image={item.profile_path}
+              role={item.job || item.character}
+            />
+          ))
+        ) : (
+          <li>
+            <p className="text-muted-foreground">No data</p>
+          </li>
+        )}
       </HorizontalList>
     </div>
   )

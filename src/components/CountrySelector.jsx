@@ -20,7 +20,7 @@ const CountrySelector = () => {
       <Button
         onClick={() => setOpen(true)}
         variant="ghost"
-        className="hover:cursor-pointer hover:bg-transparent dark:hover:bg-transparent"
+        className="hover:cursor-pointer hover:bg-transparent dark:hover:bg-transparent p-0"
         title="Your region"
         aria-label="Your region"
       >

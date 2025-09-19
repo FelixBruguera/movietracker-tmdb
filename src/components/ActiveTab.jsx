@@ -25,6 +25,14 @@ const TabRenderer = ({ movie, tab }) => {
           items={movie.credits.cast}
         />
       )
+    case "Directors":
+      return (
+        <MovieItemList
+          path="./credits"
+          title="Directors"
+          items={movie.credits.directors}
+        />
+      )
     case "Crew":
       return (
         <MovieItemList

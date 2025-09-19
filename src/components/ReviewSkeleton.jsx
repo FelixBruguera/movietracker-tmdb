@@ -1,9 +1,9 @@
-import { Skeleton } from "../../app/components/ui/skeleton"
+import StyledSkeleton from "./StyledSkeleton"
 
 const ReviewSkeleton = () => {
   return (
     <div>
-      <Skeleton className="w-full h-30 bg-muted rounded-md" />
+      <StyledSkeleton className="w-8/10 h-30" />
     </div>
   )
 }

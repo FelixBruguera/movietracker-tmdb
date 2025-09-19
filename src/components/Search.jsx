@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { DialogContext } from "./DialogWrapper"
 
-const Search = () => {
+const Search = ({ renderFn }) => {
   const [search, setSearch] = useState("")
   const { debouncedValue, isLoading } = useDebounce(search, 1000)
   const {
@@ -39,13 +39,7 @@ const Search = () => {
         {(isLoading || dataLoading) && <MovieSearchSkeleton />}
         {isError && <li>Something went wrong</li>}
         {data?.results.length > 0
-          ? data.results.map((itemData) => (
-              <SearchItem
-                key={itemData.id}
-                itemData={itemData}
-                setOpen={setOpen}
-              />
-            ))
+          ? renderFn(data.results, setOpen)
           : !isLoading && search.length > 2 && <li>No Results</li>}
       </ul>
     </form>

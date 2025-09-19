@@ -1,11 +1,15 @@
 import { Skeleton } from "../../app/components/ui/skeleton"
+import StyledSkeleton from "./StyledSkeleton"
 
 const MovieSearchSkeleton = ({}) => {
-  const items = Array.from(Array(6).keys())
-  return items.map(() => (
-    <div className="flex flex-col w-full lg:w-1/4 gap-1 justify-center items-center">
-      <Skeleton className="flex w-1/2 h-40 lg:h-40 bg-zinc-300 dark:bg-stone-800 py-10 px-2 rounded-lg items-center  gap-2 border-1 border-transparent transition-all" />
-      <Skeleton className="flex w-full h-5 bg-zinc-300 dark:bg-stone-800 py-5 px-2 rounded-lg items-center  gap-2 border-1 border-transparent transition-all" />
+  const items = Array.from(Array(8).keys())
+  return items.map((i) => (
+    <div
+      key={i}
+      className="flex flex-col w-2/7 flex-wrap lg:w-1/5 gap-1 justify-center items-center"
+    >
+      <StyledSkeleton styles="flex w-2/3 h-30 lg:h-40 py-10 px-2 items-center gap-2 border-1 border-transparent transition-all" />
+      <StyledSkeleton styles="flex w-2/4 h-5 py-5 px-2 items-center gap-2 border-1 border-transparent transition-all" />
     </div>
   ))
 }

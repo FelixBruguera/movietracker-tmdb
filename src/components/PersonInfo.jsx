@@ -1,17 +1,11 @@
-import {
-  Briefcase,
-  BriefcaseBusiness,
-  Cake,
-  MapPin,
-  MapPinPen,
-} from "lucide-react"
+import { BriefcaseBusiness, Cake, MapPin } from "lucide-react"
 import Poster from "./Poster"
 import MovieDetail from "./MovieDetail"
 import MovieDescription from "./MovieDescription"
 import PersonInfoSkeleton from "./PersonInfoSkeleton"
 
-const PersonInfo = ({ data }) => {
-  if (!data) {
+const PersonInfo = ({ data, isLoading }) => {
+  if (isLoading) {
     return <PersonInfoSkeleton />
   }
   return (

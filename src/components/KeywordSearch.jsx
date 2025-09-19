@@ -42,7 +42,7 @@ const KeywordSearch = ({ title, selected, setSelected }) => {
       {selected.some((item) => item.id === keyword.id) ? (
         <Button
           variant="outline"
-          className="size-fit text-accent has-[>svg]:px-0"
+          className="size-fit text-accent has-[>svg]:px-0 bg-transparent hover:bg-transparent hover:text-primary border-transparent"
           title="Remove"
           aria-label="Remove"
           onClick={() => removeItem(keyword)}
@@ -53,7 +53,7 @@ const KeywordSearch = ({ title, selected, setSelected }) => {
       ) : (
         <Button
           variant="outline"
-          className="size-fit has-[>svg]:px-0 hover:text-accent transition-colors"
+          className="size-fit has-[>svg]:px-0 hover:text-accent hover:bg-transparent transition-colors bg-transparent border-transparent"
           title="Add"
           aria-label="Add"
           disabled={!canAddMore}

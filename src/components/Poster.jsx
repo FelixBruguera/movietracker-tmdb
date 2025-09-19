@@ -22,7 +22,11 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
         title={alt}
         className={`${sizeClass} shadow-md rounded-sm lg:row-span-2 mx-auto`}
       />
-      {!src && type === "movie" && <p>{alt}</p>}
+      {!src && type === "movie" && (
+        <p className="max-w-7/10 text-ellipsis overflow-hidden whitespace-nowrap">
+          {alt}
+        </p>
+      )}
     </>
   )
 }

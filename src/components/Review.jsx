@@ -31,10 +31,10 @@ const Likes = ({ reviewId, movieId, currentUserLiked, count }) => {
   })
   const verb = count === 1 ? "Like" : "Likes"
   return (
-    <div className="flex flex-col gap-2 items-center justify-center">
+    <div className="flex flex-col gap-1 items-center justify-center">
       {currentUserLiked === 1 ? (
         <Button
-          variant="outline"
+          variant="ghost"
           title="Dislike"
           aria-label="Dislike"
           onClick={() => dislikeMutation.mutate()}
@@ -44,7 +44,7 @@ const Likes = ({ reviewId, movieId, currentUserLiked, count }) => {
         </Button>
       ) : (
         <Button
-          variant="outline"
+          variant="ghost"
           title="Like"
           aria-label="Like"
           onClick={() => likeMutation.mutate()}
@@ -66,17 +66,17 @@ const Review = ({ movieId, data, userInfo = null, color }) => {
   console.log(user)
   return (
     <li
-      key={data._id}
+      key={data.id}
       className="border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-stone-400 dark:hover:border-stone-600 flex items-center justify-between transition-all"
     >
-      <div className="flex gap-3 items-center">
-        <p
-          className={`font-bold text-base ${color} px-3 py-1 h-fit dark:text-black rounded-lg`}
-        >
-          {data.rating}
-        </p>
-      </div>
-      <div className="flex items-start w-full gap-2">
+      <p
+        className={`font-bold text-base ${color} px-3 py-1 h-fit dark:text-black rounded-lg`}
+      >
+        {data.rating}
+      </p>
+      <div
+        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-center"}`}
+      >
         <div className="flex flex-col gap-1 w-full px-3">
           <div className="flex gap-2 items-center">
             <Link

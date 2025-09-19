@@ -26,7 +26,7 @@ const DialogWrapper = (props) => {
         className={`scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground ${props.contentClass}`}
       >
         <DialogHeader>
-          <DialogTitle>{props.title}</DialogTitle>
+          <DialogTitle className="max-w-9/10">{props.title}</DialogTitle>
         </DialogHeader>
         <DialogContext.Provider value={{ setOpen }}>
           {props.children}

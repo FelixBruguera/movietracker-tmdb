@@ -155,7 +155,6 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
           />
           <FiltersField labelText="TMDB Vote Count" labelFor="vote_count">
             <NumberField
-              className="w-1/3"
               fieldName="vote_count"
               title="Min"
               denomination="gte"

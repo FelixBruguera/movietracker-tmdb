@@ -50,9 +50,7 @@ const MoviesWithParam = ({ endpoint, path = "movies" }) => {
     <div className="flex flex-col justify-between">
       <MoviesMenu title={paramData.name} />
       <PosterList movies={movies} path={path} />
-      {totalPages > 1 && (
-        <PaginationWrap currentPage={data.page} totalPages={totalPages} />
-      )}
+      {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}
     </div>
   )
 }

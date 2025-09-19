@@ -12,7 +12,7 @@ const NumberField = ({
   ariaLabel,
 }) => {
   return (
-    <div className="flex w-full justify-evenly">
+    <div className="flex w-full justify-evenly max-w-1/2">
       <Label
         className="text-muted-foreground text-xs lg:text-sm"
         htmlFor={`${fieldName}.${denomination}`}

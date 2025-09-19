@@ -6,7 +6,6 @@ import { Link } from "react-router"
 
 const AvailabilityList = ({ title, services, path = "/" }) => {
   const region = useRegion((state) => state.details.code)
-  console.log(services)
   return (
     services && (
       <div className="flex items-center py-3  border-b-2 border-b-input dark:border-b-muted">
@@ -42,7 +41,16 @@ const MovieServices = ({ data, path }) => {
   }
   return (
     <div>
-      <MovieListTitle title="Service availability" />
+      <div className="flex items-center justify-between">
+        <MovieListTitle title="Service availability" />
+        <a
+          href="https://www.justwatch.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img src="/just_watch.svg" alt="JustWatch logo" className="h-5" />
+        </a>
+      </div>
       <AvailabilityList title="Free" services={data.free} path={path} />
       <AvailabilityList title="Free with ads" services={data.ads} path={path} />
       <AvailabilityList

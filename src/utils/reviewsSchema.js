@@ -1,13 +1,8 @@
 import { z } from "zod"
-import data from "../../lib/filters.json"
 import { baseSchema } from "./baseSchema"
 
 export const reviewsSchema = baseSchema.extend({
   sort_by: z.enum(["date", "rating", "likes"]).default("date"),
-  sortOrder: z
-    .enum(["-1", "1"])
-    .transform((num) => parseFloat(num))
-    .default(-1),
 })
 
 export const newReviewSchema = z.object({

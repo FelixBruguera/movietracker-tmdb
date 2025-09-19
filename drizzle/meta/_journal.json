@@ -134,6 +134,55 @@
       "when": 1757877897545,
       "tag": "0018_ambitious_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1757947809732,
+      "tag": "0019_magical_vision",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1757948612750,
+      "tag": "0020_unknown_vapor",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1757963379155,
+      "tag": "0021_sloppy_patriot",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "6",
+      "when": 1758202077402,
+      "tag": "0022_add-lists-fts",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "6",
+      "when": 1758203457152,
+      "tag": "0023_workable_satana",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1758204337539,
+      "tag": "0024_remove-lists-fts",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1758217678167,
+      "tag": "0025_dizzy_justice",
+      "breakpoints": true
     }
   ]
 }

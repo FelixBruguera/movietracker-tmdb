@@ -124,12 +124,9 @@
     }
   ],
   "ranges": {
-    "popularity.asc": "Less popular",
     "popularity.desc": "Most popular",
-    "vote_average.asc": "Worst average rating",
-    "vote_average.desc": "Best average rating",
-    "vote_count.asc": "Less votes",
-    "vote_count.desc": "Most votes"
+    "vote_average.desc": "Best rated",
+    "vote_count.desc": "Most voted"
   },
   "departments": [
     "All",

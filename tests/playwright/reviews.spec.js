@@ -12,7 +12,7 @@ test.describe("as a logged in user", () => {
       await page.getByText("Send").click()
     }
   })
-  test.describe("reviews", () => {
+  test.describe("movie reviews", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
       await expect(page.getByText("Test")).toBeVisible()
@@ -75,6 +75,105 @@ test.describe("as a logged in user", () => {
     //   await page.getByRole("button", { name: "Delete" }).click()
     //   await page.getByRole("button", { name: "Delete" }).click()
     //   await expect(page.getByText("Succesfully deleted")).toBeVisible()
-    // })
+  })
+  test.describe("tv reviews", () => {
+    test.describe.configure({ mode: "serial" })
+    test.beforeEach(async ({ page }) => {
+      await expect(page.getByText("Test")).toBeVisible()
+      await page.goto("/tv/5")
+    })
+    test("Creating a review", async ({ page }) => {
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByRole("textbox").fill("Not bad")
+      await page.getByRole("combobox", { name: "Your Rating" }).click()
+      await page.getByLabel("5").click()
+      await page.getByText("Save").click()
+      await expect(page.getByText("Review created")).toBeVisible()
+      await expect(page.getByText("Not bad")).toHaveCount(2)
+    })
+    test("Editing a review", async ({ page }) => {
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByLabel("Edit your review").click()
+      await page.getByRole("textbox").fill("Not that great")
+      await page.getByRole("combobox", { name: "Your Rating" }).click()
+      await page.getByLabel("2").click()
+      await page.getByText("Save").click()
+      await expect(page.getByText("Review updated")).toBeVisible()
+      await expect(page.getByText("Not that great")).toHaveCount(2)
+    })
+    test("Deleting a review", async ({ page }) => {
+      await page.getByLabel("Like").click()
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByLabel("Delete your review").click()
+      await page.getByText("Delete").click()
+      await expect(page.getByText("Review Deleted")).toBeVisible()
+      await expect(page.getByText("Not that great")).toHaveCount(0)
+    })
+  })
+  test.describe("reviewing a movie from a watchlist removes it from the list", () => {
+    test.describe.configure({ mode: "serial" })
+    test("adding the movie to the list", async ({ page }) => {
+      await page.goto("/movies/566810")
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByRole("button", { name: "Add to list" }).click()
+      await expect(page.getByText("Succesfully Added")).toBeVisible()
+      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await expect(page.getByAltText("The Dark Kingdom")).toBeVisible()
+    })
+    test("reviewing the movie", async ({ page }) => {
+      await page.goto("/movies/566810")
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByRole("textbox").fill("I watched this.")
+      await page.getByRole("combobox", { name: "Your Rating" }).click()
+      await page.getByLabel("6").click()
+      await page.getByText("Save", { exact: true }).click()
+      await expect(page.getByText("Review created")).toBeVisible()
+    })
+    test("checking the list after reviewing", async ({ page }) => {
+      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await expect(page.getByAltText("The Dark Kingdom")).not.toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("2")
+    })
+
+    test("deleting the review", async ({ page }) => {
+      await page.goto("/movies/566810")
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByLabel("Delete your review").click()
+      await page.getByText("Delete").click()
+      await expect(page.getByText("Review Deleted")).toBeVisible()
+    })
+  })
+  test.describe("reviewing a tv show from a watchlist removes it from the list", () => {
+    test.describe.configure({ mode: "serial" })
+    test("adding the show to the list", async ({ page }) => {
+      await page.goto("/tv/157239")
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByRole("button", { name: "Add to list" }).click()
+      await expect(page.getByText("Succesfully Added")).toBeVisible()
+      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await expect(page.getByAltText("Alien: Earth")).toBeVisible()
+    })
+    test("reviewing the show", async ({ page }) => {
+      await page.goto("/tv/157239")
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByRole("textbox").fill("I watched this.")
+      await page.getByRole("combobox", { name: "Your Rating" }).click()
+      await page.getByLabel("6").click()
+      await page.getByText("Save", { exact: true }).click()
+      await expect(page.getByText("Review created")).toBeVisible()
+    })
+    test("checking the list after reviewing", async ({ page }) => {
+      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await expect(page.getByAltText("Alien: Earth")).not.toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("2")
+    })
+
+    test("deleting the review", async ({ page }) => {
+      await page.goto("/tv/157239")
+      await page.getByLabel("Add or manage your review").click()
+      await page.getByLabel("Delete your review").click()
+      await page.getByText("Delete").click()
+      await expect(page.getByText("Review Deleted")).toBeVisible()
+    })
   })
 })

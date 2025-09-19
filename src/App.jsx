@@ -10,6 +10,9 @@ import MoviesWithPerson from "./components/MoviesWithPerson"
 import { useEffect } from "react"
 import MovieCredits from "./components/MovieCredits"
 import TVShow from "./components/TVShow"
+import Lists from "./components/Lists"
+import List from "./components/List"
+import Footer from "./components/Footer"
 
 const App = () => {
   const pathname = useLocation()
@@ -17,7 +20,7 @@ const App = () => {
     window.scrollTo(0, 0)
   }, [pathname])
   return (
-    <div className="max-w-500 mx-auto ">
+    <div className="max-w-500 mx-auto">
       <Header />
       <Routes>
         <Route element={<Movies />} index={true} />
@@ -41,7 +44,10 @@ const App = () => {
         <Route path="people/:person" element={<MoviesWithPerson />} />
         <Route path="/users/login" element={<Login />} />
         <Route path="/users/signup" element={<Signup />} />
+        <Route path="/lists" element={<Lists />} />
+        <Route path="/lists/:id" element={<List />} />
       </Routes>
+      <Footer />
     </div>
   )
 }

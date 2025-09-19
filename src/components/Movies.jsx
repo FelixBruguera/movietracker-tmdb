@@ -38,9 +38,7 @@ const Movies = ({ path = "movies" }) => {
     <div className="flex flex-col justify-between">
       <MoviesMenu />
       <PosterList movies={movies} path={path} />
-      {totalPages > 1 && (
-        <PaginationWrap currentPage={data.page} totalPages={totalPages} />
-      )}
+      {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}
     </div>
   )
 }

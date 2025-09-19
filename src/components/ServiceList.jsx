@@ -45,6 +45,7 @@ const ServiceList = ({
       <Input
         placeholder="Search"
         value={searchValue}
+        className="border-border"
         onChange={(e) => setSearchValue(e.target.value)}
       ></Input>
       <DialogDescription>
@@ -89,6 +90,7 @@ const ServiceList = ({
                 {item.provider_name}
               </div>
               <Switch
+                className="data-[state=unchecked]:bg-ring"
                 checked={selected.has(item.provider_id)}
                 onCheckedChange={(e) =>
                   e ? addItem(item.provider_id) : removeItem(item.provider_id)
