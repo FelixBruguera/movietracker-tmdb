@@ -1,16 +1,9 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
-import { searches } from "../db/schema"
 import { eq, sql, and, count, avg, asc, desc, inArray } from "drizzle-orm"
 import * as schema from "../db/schema"
-import {
-  searchQuerySchema,
-  searchQuerySchemaTV,
-  searchSchema,
-} from "../utils/searchSchema"
 import { HTTPException } from "hono/http-exception"
 import auth from "./middleware/auth"
-import { except } from "hono/combine"
 import { getAuth } from "../../lib/auth.server"
 import {
   reviews,
@@ -124,7 +117,7 @@ app.get("/user/:mediaId", async (c) => {
   return c.json(response)
 })
 
-const watchlistQuery = (db, userId, mediaId) => {
+export const watchlistQuery = (db, userId, mediaId) => {
   const deleteSubquery = db
     .select({ id: lists.id })
     .from(lists)

@@ -2,11 +2,14 @@ import { useQuery } from "@tanstack/react-query"
 import MovieSkeleton from "./MovieSkeleton"
 import {
   ActivitySquareIcon,
+  Book,
   Calendar,
   Clock4,
   Languages,
   LibraryBig,
   List,
+  NotebookPen,
+  NotebookPenIcon,
   Star,
   Trophy,
 } from "lucide-react"
@@ -39,6 +42,7 @@ import MovieDescriptionContainer from "./MovieDescriptionContainer.jsx"
 import DialogWrapper from "./DialogWrapper.jsx"
 import ReviewDialog from "./ReviewDialog.jsx"
 import ListMovieDialog from "./ListMovieDialog.jsx"
+import DiaryLogForm from "./DiaryLogForm.jsx"
 
 const Movie = () => {
   const { id } = useParams()
@@ -98,6 +102,14 @@ const Movie = () => {
               {session && (
                 <>
                   {/* <LogManager movie={movie} /> */}
+                  <DialogWrapper
+                    title={`Adding a log for ${movie.title || movie.name}`}
+                    label="Add to your diary"
+                    Icon={NotebookPen}
+                    contentClass="min-w-1/3"
+                  >
+                    <DiaryLogForm movie={movie} />
+                  </DialogWrapper>
                   <DialogWrapper
                     title={`Your review of ${movie.title || movie.name}`}
                     label="Add or manage your review"
