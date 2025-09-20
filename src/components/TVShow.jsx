@@ -85,7 +85,7 @@ const TVShow = () => {
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
-    <div className="mx-auto p-4 w-full 2xl:w-9/10">
+    <div className="mx-auto w-full 2xl:w-9/10">
       <title>{movie.name}</title>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="mx-auto w-8/10 lg:w-3/10">

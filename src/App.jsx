@@ -20,7 +20,7 @@ const App = () => {
     window.scrollTo(0, 0)
   }, [pathname])
   return (
-    <div className="max-w-500 mx-auto">
+    <div className="max-w-500 mx-auto px-6">
       <Header />
       <Routes>
         <Route element={<Movies />} index={true} />

@@ -87,14 +87,14 @@ const Movie = () => {
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   return (
-    <div className="mx-auto w-full 2xl:w-9/10 p-4">
+    <div className="mx-auto w-full 2xl:w-9/10">
       <title>{movie.title}</title>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="mx-auto w-8/10 lg:w-3/10">
           <Poster src={movie.poster_path} alt={movie.title} size="large" />
         </div>
         <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">
-          <div className="flex items-center justify-between w-full lg:w-11/12">
+          <div className="flex items-center justify-between w-full">
             <h1 className="text-2xl lg:text-3xl font-bold mb-2 mx-3 lg:mx-0">
               {movie.title}
             </h1>
