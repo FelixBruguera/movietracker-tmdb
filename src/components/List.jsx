@@ -69,14 +69,14 @@ export default function List() {
   const isFollowed = data.currentUserFollows === 1 ? true : false
 
   return (
-    <div className="px-10 py-5 w-full mx-auto">
+    <div className="lg:py-3 min-h-dvh w-9/10 lg:w-full mx-auto">
       <title>{list.name}</title>
       <meta property="og:title" content={list.name} />
       <div className="w-full flex items-start justify-between">
         <div className="w-9/10 flex flex-col gap-2">
           <h1 className="text-2xl lg:text-3xl font-bold">{list.name}</h1>
           <ListDetails user={user} list={list} />
-          <p className="text-base lg:text-lg w-full text-stone-600 dark:text-stone-200 text-justify">
+          <p className="text-base lg:text-lg w-8/10 text-stone-600 dark:text-stone-200 text-justify">
             {list.description}
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function List() {
         <SortOrderToggle />
       </ListHeading>
       <ul
-        className="flex flex-wrap py-2 lg:py-5 items-center justify-around lg:justify-start gap-x-0 lg:gap-x-4 gap-y-1"
+        className="py-5 flex flex-wrap justify-start gap-x-2 items-center gap-y-1"
         aria-label="Movies"
       >
         {media.media.length > 0 &&

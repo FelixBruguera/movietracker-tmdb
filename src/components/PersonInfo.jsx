@@ -3,13 +3,14 @@ import Poster from "./Poster"
 import MovieDetail from "./MovieDetail"
 import MovieDescription from "./MovieDescription"
 import PersonInfoSkeleton from "./PersonInfoSkeleton"
+import MovieDescriptionContainer from "./MovieDescriptionContainer"
 
 const PersonInfo = ({ data, isLoading }) => {
   if (isLoading) {
     return <PersonInfoSkeleton />
   }
   return (
-    <div className="px-3 lg:px-9 mb-3">
+    <div className="mb-5 lg:mb-0">
       <div className="items-start gap-2 grid grid-cols-[1fr_2fr] md:grid-cols-[1fr_5fr] grid-rows-[4fr_15%] lg:w-7/10">
         <Poster
           src={data.profile_path}
@@ -20,7 +21,10 @@ const PersonInfo = ({ data, isLoading }) => {
         <div className="flex flex-col gap-5 justify-between col-start-2 row-start-1">
           <div className="flex flex-col gap-1 row-start-2 col-start-2">
             <h1 className="font-bold text-xl lg:text-2xl">{data.name}</h1>
-            <MovieDescription description={data.biography} length={300} />
+            <MovieDescriptionContainer
+              description={data.biography}
+              length={250}
+            />
           </div>
         </div>
         <div className="flex col-span-full row-start-2 items-center justify-start lg:justify-items-start lg:justify-start gap-2 lg:gap-2 lg:col-start-2">

@@ -41,7 +41,7 @@ const ListsMenu = memo(() => {
     }
   }
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between w-full px-9 gap-2 lg:gap-0">
+    <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-2 lg:gap-0">
       <div className="w-full lg:w-2/10">
         <ul className="flex w-full lg:w-fit items-center justify-evenly gap-5 lg:justify-between">
           {session &&

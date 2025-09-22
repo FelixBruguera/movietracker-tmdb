@@ -40,7 +40,9 @@ const Search = ({ renderFn }) => {
         {isError && <li>Something went wrong</li>}
         {data?.results.length > 0
           ? renderFn(data.results, setOpen)
-          : !isLoading && search.length > 2 && <li>No Results</li>}
+          : !isLoading &&
+            search.length > 2 &&
+            data?.results && <li>No Results</li>}
       </ul>
     </form>
   )

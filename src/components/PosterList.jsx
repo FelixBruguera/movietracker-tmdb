@@ -9,7 +9,7 @@ const PosterList = ({
 }) => {
   return (
     <ul
-      className="p-5 flex flex-wrap justify-evenly items-center gap-y-1"
+      className="py-5 flex flex-wrap justify-evenly items-center gap-y-1"
       aria-label="movies"
     >
       {movies.length === 0 ? (

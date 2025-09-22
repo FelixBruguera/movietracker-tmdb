@@ -47,18 +47,7 @@ const MoviesMenu = ({ title = null }) => {
     setFilterOpen(false)
   }
   return (
-    <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row items-center justify-between w-full px-9 mx-auto">
-      {/* <ul className="hidden lg:flex w-full lg:w-full flex-wrap items-center justify-start lg:gap-5">
-        {genres.map((genre) => (
-          <li key={genre}>
-            <MoviesMenuItem
-              title={genre}
-              onClick={handleGenre}
-              isActive={currentGenre === genre}
-            />
-          </li>
-        ))}
-      </ul> */}
+    <div className="flex gap-3 lg:gap-0 items-center justify-between w-full p-1 lg:p-0 mx-auto">
       {session && <SavedSearch />}
       {title && <MoviesWithParamTitle title={title} />}
       <div className="flex items-start justify-end gap-2 w-full">

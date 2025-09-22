@@ -58,7 +58,11 @@ describe("the reviews endpoint", async () => {
     test("it only allows the creator of a review to update it", async () => {
       const response = await fetch("http://localhost:3000/api/reviews/25", {
         method: "PATCH",
-        body: JSON.stringify({ text: "testing", rating: "5" }),
+        body: JSON.stringify({
+          text: "testing",
+          rating: "5",
+          movie: { id: 755898 },
+        }),
         headers: { Cookie: cookie, "Content-Type": "application/json" },
       })
       expect(response.status).toBe(404)

@@ -100,8 +100,11 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               ? tvSchema.safeParse(data)
               : moviesSchema.safeParse(data)
             if (!validation.success) {
-              console.log(validation)
-              return toast("Invalid input")
+              console.log(validation.error)
+              return (
+                toast(validation.error._zod.def[0].message) ||
+                toast("Invalid input")
+              )
             }
             return handleFilter(data)
           }}

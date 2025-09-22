@@ -3,7 +3,6 @@ import AuthInput from "./AuthInput.jsx"
 import { authClient } from "../../lib/auth-client.ts"
 import { toast } from "sonner"
 import AuthForm from "./AuthForm.jsx"
-import { useEffect } from "react"
 import { Link } from "react-router"
 import { useNavigate } from "react-router"
 
@@ -28,9 +27,6 @@ const Login = () => {
       },
     )
   }
-  useEffect(() => {
-    authClient.revokeOtherSessions()
-  }, [session])
 
   return (
     <AuthForm title="Login" onSubmit={onSubmit}>

@@ -18,6 +18,19 @@ const ReviewForm = ({ previousReview, movie, mutation }) => {
   const [rating, setRating] = useState(previousRating || 1)
   const [createLog, setCreateLog] = useState(false)
   const ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const movieData = previousReview
+    ? { id: movie.id }
+    : {
+        id: movie.id,
+        title: movie.title || movie.name,
+        releaseDate: movie.release_date || movie.first_air_date,
+        poster: movie.poster_path,
+        cast: movie.credits.cast,
+        directors: movie.credits.directors,
+        genres: movie.genres,
+        created_by: movie.created_by,
+        networks: movie.networks,
+      }
   return (
     <form
       className="flex flex-col gap-3 lg:gap-2 w-full items-center justify-center my-2"
@@ -26,18 +39,8 @@ const ReviewForm = ({ previousReview, movie, mutation }) => {
         mutation.mutate({
           text: text,
           rating: rating,
-          movie: !previousReview && {
-            id: movie.id,
-            title: movie.title || movie.name,
-            releaseDate: movie.release_date || movie.first_air_date,
-            poster: movie.poster_path,
-            cast: movie.credits.cast,
-            directors: movie.credits.directors,
-            genres: movie.genres,
-            created_by: movie.created_by,
-            networks: movie.networks,
-          },
-          create_log: createLog,
+          movie: movieData,
+          addToDiary: createLog,
         })
       }}
     >

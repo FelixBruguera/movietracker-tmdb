@@ -51,7 +51,7 @@ const PersonMenu = ({ title = null }) => {
   }
 
   return (
-    <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row items-center justify-between w-full px-9 mx-auto">
+    <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row items-center justify-between w-full px-5 lg:px-0 mx-auto">
       <div className="flex items-start justify-end gap-2 w-full">
         <div className="flex flex-wrap lg:flex-nowrap items-center justify-start lg:justify-end gap-3">
           <div className="flex flex-col items-start gap-2">

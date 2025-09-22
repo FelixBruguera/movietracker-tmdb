@@ -1,6 +1,6 @@
 const MovieDetailsList = (props) => {
   return (
-    <div className="flex gap-3 items-center justify-start flex-wrap w-9/10 mx-3 lg:mx-0">
+    <div className="flex gap-3 items-center justify-start flex-wrap lg:max-w-9/10">
       {props.children}
     </div>
   )

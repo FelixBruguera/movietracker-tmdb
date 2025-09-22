@@ -8,8 +8,8 @@ const AvailabilityList = ({ title, services, path = "/" }) => {
   const region = useRegion((state) => state.details.code)
   return (
     services && (
-      <div className="flex items-center py-3  border-b-2 border-b-input dark:border-b-muted">
-        <h2 className="w-30 font-semibold text-lg">{title}</h2>
+      <div className="flex items-center py-3 border-b-2 border-b-input dark:border-b-muted">
+        <h2 className="w-15 font-semibold text-lg">{title}</h2>
         <HorizontalList>
           {services.map((service) => (
             <li key={service.provider_id}>
@@ -52,12 +52,8 @@ const MovieServices = ({ data, path }) => {
         </a>
       </div>
       <AvailabilityList title="Free" services={data.free} path={path} />
-      <AvailabilityList title="Free with ads" services={data.ads} path={path} />
-      <AvailabilityList
-        title="Subscription"
-        services={data.flatrate}
-        path={path}
-      />
+      <AvailabilityList title="Ads" services={data.ads} path={path} />
+      <AvailabilityList title="Sub" services={data.flatrate} path={path} />
       <AvailabilityList title="Rent" services={data.rent} path={path} />
       <AvailabilityList title="Buy" services={data.buy} path={path} />
     </div>

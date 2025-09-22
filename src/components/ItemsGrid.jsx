@@ -10,7 +10,7 @@ const ItemsGrid = ({ items, isLoading, isError, renderItem, ariaLabel }) => {
     return <ErrorMessage />
   }
   return (
-    <div className="p-5 flex flex-col items-center gap-2">
+    <div className="py-5 flex flex-col items-center gap-2">
       <ul
         className="flex flex-wrap w-full items-center gap-5"
         aria-label={ariaLabel}

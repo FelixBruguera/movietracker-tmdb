@@ -1,0 +1,1 @@
+DROP INDEX `diary_user_id_media_id_unique`;

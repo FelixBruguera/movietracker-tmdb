@@ -1,16 +1,9 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
-import { searches } from "../db/schema"
 import { eq, sql, and, count, avg, asc, desc, inArray } from "drizzle-orm"
 import * as schema from "../db/schema"
-import {
-  searchQuerySchema,
-  searchQuerySchemaTV,
-  searchSchema,
-} from "../utils/searchSchema"
 import { HTTPException } from "hono/http-exception"
 import auth from "./middleware/auth"
-import { except } from "hono/combine"
 import { getAuth } from "../../lib/auth.server"
 import {
   reviews,
@@ -24,6 +17,7 @@ import {
   networksToMedia,
   lists,
   mediaToLists,
+  diary,
 } from "../db/schema"
 import { newReviewSchema, reviewsSchema } from "../utils/reviewsSchema"
 import { alias } from "drizzle-orm/sqlite-core"
@@ -124,7 +118,7 @@ app.get("/user/:mediaId", async (c) => {
   return c.json(response)
 })
 
-const watchlistQuery = (db, userId, mediaId) => {
+export const watchlistQuery = (db, userId, mediaId) => {
   const deleteSubquery = db
     .select({ id: lists.id })
     .from(lists)
@@ -141,41 +135,13 @@ const watchlistQuery = (db, userId, mediaId) => {
 
 app.post("/", auth, async (c) => {
   const session = c.get("session")
-  const { movie, text, rating } = newReviewSchema.parse(await c.req.json())
+  const { movie, text, rating, addToDiary } = newReviewSchema.parse(
+    await c.req.json(),
+  )
   const moviePeople = movie.cast.concat(movie.directors)
   const genres = movie.genres
   const db = drizzle(c.env.DB, { schema: schema })
-  const peopleQueries = moviePeople.map((person) =>
-    db
-      .insert(people)
-      .values({
-        id: person.id,
-        name: person.name,
-        profile_path: person.profile_path,
-      })
-      .onConflictDoNothing(),
-  )
-  const peopleToMediaQueries = moviePeople.map((person) =>
-    db
-      .insert(peopleToMedia)
-      .values({
-        personId: person.id,
-        mediaId: movie.id,
-        isDirector: person.job === "Director",
-        isCreator: false,
-      })
-      .onConflictDoNothing(),
-  )
-  const genreToMediaQueries = genres.map((genre) =>
-    db
-      .insert(genresToMedia)
-      .values({
-        genreId: genre.id,
-        mediaId: movie.id,
-      })
-      .onConflictDoNothing(),
-  )
-  const result = await db.batch([
+  const queries = [
     db
       .insert(media)
       .values({
@@ -185,9 +151,36 @@ app.post("/", auth, async (c) => {
         releaseDate: new Date(movie.releaseDate),
       })
       .onConflictDoNothing(),
-    ...peopleQueries,
-    ...peopleToMediaQueries,
-    ...genreToMediaQueries,
+    ...moviePeople.map((person) =>
+      db
+        .insert(people)
+        .values({
+          id: person.id,
+          name: person.name,
+          profile_path: person.profile_path,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...moviePeople.map((person) =>
+      db
+        .insert(peopleToMedia)
+        .values({
+          personId: person.id,
+          mediaId: movie.id,
+          isDirector: person.job === "Director",
+          isCreator: false,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...genres.map((genre) =>
+      db
+        .insert(genresToMedia)
+        .values({
+          genreId: genre.id,
+          mediaId: movie.id,
+        })
+        .onConflictDoNothing(),
+    ),
     watchlistQuery(db, session.user.id, movie.id),
     db.insert(reviews).values({
       text: text,
@@ -195,7 +188,18 @@ app.post("/", auth, async (c) => {
       userId: session.user.id,
       mediaId: movie.id,
     }),
-  ])
+  ]
+
+  if (addToDiary) {
+    queries.push(
+      db.insert(diary).values({
+        date: new Date(),
+        userId: session.user.id,
+        mediaId: movie.id,
+      }),
+    )
+  }
+  const result = await db.batch(queries)
   if (result[0].success) {
     return c.newResponse("", 201)
   } else {
@@ -210,6 +214,7 @@ app.post("/tv", auth, async (c) => {
     movie: show,
     text,
     rating,
+    addToDiary,
   } = newReviewSchema.parse(await c.req.json())
   const cast = show.cast
   const creators = show.created_by
@@ -217,67 +222,7 @@ app.post("/tv", auth, async (c) => {
   const genres = show.genres
   const networkData = show.networks
   const db = drizzle(c.env.DB, { schema: schema })
-  const peopleQueries = showPeople.map((person) =>
-    db
-      .insert(people)
-      .values({
-        id: person.id,
-        name: person.name,
-        profile_path: person.profile_path,
-      })
-      .onConflictDoNothing(),
-  )
-  const castToMediaQueries = cast.map((person) =>
-    db
-      .insert(peopleToMedia)
-      .values({
-        personId: person.id,
-        mediaId: show.id,
-        isDirector: false,
-        isCreator: false,
-      })
-      .onConflictDoNothing(),
-  )
-  const networkQueries = networkData.map((network) =>
-    db
-      .insert(networks)
-      .values({
-        id: network.id,
-        name: network.name,
-        logo_path: network.logo_path,
-      })
-      .onConflictDoNothing(),
-  )
-  const networkToMediaQueries = networkData.map((network) =>
-    db
-      .insert(networksToMedia)
-      .values({
-        networkId: network.id,
-        mediaId: show.id,
-      })
-      .onConflictDoNothing(),
-  )
-  const creatorsToMediaQueries = creators.map((person) =>
-    db
-      .insert(peopleToMedia)
-      .values({
-        personId: person.id,
-        mediaId: show.id,
-        isDirector: false,
-        isCreator: true,
-      })
-      .onConflictDoNothing(),
-  )
-  const genreToMediaQueries = genres.map((genre) =>
-    db
-      .insert(genresToMedia)
-      .values({
-        genreId: genre.id,
-        mediaId: show.id,
-      })
-      .onConflictDoNothing(),
-  )
-  const result = await db.batch([
+  const queries = [
     db
       .insert(media)
       .values({
@@ -288,20 +233,83 @@ app.post("/tv", auth, async (c) => {
         isTv: true,
       })
       .onConflictDoNothing(),
-    ...peopleQueries,
-    ...castToMediaQueries,
-    ...creatorsToMediaQueries,
-    ...genreToMediaQueries,
-    ...networkQueries,
-    ...networkToMediaQueries,
-    watchlistQuery(db, session.user.id, show.id),
+    ...showPeople.map((person) =>
+      db
+        .insert(people)
+        .values({
+          id: person.id,
+          name: person.name,
+          profile_path: person.profile_path,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...cast.map((person) =>
+      db
+        .insert(peopleToMedia)
+        .values({
+          personId: person.id,
+          mediaId: show.id,
+          isDirector: false,
+          isCreator: false,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...networkData.map((network) =>
+      db
+        .insert(networks)
+        .values({
+          id: network.id,
+          name: network.name,
+          logo_path: network.logo_path,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...networkData.map((network) =>
+      db
+        .insert(networksToMedia)
+        .values({
+          networkId: network.id,
+          mediaId: show.id,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...creators.map((person) =>
+      db
+        .insert(peopleToMedia)
+        .values({
+          personId: person.id,
+          mediaId: show.id,
+          isDirector: false,
+          isCreator: true,
+        })
+        .onConflictDoNothing(),
+    ),
+    ...genres.map((genre) =>
+      db
+        .insert(genresToMedia)
+        .values({
+          genreId: genre.id,
+          mediaId: show.id,
+        })
+        .onConflictDoNothing(),
+    ),
     db.insert(reviews).values({
       text: text,
       rating: rating,
       userId: session.user.id,
       mediaId: show.id,
     }),
-  ])
+  ]
+  if (addToDiary) {
+    queries.push(
+      db.insert(diary).values({
+        date: new Date(),
+        userId: session.user.id,
+        mediaId: show.id,
+      }),
+    )
+  }
+  const result = await db.batch(queries)
   if (result[0].success) {
     return c.newResponse("", 201)
   } else {
@@ -312,18 +320,31 @@ app.post("/tv", auth, async (c) => {
 
 app.patch("/:id", auth, async (c) => {
   const session = c.get("session")
-  const schema = newReviewSchema.omit({ movie: true })
   const id = c.req.param("id")
-  const { text, rating } = schema.parse(await c.req.json())
+  const { text, rating, addToDiary, movie } = newReviewSchema.parse(
+    await c.req.json(),
+  )
   const db = drizzle(c.env.DB, { schema: schema })
-  const result = await db
-    .update(reviews)
-    .set({ text: text, rating: rating })
-    .where(and(eq(reviews.id, id), eq(reviews.userId, session.user.id)))
-    .returning({ text: reviews.text, rating: reviews.rating })
+  const queries = [
+    db
+      .update(reviews)
+      .set({ text: text, rating: rating })
+      .where(and(eq(reviews.id, id), eq(reviews.userId, session.user.id)))
+      .returning({ text: reviews.text, rating: reviews.rating }),
+  ]
+  if (addToDiary) {
+    queries.push(
+      db.insert(diary).values({
+        date: new Date(),
+        userId: session.user.id,
+        mediaId: movie.id,
+      }),
+    )
+  }
+  const result = await db.batch(queries)
   console.log(result)
-  if (result.length > 0) {
-    return c.json(result)
+  if (result[0][0]) {
+    return c.json(result[0][0])
   } else {
     console.log(result)
     throw new HTTPException(404)

@@ -25,16 +25,19 @@ const ReviewDialog = ({ movie, isTv = false }) => {
   const mutation = useMutation({
     mutationFn: (newReview) => axios.post(`/api/reviews${path}`, newReview),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "reviews",
-          movie.id,
-          searchParams.toString(),
-          currentUser.id,
-        ],
-        exact: true,
-      })
-      queryClient.invalidateQueries({ queryKey: ["user_review", movie.id] })
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [
+            "reviews",
+            movie.id,
+            searchParams.toString(),
+            currentUser.id,
+          ],
+          exact: true,
+        }),
+        queryClient.invalidateQueries({ queryKey: ["user_review", movie.id] }),
+        queryClient.invalidateQueries({ queryKey: ["diary", movie.id] }),
+      ])
       return toast("Review created")
     },
     onError: (error) => toast(error.response.statusText),

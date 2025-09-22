@@ -16,7 +16,7 @@ import SearchItem from "./SearchItem.jsx"
 
 const Header = () => {
   return (
-    <nav className="flex flex-col lg:flex-row items-center justify-around h-30 lg:h-20 p-2 mb-2 w-dvw lg:w-full">
+    <nav className="flex flex-col lg:flex-row items-center justify-between h-30 lg:h-20 mb-6 lg:mb-2 w-dvw lg:w-full">
       <Link
         to={"/"}
         className="flex items-center gap-1 text-2xl font-bold w-fit"

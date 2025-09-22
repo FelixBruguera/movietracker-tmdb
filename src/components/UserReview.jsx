@@ -49,7 +49,7 @@ const UserReview = ({ movieId, data, color }) => {
     mutationFn: (newReview) =>
       axios.patch(`/api/reviews/${data.id}`, newReview),
     onSuccess: (response) => {
-      const newReview = response.data[0]
+      const newReview = response.data
       queryClient.invalidateQueries({
         queryKey: ["reviews", movieId, searchParams.toString(), currentUser.id],
         exact: true,
@@ -57,6 +57,7 @@ const UserReview = ({ movieId, data, color }) => {
       queryClient.setQueryData(["user_review", movieId], (oldData) => [
         { ...oldData[0], text: newReview.text, rating: newReview.rating },
       ])
+      queryClient.invalidateQueries({ queryKey: ["diary", movieId] })
       setIsEditing(false)
       return toast("Review updated")
     },
@@ -84,7 +85,11 @@ const UserReview = ({ movieId, data, color }) => {
         </div>
       </div>
       {isEditing ? (
-        <ReviewForm previousReview={data} mutation={updateMutation} />
+        <ReviewForm
+          previousReview={data}
+          movie={{ id: movieId }}
+          mutation={updateMutation}
+        />
       ) : (
         <Review
           data={data}

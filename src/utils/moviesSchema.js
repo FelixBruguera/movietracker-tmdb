@@ -71,11 +71,15 @@ const moviesSchema = baseSchema
       .literal("155477,1664,190370,267122,171341,229706,251175")
       .default("155477,1664,190370,267122,171341,229706,251175"),
   })
-  .refine((data) => data["vote_average.gte"] <= data["vote_average.lte"])
-  .refine((data) =>
-    data["primary_release_date.gte"] && data["primary_release_date.lte"]
-      ? data["primary_release_date.gte"] <= data["primary_release_date.lte"]
-      : true,
+  .refine((data) => data["vote_average.gte"] <= data["vote_average.lte"], {
+    error: "Invalid average rating range",
+  })
+  .refine(
+    (data) =>
+      data["primary_release_date.gte"] && data["primary_release_date.lte"]
+        ? data["primary_release_date.gte"] <= data["primary_release_date.lte"]
+        : true,
+    { error: "Invalid release year range" },
   )
 
 export default moviesSchema

@@ -9,13 +9,13 @@ import CompanyLink from "./CompanyLink"
 
 const ItemList = (props) => {
   return (
-    <ul className="px-3 py-2 lg:px-0 flex flex-wrap gap-2 lg:max-w-9/10">
+    <ul className="py-2 px-0 flex flex-wrap gap-2 lg:max-w-8/10">
       {props.children}
     </ul>
   )
 }
 
-const TabRenderer = ({ movie, tab }) => {
+const TabRenderer = ({ movie, tab, isTv }) => {
   switch (tab) {
     case "Cast":
       return (
@@ -42,6 +42,7 @@ const TabRenderer = ({ movie, tab }) => {
         />
       )
     case "Companies":
+      const companyPath = isTv ? "tv/company" : "movies/company"
       return (
         <>
           <MovieListTitle title="Production companies" />
@@ -51,19 +52,22 @@ const TabRenderer = ({ movie, tab }) => {
                 name={item.name}
                 id={item.id}
                 image={item.logo_path}
+                path={companyPath}
               />
             ))}
           </ItemList>
         </>
       )
     case "Keywords":
+      const keywords = movie.keywords.keywords || movie.keywords.results
+      const keywordPath = isTv ? "tv" : ""
       return (
         <>
           <MovieListTitle title="Keywords" />
           <ItemList>
-            {movie.keywords.keywords.map((keyword) => (
+            {keywords.map((keyword) => (
               <MovieDetailLink
-                href={`/?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
+                href={`/${keywordPath}?with_keywords=${encodeURIComponent(JSON.stringify([keyword]))}`}
               >
                 {keyword.name}
               </MovieDetailLink>
@@ -72,12 +76,14 @@ const TabRenderer = ({ movie, tab }) => {
         </>
       )
     case "Similar":
+      const title = isTv ? "Shows" : "Movies"
+      const path = isTv ? "tv" : "movies"
       return (
         <>
-          <MovieListTitle title="Similar movies" />
+          <MovieListTitle title={`Similar ${title}`} />
           <HorizontalList>
             {movie.recommendations.results.map((item) => (
-              <Link to={`/movies/${item.id}`} className="contents">
+              <Link to={`/${path}/${item.id}`} className="contents">
                 <Poster src={item.poster_path} alt={item.title} size="small" />
               </Link>
             ))}
@@ -85,14 +91,39 @@ const TabRenderer = ({ movie, tab }) => {
         </>
       )
     case "Services":
-      return <MovieServices data={movie["watch/providers"]?.results} />
+      const servicesPath = isTv ? "/tv" : "/"
+      return (
+        <MovieServices
+          data={movie["watch/providers"]?.results}
+          path={servicesPath}
+        />
+      )
+    case "Created by":
+      return (
+        <MovieItemList
+          path="./credits"
+          title="Created by"
+          items={movie.created_by}
+        />
+      )
+    case "Networks":
+      return (
+        <div>
+          <MovieListTitle title="Networks" />
+          <ItemList>
+            {movie.networks.map((item) => (
+              <CompanyLink name={item.name} id={item.id} path="tv/network" />
+            ))}
+          </ItemList>
+        </div>
+      )
   }
 }
 
-const ActiveTab = ({ movie, tab }) => {
+const ActiveTab = ({ movie, tab, isTv }) => {
   return (
     <div className="min-h-60 w-full">
-      <TabRenderer movie={movie} tab={tab} />
+      <TabRenderer movie={movie} tab={tab} isTv={isTv} />
     </div>
   )
 }

@@ -3,6 +3,7 @@ node_modules
 .env
 .dev.vars
 .wrangler
+.zed
 
 # Playwright
 /test-results/

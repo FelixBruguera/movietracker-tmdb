@@ -71,7 +71,7 @@ test.describe("the index route", () => {
       await page.getByLabel("Release year minimum").fill("1998")
       await page.getByLabel("Release year maximum").fill("1995")
       await page.getByText("Submit").click()
-      await expect(page.getByText("Invalid Input")).toBeVisible()
+      await expect(page.getByText("Invalid release year range")).toBeVisible()
     })
   })
   test.describe("Saving searches", () => {

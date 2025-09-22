@@ -35,7 +35,7 @@ const Movies = ({ path = "movies" }) => {
   const totalPages = data.total_pages
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-start min-h-dvh">
       <MoviesMenu />
       <PosterList movies={movies} path={path} />
       {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}

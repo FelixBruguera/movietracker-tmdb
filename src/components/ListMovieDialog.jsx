@@ -4,7 +4,7 @@ import { authClient } from "../../lib/auth-client"
 import { toast } from "sonner"
 import { Button } from "../../app/components/ui/button"
 import { Eye, Lock, Minus, MinusCircle, Plus, Trash } from "lucide-react"
-import ReviewsSkeleton from "./ReviewsSkeleton"
+import ReviewSkeleton from "./ReviewSkeleton"
 import ErrorMessage from "./ErrorMessage"
 
 const ListMovieDialog = ({ movie, isTv = false }) => {
@@ -57,7 +57,7 @@ const ListMovieDialog = ({ movie, isTv = false }) => {
   if (isLoading) {
     return (
       <div>
-        <ReviewsSkeleton />
+        <ReviewSkeleton />
       </div>
     )
   }

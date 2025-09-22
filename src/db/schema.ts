@@ -21,7 +21,8 @@ export const user = sqliteTable("user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   searches: many(searches),
-  reviews: many(reviews)
+  reviews: many(reviews),
+  logs: many(diary)
 }))
 
 
@@ -102,7 +103,8 @@ export const media = sqliteTable("media", {
 export const mediaRelations = relations(media, ({ many }) => ({
   peopleToMedia: many(peopleToMedia),
   genresToMedia: many(genresToMedia),
-  reviews: many(reviews)
+  reviews: many(reviews),
+  logs: many(diary)
 }))
 
 export const people = sqliteTable("people", {
@@ -278,5 +280,33 @@ export const listFollowersRelations = relations(listFollowers, ({ one }) => ({
     references: [user.id],
   }),
 }))
+
+export const diary = sqliteTable("diary", {
+  id: integer().primaryKey({ autoIncrement: true }),
+  date: integer({ mode: "timestamp" }).notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  mediaId: integer("media_id")
+    .notNull()
+    .references(() => media.id, { onDelete: "cascade" }),
+}, (t) => [
+  index("diary_media_id").on(t.mediaId), 
+  index("diary_user_id").on(t.userId),
+  index("diary_yearly_idx").on(sql`strftime('%Y', date)`),
+  index("diary_monthly_idx").on(sql`strftime('%Y-%m', date)`)
+])
+
+export const diaryRelations = relations(diary, ({ one }) => ({
+  user: one(user, {
+    fields: [diary.userId],
+    references: [user.id],
+  }),
+  media: one(media, {
+    fields: [diary.mediaId],
+    references: [media.id],
+  }),
+}))
+
 
 
