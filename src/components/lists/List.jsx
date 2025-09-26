@@ -78,11 +78,11 @@ export default function List() {
             <div className="flex gap-2 lg:w-fit">
               {session && <CopyList list={list} />}
               {session?.user.id === user.id && (
-                  <>
-                    <AddToList list={list} />
-                    <UpdateList list={list} />
-                    <DeleteList list={list} />
-                  </>
+                <>
+                  <AddToList list={list} />
+                  <UpdateList list={list} />
+                  <DeleteList list={list} />
+                </>
               )}
               {session && session.user.id !== user.id && (
                 <FollowList listId={list.id} isFollowed={isFollowed} />
@@ -108,7 +108,7 @@ export default function List() {
         <SortOrderToggle />
       </ListHeading>
       <ul
-        className="py-5 flex flex-wrap justify-start gap-x-2 items-center gap-y-1"
+        className="py-5 flex flex-wrap justify-start gap-x-0 items-center gap-y-1"
         aria-label="Movies"
       >
         {media.media.length > 0 &&
