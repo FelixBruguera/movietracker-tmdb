@@ -5,7 +5,7 @@ import { cors } from "hono/cors"
 import movies from "./movies"
 import people from "./people"
 import tv from "./tv"
-import user from "./user"
+import users from "./users"
 import search from "./search"
 import reviews from "./reviews"
 import lists from "./lists"
@@ -33,7 +33,7 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 app.route("/", movies)
 app.route("/", tv)
 app.route("/", people)
-app.route("/", user)
+app.route("/", users)
 app.route("/", search)
 app.route("/", reviews)
 app.route("/", lists)

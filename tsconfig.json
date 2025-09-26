@@ -9,6 +9,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"],
+      "@ui/*": ["./app/components/ui/*"],
+      "@lib/*": ["./lib/*"],
+      "@stores/*": ["./src/stores/*"],
       "~/*": ["./*"]
     }
   }

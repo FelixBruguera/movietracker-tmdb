@@ -1,17 +1,23 @@
 import { Route, Routes, ScrollRestoration, useLocation } from "react-router"
-import Header from "./components/Header"
+import Header from "./components/shared/Header"
 import "./styles/app.css"
-import Login from "./components/Login"
-import Movies from "./components/Movies"
-import Signup from "./components/Signup"
-import Media from "./components/Media"
-import MoviesWithParam from "./components/MoviesWithParam"
-import MoviesWithPerson from "./components/MoviesWithPerson"
+import Login from "./components/auth/Login"
+import Movies from "./components/media/Movies"
+import Signup from "./components/auth/Signup"
+import Media from "./components/media/Media"
+import MoviesWithParam from "./components/media/MoviesWithParam"
+import MoviesWithPerson from "./components/people/MoviesWithPerson"
 import { useEffect } from "react"
-import MovieCredits from "./components/MovieCredits"
-import Lists from "./components/Lists"
-import List from "./components/List"
-import Footer from "./components/Footer"
+import MovieCredits from "./components/media/MovieCredits"
+import Lists from "./components/lists/Lists"
+import List from "./components/lists/List"
+import Footer from "./components/shared/Footer"
+import UserList from "./components/users/UserList"
+import Diary from "./components/users/Diary"
+import ProfileHeader from "./components/users/ProfileHeader"
+import ProfileReviews from "./components/users/ProfileReviews"
+import ProfileLists from "./components/users/ProfileLists"
+import MobileMenu from "./components/shared/MobileMenu"
 
 const App = () => {
   const pathname = useLocation()
@@ -45,7 +51,14 @@ const App = () => {
         <Route path="/users/signup" element={<Signup />} />
         <Route path="/lists" element={<Lists />} />
         <Route path="/lists/:id" element={<List />} />
+        <Route path="/users" element={<UserList />} />
+        <Route path="/users/:id" element={<ProfileHeader />}>
+          <Route index={true} element={<ProfileReviews />} />
+          <Route path="diary" element={<Diary />} />
+          <Route path="lists" element={<ProfileLists />} />
+        </Route>
       </Routes>
+      <MobileMenu />
       <Footer />
     </div>
   )

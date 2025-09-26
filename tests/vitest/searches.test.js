@@ -12,7 +12,7 @@ describe("the user/searches endpoint", async () => {
   describe("with invalid requests", () => {
     test("it only allows the creator of a search to update it ", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/user/searches/55",
+        "http://localhost:3000/api/users/searches/55",
         {
           method: "PATCH",
           body: JSON.stringify({
@@ -25,7 +25,7 @@ describe("the user/searches endpoint", async () => {
     })
     test("it only allows the creator of a search to delete it ", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/user/searches/55",
+        "http://localhost:3000/api/users/searches/55",
         {
           method: "DELETE",
           headers: { Cookie: cookie, "Content-Type": "application/json" },

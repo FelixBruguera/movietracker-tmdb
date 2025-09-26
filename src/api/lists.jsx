@@ -66,13 +66,13 @@ app.get("/", async (c) => {
         isPrivate: lists.isPrivate,
         isWatchlist: lists.isWatchlist,
         followers: countDistinct(listFollowers.userId),
-        movies: countDistinct(mediaToLists.mediaId),
+        media: countDistinct(mediaToLists.mediaId),
       })
       .from(lists)
       .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))
       .leftJoin(listFollowers, eq(lists.id, listFollowers.listId))
-      .having(({ movies, followers }) =>
-        and(gte(movies, minMedia), gte(followers, minFollowers)),
+      .having(({ media, followers }) =>
+        and(gte(media, minMedia), gte(followers, minFollowers)),
       )
       .groupBy(lists.id)
       .where(
@@ -212,7 +212,7 @@ app.get("/user/:mediaId", auth, async (c) => {
       and(eq(mediaToLists.listId, lists.id), eq(mediaToLists.mediaId, mediaId)),
     )
     .where(eq(lists.userId, session.user.id))
-  if (result.length > 0) {
+  if (result) {
     return c.json(result)
   } else {
     throw new HTTPException(404)

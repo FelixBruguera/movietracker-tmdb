@@ -293,6 +293,7 @@ app.post("/tv", auth, async (c) => {
         })
         .onConflictDoNothing(),
     ),
+    watchlistQuery(db, session.user.id, show.id),
     db.insert(reviews).values({
       text: text,
       rating: rating,
