@@ -90,7 +90,7 @@ const Media = ({ isTv }) => {
   const title = movie.title || movie.name
   return (
     <div className="mx-auto w-9/10 lg:w-full">
-      <title>{movie.title}</title>
+      <title>{title}</title>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="mx-auto w-8/10 lg:w-3/10">
           <Poster src={movie.poster_path} alt={title} size="large" />
