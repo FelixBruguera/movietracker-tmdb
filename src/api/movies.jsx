@@ -12,7 +12,12 @@ app.get("/", async (c) => {
   query.include_adult = false
   query.language = "en-US"
   console.log(query)
-  const parsedQuery = moviesSchema.parse(query)
+  const validation = moviesSchema.safeParse(query)
+  if (!validation.success) {
+    const error = JSON.parse(validation.error.message)[0]
+    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+  }
+  const parsedQuery = validation.data
   const key = await createCacheKey(stableStringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
@@ -95,8 +100,12 @@ app.get("/:id/credits", async (c) => {
 
 app.get("/company/:company", async (c) => {
   const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
-  console.log(c.req)
+  const validation = moviesSchema.safeParse(query)
+  if (!validation.success) {
+    const error = JSON.parse(validation.error.message)[0]
+    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+  }
+  const parsedQuery = validation.data
   parsedQuery.with_companies = c.req.param("company")
   const response = await axios.get(
     `https://api.themoviedb.org/3/discover/movie`,

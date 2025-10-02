@@ -26,13 +26,13 @@ const defaultParams = {
     page: 1
 }
 
-describe("The GET /movies endpoint", () => {
-    const baseUrl = "http://localhost/api/movies"
+describe("The GET /tv endpoint", () => {
+    const baseUrl = "http://localhost/api/tv"
     const env = createTestEnv()
     beforeEach(() => {
         vi.clearAllMocks()
         axios.get.mockResolvedValue({
-            data: { results: ["mock movie"] },
+            data: { results: ["mock tv show"] },
             request: {},
         })
     })
@@ -46,7 +46,7 @@ describe("The GET /movies endpoint", () => {
         const response = await app.fetch(request, env)
         expect(env.KV.get).toHaveBeenCalledTimes(1)
         expect(axios.get).toHaveBeenCalledWith(
-            "https://api.themoviedb.org/3/discover/movie",
+            "https://api.themoviedb.org/3/discover/tv",
             expect.objectContaining({
                 headers: "Authorization: Bearer test-token",
                 params: defaultParams
@@ -59,8 +59,8 @@ describe("The GET /movies endpoint", () => {
             with_keywords: encodeURIComponent(
                 JSON.stringify([{ id: 8, name: "testing" }]),
             ),
-            "primary_release_date.gte": "2019",
-            "primary_release_date.lte": "2022",
+            "first_air_date.gte": "1970",
+            "first_air_date.lte": "1975",
         })
         const request = new Request(
             `${baseUrl}?${queryString}`,
@@ -72,13 +72,13 @@ describe("The GET /movies endpoint", () => {
         const response = await app.fetch(request, env)
         expect(env.KV.get).toHaveBeenCalledTimes(1)
         expect(axios.get).toHaveBeenCalledWith(
-            "https://api.themoviedb.org/3/discover/movie",
+            "https://api.themoviedb.org/3/discover/tv",
             expect.objectContaining({
                 headers: "Authorization: Bearer test-token",
                 params: {
                     ...defaultParams,
-                    "primary_release_date.gte": "2019-01-01", 
-                    "primary_release_date.lte": "2022-12-31",
+                    "first_air_date.gte": "1970-01-01", 
+                    "first_air_date.lte": "1975-12-31",
                     with_keywords: "8",
                     with_genres: "1|2|3",
                     with_watch_providers: "4|5|6"
@@ -128,8 +128,8 @@ describe("The GET /movies endpoint", () => {
         expect(axios.get).not.toHaveBeenCalled()
     })
 })
-describe("The GET /movies/:id endpoint", () => {
-    const baseUrl = "http://localhost/api/movies/123"
+describe("The GET /tv/:id endpoint", () => {
+    const baseUrl = "http://localhost/api/tv/123"
     const env = createTestEnv()
     beforeEach(() => {
         vi.clearAllMocks()
@@ -153,7 +153,7 @@ describe("The GET /movies/:id endpoint", () => {
             request: {},
         })
     })
-    it("transforms the cast, director and crew correctly", async () => {
+    it("transforms the cast and crew correctly", async () => {
         const request = new Request(baseUrl,
             {
                 method: "GET",
@@ -163,7 +163,6 @@ describe("The GET /movies/:id endpoint", () => {
         const response = await app.fetch(request, env)
         const responseBody = await response.json()
         expect(responseBody.credits.cast).toStrictEqual(Array(20).fill(1).map((e, i) => e+(i*1)))
-        expect(responseBody.credits.directors).toStrictEqual([{id: 3, job: "Director"}])
         expect(responseBody.credits.crew).toHaveLength(10)
         expect(responseBody.credits.crew).not.toContainEqual({id: 10, job: "Novel"})
     })
@@ -205,8 +204,8 @@ describe("The GET /movies/:id endpoint", () => {
         expect(axios.get).not.toHaveBeenCalled()
     })
 })
-describe("The GET /movies/:id/credits endpoint", () => {
-    const baseUrl = "http://localhost/api/movies/123/credits"
+describe("The GET /tv/:id/credits endpoint", () => {
+    const baseUrl = "http://localhost/api/tv/123/credits"
     const env = createTestEnv()
     beforeEach(() => {
         vi.clearAllMocks()
@@ -241,8 +240,8 @@ describe("The GET /movies/:id/credits endpoint", () => {
         expect(axios.get).not.toHaveBeenCalled()
     })
 })
-describe("The GET /movies/company/:company endpoint", () => {
-    const baseUrl = "http://localhost/api/movies/company/5"
+describe("The GET /tv/company/:company endpoint", () => {
+    const baseUrl = "http://localhost/api/tv/company/5"
     const env = createTestEnv()
     beforeEach(() => {
         vi.clearAllMocks()
@@ -260,7 +259,7 @@ describe("The GET /movies/company/:company endpoint", () => {
         )
         const response = await app.fetch(request, env)
         expect(axios.get).toHaveBeenCalledWith(
-            "https://api.themoviedb.org/3/discover/movie",
+            "https://api.themoviedb.org/3/discover/tv",
             expect.objectContaining({
                 headers: "Authorization: Bearer test-token",
                 params: {...defaultParams, with_companies: "5"}
@@ -273,8 +272,8 @@ describe("The GET /movies/company/:company endpoint", () => {
             with_keywords: encodeURIComponent(
                 JSON.stringify([{ id: 8, name: "testing" }]),
             ),
-            "primary_release_date.gte": "2019",
-            "primary_release_date.lte": "2022",
+            "first_air_date.gte": "2019",
+            "first_air_date.lte": "2022",
         })
         const request = new Request(
             `${baseUrl}?${queryString}`,
@@ -285,13 +284,13 @@ describe("The GET /movies/company/:company endpoint", () => {
         )
         const response = await app.fetch(request, env)
         expect(axios.get).toHaveBeenCalledWith(
-            "https://api.themoviedb.org/3/discover/movie",
+            "https://api.themoviedb.org/3/discover/tv",
             expect.objectContaining({
                 headers: "Authorization: Bearer test-token",
                 params: {
                     ...defaultParams,
-                    "primary_release_date.gte": "2019-01-01", 
-                    "primary_release_date.lte": "2022-12-31",
+                    "first_air_date.gte": "2019-01-01", 
+                    "first_air_date.lte": "2022-12-31",
                     with_keywords: "8",
                     with_genres: "1|2|3",
                     with_watch_providers: "4|5|6",
