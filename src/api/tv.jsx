@@ -115,7 +115,12 @@ app.get("/company/:company", async (c) => {
 
 app.get("/network/:network", async (c) => {
   const query = c.req.query()
-  const parsedQuery = tvSchema.parse(query)
+ const validation = tvSchema.safeParse(query)
+  if (!validation.success) {
+    const error = JSON.parse(validation.error.message)[0]
+    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+  }
+  const parsedQuery = validation.data
   console.log(c.req)
   parsedQuery.with_networks = c.req.param("network")
   const response = await axios.get(`https://api.themoviedb.org/3/discover/tv`, {

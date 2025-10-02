@@ -1,6 +1,5 @@
 import { Hono } from "hono"
 import axios from "axios"
-import tvSchema from "../utils/tvSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
 import { z } from "zod"
@@ -17,7 +16,12 @@ app.get("/", async (c) => {
   const query = c.req.query()
   query.include_adult = false
   query.language = "en-US"
-  const parsedQuery = searchSchema.parse(query)
+  const validation = searchSchema.safeParse(query)
+  if (!validation.success) {
+    const error = JSON.parse(validation.error.message)[0]
+    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+  }
+  const parsedQuery = validation.data
   const queryKey = await createCacheKey(stableStringify(parsedQuery))
   const key = `search_${queryKey}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
