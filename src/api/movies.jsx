@@ -11,6 +11,7 @@ app.get("/", async (c) => {
   const query = c.req.query()
   query.include_adult = false
   query.language = "en-US"
+  console.log(query)
   const parsedQuery = moviesSchema.parse(query)
   const key = await createCacheKey(stableStringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
