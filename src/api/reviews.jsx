@@ -33,17 +33,17 @@ app.get("/:mediaId", async (c) => {
   const db = drizzle(c.env.DB, { schema: schema })
   const { sort_by, sort_order, page } = reviewsSchema.parse(c.req.query())
   const sortCol =
-    sort_by === "date"
-      ? reviews.createdAt
-      : sort_by === "rating"
-        ? reviews.rating
-        : count(likesToReviews.reviewId)
+    sort_by === "rating"
+      ? reviews.rating
+      : sort_by === "likes"
+        ? count(likesToReviews.reviewId)
+        : reviews.createdAt
   const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
   console.log([sort_by, sort])
   const offset = page * itemsPerPage - itemsPerPage
   const currentUserLike = alias(likesToReviews, "currentUserLike")
   const userId = session?.user?.id || 0
-  const [reviewList, aggregates] = await Promise.all([
+  const result = await db.batch([
     db
       .select({
         id: reviews.id,
@@ -64,7 +64,6 @@ app.get("/:mediaId", async (c) => {
       .from(reviews)
       .fullJoin(user, eq(reviews.userId, user.id))
       .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
-      .groupBy(reviews.id)
       .leftJoin(
         currentUserLike,
         and(
@@ -85,11 +84,12 @@ app.get("/:mediaId", async (c) => {
       .from(reviews)
       .where(eq(reviews.mediaId, mediaId)),
   ])
-  const aggregateData = aggregates[0]
+  const reviewList = result[0]
+  const aggregates = result[1]
   return c.json({
     reviews: reviewList,
-    totalReviews: aggregateData.totalReviews,
-    averageRating: aggregateData.averageRating,
+    totalReviews: aggregates.totalReviews,
+    averageRating: aggregates.averageRating,
   })
 })
 
