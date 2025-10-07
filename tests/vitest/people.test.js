@@ -238,6 +238,87 @@ describe("The GET /people/:person/credits endpoint with the movies scope", () =>
   })
 })
 
+describe("Pagination of the GET /people/:person/credits endpoint", () => {
+  const baseUrl = "http://localhost/api/people/25/credits"
+  const env = createTestEnv()
+  const largeMockData = {
+    cast: Array.from({ length: 15 }, (_, i) => ({
+      id: `cast${i}`,
+      release_date: "2023-01-01",
+      vote_average: 5,
+      vote_count: 5,
+    })),
+    crew: Array.from({ length: 15 }, (_, i) => ({
+      id: `crew${i}`,
+      release_date: "2023-01-01",
+      vote_average: 5,
+      vote_count: 5,
+    })),
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    axios.get.mockResolvedValue({
+      data: largeMockData,
+      request: {},
+    })
+  })
+
+  it("returns the first page with the correct items and page count", async () => {
+    const request = new Request(baseUrl, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    const response = await app.fetch(request, env)
+    const responseBody = await response.json()
+
+    expect(responseBody.results.length).toBe(20)
+    expect(responseBody.results).toContainEqual({id: "cast14", release_date: "2023-01-01", vote_average: 5, vote_count: 5})
+    expect(responseBody.page).toBe(1)
+    expect(responseBody.total_pages).toBe(2)
+  })
+
+  it("returns the second page with the remaining items", async () => {
+    const request = new Request(`${baseUrl}?page=2`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    const response = await app.fetch(request, env)
+    const responseBody = await response.json()
+
+    expect(responseBody.results.length).toBe(10)
+    expect(responseBody.results).not.toContainEqual({id: "cast14", release_date: "2023-01-01", vote_average: 5, vote_count: 5})
+    expect(responseBody.results).toContainEqual({id: "crew14", release_date: "2023-01-01", vote_average: 5, vote_count: 5})
+    expect(responseBody.page).toBe(2)
+    expect(responseBody.total_pages).toBe(2)
+  })
+
+  it("returns an empty array for a page that is out of bounds", async () => {
+    const request = new Request(`${baseUrl}?page=3`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    const response = await app.fetch(request, env)
+    const responseBody = await response.json()
+
+    expect(responseBody.results).toStrictEqual([])
+    expect(responseBody.page).toBe(3)
+    expect(responseBody.total_pages).toBe(2)
+  })
+
+  it("returns a validation error for an invalid page number", async () => {
+    const request = new Request(`${baseUrl}?page=abc`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    const response = await app.fetch(request, env)
+    const responseBody = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(responseBody.error).toContain("validation failed")
+  })
+})
+
 describe("The GET /people/:person/credits endpoint with the tv scope", () => {
   const baseUrl = "http://localhost/api/people/25/credits"
   const mockData = {

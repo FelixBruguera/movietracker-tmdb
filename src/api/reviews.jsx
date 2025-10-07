@@ -189,7 +189,6 @@ app.post("/", auth, async (c) => {
       mediaId: movie.id,
     }),
   ]
-
   if (addToDiary) {
     queries.push(
       db.insert(diary).values({

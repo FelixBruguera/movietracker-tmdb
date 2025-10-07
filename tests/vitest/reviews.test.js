@@ -1,52 +1,38 @@
 import { describe, test, expect, assert, beforeEach, it, vi } from "vitest"
 import app from "./src/api/index"
 import { drizzle } from "drizzle-orm/d1"
-import { asc, count, desc, eq } from "drizzle-orm"
-import { likesToReviews, reviews } from "../../src/db/schema"
+import { and, asc, count, desc, eq } from "drizzle-orm"
+import { diary, genresToMedia, likesToReviews, media, people, peopleToMedia, reviews } from "../../src/db/schema"
+import { getAuth } from "../../lib/auth.server"
+import auth from "../../src/api/middleware/auth"
+import { mockDb } from "../mocks/db"
+import { authMock, invalidAuthMock } from "../mocks/auth"
 
 vi.mock("drizzle-orm/d1")
-
-const mockQueryBuilder = {
-  from: vi.fn().mockReturnThis(),
-  where: vi.fn().mockReturnThis(),
-  leftJoin: vi.fn().mockReturnThis(),
-  fullJoin: vi.fn().mockReturnThis(),
-  orderBy: vi.fn().mockReturnThis(),
-  groupBy: vi.fn().mockReturnThis(),
-  offset: vi.fn().mockReturnThis(),
-  limit: vi.fn().mockReturnThis(),
-}
-
-const mockDb = {
-  select: vi.fn(() => mockQueryBuilder),
-  insert: vi.fn().mockReturnThis(),
-  values: vi.fn().mockReturnThis(),
-  returning: vi.fn(),
-  batch: vi.fn(),
-  update: vi.fn(() => mockUpdate),
-}
+vi.mock("../../lib/auth.server")
+vi.mock("./middleware/auth", () => authMock)
 
 describe("The GET /reviews/:mediaId endpoint", () => {
   const baseUrl = "http://localhost/api/reviews/3"
-  beforeEach(() => {
-    vi.clearAllMocks()
-    drizzle.mockReturnValue(mockDb)
-  })
-  it.only("falls back to the default values", async () => {
-    mockDb.batch.mockReturnValueOnce([
-      [
+  const batchMockResponse = [
+    [
         { id: 1, text: "Test review", rating: 5 },
         { id: 2, text: "Another test", rating: 2 },
       ],
       [{ totalReviews: 2, averageRating: 4 }],
-    ])
+    ]
+  beforeEach(() => {
+    vi.clearAllMocks()
+    drizzle.mockReturnValue(mockDb)
+  })
+  it("falls back to the default values", async () => {
+    mockDb.batch.mockReturnValueOnce(batchMockResponse)
+    getAuth.mockReturnValue(authMock)
     const request = new Request(baseUrl, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
-    const response = await app.fetch(request, { DB: {} })
-    const data = await response.json()
-    console.log(data)
+    await app.fetch(request, { DB: {} })
     expect(mockDb.batch).toHaveBeenCalledTimes(1)
     expect(mockDb.select).toHaveBeenCalledTimes(2)
     expect(mockDb.select().where).toHaveBeenCalledWith(eq(reviews.mediaId, "3"))
@@ -57,14 +43,9 @@ describe("The GET /reviews/:mediaId endpoint", () => {
     expect(mockDb.select().offset).toHaveBeenCalledWith(0)
     expect(mockDb.select().limit).toHaveBeenCalledWith(10)
   })
-  it.only("transforms the params correctly", async () => {
-    mockDb.batch.mockReturnValueOnce([
-      [
-        { id: 1, text: "Test review", rating: 5 },
-        { id: 2, text: "Another test", rating: 2 },
-      ],
-      [{ totalReviews: 2, averageRating: 4 }],
-    ])
+  it("transforms the params correctly", async () => {
+    mockDb.batch.mockReturnValueOnce(batchMockResponse)
+    getAuth.mockReturnValue(authMock)
     const request = new Request(
       `${baseUrl}?sort_by=likes&sort_order=1&page=3`,
       {
@@ -72,15 +53,125 @@ describe("The GET /reviews/:mediaId endpoint", () => {
         headers: { "Content-Type": "application/json" },
       },
     )
-    const response = await app.fetch(request, { DB: {} })
-    const data = await response.json()
+    await app.fetch(request, { DB: {} })
     expect(mockDb.select().orderBy).toHaveBeenCalledWith(
       asc(count(likesToReviews.reviewId)),
     )
     expect(mockDb.select().offset).toHaveBeenCalledWith(20)
     expect(mockDb.select().limit).toHaveBeenCalledWith(10)
   })
+  it("falls back to the default values", async () => {
+    mockDb.batch.mockReturnValueOnce(batchMockResponse)
+    getAuth.mockReturnValue(invalidAuthMock)
+    const request = new Request(baseUrl, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    await app.fetch(request, { DB: {} })
+    expect(mockDb.batch).toHaveBeenCalledTimes(1)
+    expect(mockDb.select).toHaveBeenCalledTimes(2)
+    expect(mockDb.select().where).toHaveBeenCalledWith(eq(reviews.mediaId, "3"))
+    expect(mockDb.select().groupBy).toHaveBeenCalledWith(reviews.id)
+    expect(mockDb.select().orderBy).toHaveBeenCalledWith(
+      desc(reviews.createdAt),
+    )
+    expect(mockDb.select().offset).toHaveBeenCalledWith(0)
+    expect(mockDb.select().limit).toHaveBeenCalledWith(10)
+  })
 })
+
+describe("The GET /reviews/user/:mediaId endpoint", () => {
+  const baseUrl = "http://localhost/api/reviews/user/8"
+  beforeEach(() => {
+    vi.clearAllMocks()
+    drizzle.mockReturnValue(mockDb)
+  })
+  describe("With the user logged in", () => {
+    beforeEach(() => {
+      getAuth.mockReturnValue(authMock)
+    })
+    it("uses the parameters correctly", async () => {
+      const request = new Request(baseUrl, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+      await app.fetch(request, { DB: {} })
+      expect(mockDb.select().where).toHaveBeenCalledWith(and(eq(reviews.mediaId, "8"), eq(reviews.userId, 5)))
+    })
+  })
+  describe("Without session", () => {
+    beforeEach(() => {
+      getAuth.mockReturnValue(invalidAuthMock)
+    })
+    it("uses the parameters correctly", async () => {
+      const request = new Request(baseUrl, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+      await app.fetch(request, { DB: {} })
+      expect(mockDb.select().where).not.toHaveBeenCalled()
+    })
+  })
+})
+
+describe("The POST /reviews endpoint", () => {
+  const baseUrl = "http://localhost/api/reviews"
+  const mockMovie = { text: "", rating: 8, movie: { id: 1999, title: "test", releaseDate: "01-01-2005", poster: "path/to/poster", genres: [{id: 5}, {id: 6} ], cast: [{id: 1, name: "test", profile_path: "path/to/profile"}, { id:10, name: "person", profile_path: "path/to/profile"}], directors: [{id: 100, name: "director", job: "Director"} ] }}
+  beforeEach(() => {
+    vi.clearAllMocks()
+    drizzle.mockReturnValue(mockDb)
+  })
+  describe("With the user logged in", () => {
+    beforeEach(() => {
+      getAuth.mockReturnValue(authMock)
+    })
+    it("uses the parameters correctly", async () => {
+      const request = new Request(baseUrl, {
+        method: "POST",
+        body: JSON.stringify(mockMovie),
+        headers: { "Content-Type": "application/json" },
+      })
+      await app.fetch(request, { DB: {} })
+      // console.log("RESP", await resp.json())
+      expect(mockDb.batch).toHaveBeenCalledTimes(1)
+      expect(mockDb.insert).toHaveBeenCalledWith(media)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ id: mockMovie.movie.id, title: mockMovie.movie.title, releaseDate: new Date(mockMovie.movie.releaseDate), poster: mockMovie.movie.poster }))
+      expect(mockDb.insert).toHaveBeenCalledWith(people)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ id: mockMovie.movie.cast[0].id, name: mockMovie.movie.cast[0].name, profile_path: mockMovie.movie.cast[0].profile_path }))
+      expect(mockDb.insert).toHaveBeenCalledWith(peopleToMedia)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ personId: mockMovie.movie.directors[0].id, mediaId: mockMovie.movie.id, isDirector: true, isCreator: false }))
+      expect(mockDb.insert).toHaveBeenCalledWith(genresToMedia)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ genreId: mockMovie.movie.genres[0].id, mediaId: mockMovie.movie.id }))
+      expect(mockDb.insert).toHaveBeenCalledWith(reviews)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ text: mockMovie.text, rating: mockMovie.rating, userId: 5, mediaId: mockMovie.movie.id}))
+      expect(mockDb.insert).not.toHaveBeenCalledWith(diary)
+    })
+    it("when add to diary is true, inserts into the diary", async () => {
+      const request = new Request(baseUrl, {
+        method: "POST",
+        body: JSON.stringify({...mockMovie, addToDiary: true}),
+        headers: { "Content-Type": "application/json" },
+      })
+      await app.fetch(request, { DB: {} })
+      expect(mockDb.insert).toHaveBeenCalledWith(diary)
+      expect(mockDb.insert().values).toHaveBeenCalledWith(expect.objectContaining({ userId: 5, mediaId: mockMovie.movie.id, date: expect.any(Date)}))
+    })
+  })
+  // describe("Without session", () => {
+  //   beforeEach(() => {
+  //     getAuth.mockReturnValue(authFailureMock)
+  //   })
+  //   it("uses the parameters correctly", async () => {
+  //     const request = new Request(baseUrl, {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     })
+  //     await app.fetch(request, { DB: {} })
+  //     expect(mockDb.select().where).not.toHaveBeenCalled()
+  //   })
+  // })
+})
+
 
 // describe("the reviews endpoint", async () => {
 //   let cookie = null

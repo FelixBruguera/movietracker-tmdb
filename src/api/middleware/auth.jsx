@@ -6,7 +6,7 @@ const auth = async (c, next) => {
     headers: c.req.header(),
   })
   if (!session) {
-    throw new HTTPException(401, { message: "Unauthorized" })
+    return c.json(JSON.stringify({ message: "Unauthorized" }), 401)
   }
   c.set("session", session)
   await next()
