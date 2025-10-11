@@ -6,7 +6,9 @@ const MoviesWithParamTitle = ({ title }) => {
       title={title}
       aria-label={title}
     >
-      <h2 className="whitespace-nowrap overflow-hidden text-ellipsis">{title}</h2>
+      <h2 className="whitespace-nowrap overflow-hidden text-ellipsis">
+        {title}
+      </h2>
     </div>
   )
 }

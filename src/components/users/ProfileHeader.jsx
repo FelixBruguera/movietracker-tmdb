@@ -7,26 +7,26 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
 const ProfileHeader = () => {
-    const tabs = { Reviews: "", Diary: "diary", Lists: "lists", Stats: "stats" }
-    const { id } = useParams() 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ["user", id],
-        queryFn: () =>
-        axios.get(`/api/users/${id}`).then((response) => response.data[0]),
-        staleTime: 1440 * 60000,
-        gcTime: 1440 * 60000, // 1 day
-    })
-    if (isLoading) {
-        return <ProfileSkeleton />
-    }
+  const tabs = { Reviews: "", Diary: "diary", Lists: "lists", Stats: "stats" }
+  const { id } = useParams()
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () =>
+      axios.get(`/api/users/${id}`).then((response) => response.data[0]),
+    staleTime: 1440 * 60000,
+    gcTime: 1440 * 60000, // 1 day
+  })
+  if (isLoading) {
+    return <ProfileSkeleton />
+  }
 
-    if (isError) {
-        return <ErrorMessage />
-    }
+  if (isError) {
+    return <ErrorMessage />
+  }
   return (
     <section className="min-h-dvh px-2 lg:px-0">
-        <title>{data.username}</title>
-        <meta property="og:title" content={data.username} />
+      <title>{data.username}</title>
+      <meta property="og:title" content={data.username} />
       <div className="w-full mx-auto pb-6 flex flex-col gap-2">
         <div className="flex items-center justify-center gap-3">
           <Avatar
@@ -39,11 +39,7 @@ const ProfileHeader = () => {
       </div>
       <ul className="flex items-center justify-evenly w-full mx-auto border-b-1 border-b-stone-300 dark:border-b-stone-700 pb-2 lg:px-60">
         {Object.entries(tabs).map(([key, value]) => (
-          <ProfileTab
-            key={key}
-            title={key}
-            href={`/users/${id}/${value}`}
-          />
+          <ProfileTab key={key} title={key} href={`/users/${id}/${value}`} />
         ))}
       </ul>
       <Outlet />

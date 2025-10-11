@@ -14,13 +14,13 @@ import { useParams, useSearchParams } from "react-router"
 import PosterList from "../shared/PosterList"
 
 const Diary = () => {
-    const { id } = useParams()
-    const [searchParams, setSearchParams] = useSearchParams()
+  const { id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { data, isLoading, isError } = useQuery({
     queryKey: ["diary", id, searchParams.toString()],
     queryFn: () =>
       axios
-        .get(`/api/users/${id}/diary`, { params: searchParams})
+        .get(`/api/users/${id}/diary`, { params: searchParams })
         .then((response) => response.data),
   })
   if (isLoading) {
@@ -30,7 +30,7 @@ const Diary = () => {
   if (isError) {
     return <ErrorMessage />
   }
-  const sortOptions = { monthly: "Monthly", yearly: "Yearly"}
+  const sortOptions = { monthly: "Monthly", yearly: "Yearly" }
   const sortBy = searchParams.get("sort_by") || "monthly"
   return (
     <div>
@@ -54,13 +54,11 @@ const Diary = () => {
             ))}
           </ul>
         </>
-       ) : (
+      ) : (
         <p>No logs yet.</p>
       )}
       <div className="mt-4">
-        {data.totalPages > 1 && (
-          <PaginationWrap totalPages={data.totalPages} />
-        )}
+        {data.totalPages > 1 && <PaginationWrap totalPages={data.totalPages} />}
       </div>
     </div>
   )

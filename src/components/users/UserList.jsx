@@ -12,7 +12,7 @@ export default function UserList() {
     queryKey: ["users", searchParams.toString()],
     queryFn: () =>
       axios
-        .get("/api/users", { params: searchParams})
+        .get("/api/users", { params: searchParams })
         .then((response) => response.data),
   })
   const users = data?.users

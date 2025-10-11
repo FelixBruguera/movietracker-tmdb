@@ -23,7 +23,8 @@ export default function Reviews({ movie }) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["reviews", movie.id, searchParams.toString(), currentUser?.id],
     queryFn: () =>
-      axios.get(`/api/reviews/${movie.id}`, { params: searchParams })
+      axios
+        .get(`/api/reviews/${movie.id}`, { params: searchParams })
         .then((response) => response.data),
   })
   const likeMutation = useMutation({

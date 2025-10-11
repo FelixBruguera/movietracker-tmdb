@@ -15,7 +15,9 @@ import FiltersTrigger from "../shared/FiltersTrigger"
 
 const UsersFilters = ({ filterOpen, setFilterOpen }) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { page, sort_order, sort_by, ...query } = Object.fromEntries(searchParams.entries())
+  const { page, sort_order, sort_by, ...query } = Object.fromEntries(
+    searchParams.entries(),
+  )
   return (
     <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
       <SheetTrigger asChild>

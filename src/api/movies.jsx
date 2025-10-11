@@ -3,6 +3,7 @@ import axios from "axios"
 import moviesSchema from "../utils/moviesSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/movies")
 const hourToSeconds = 3600
@@ -11,7 +12,12 @@ app.get("/", async (c) => {
   const query = c.req.query()
   query.include_adult = false
   query.language = "en-US"
-  const parsedQuery = moviesSchema.parse(query)
+  const validation = moviesSchema.safeParse(query)
+  if (!validation.success) {
+    return c.json(formatValidationError(validation), 400)
+  }
+  console.log(query)
+  const parsedQuery = validation.data
   const key = await createCacheKey(stableStringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
@@ -94,8 +100,11 @@ app.get("/:id/credits", async (c) => {
 
 app.get("/company/:company", async (c) => {
   const query = c.req.query()
-  const parsedQuery = moviesSchema.parse(query)
-  console.log(c.req)
+  const validation = moviesSchema.safeParse(query)
+  if (!validation.success) {
+    return c.json(formatValidationError(validation), 400)
+  }
+  const parsedQuery = validation.data
   parsedQuery.with_companies = c.req.param("company")
   const response = await axios.get(
     `https://api.themoviedb.org/3/discover/movie`,

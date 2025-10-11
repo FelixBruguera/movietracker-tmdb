@@ -2,7 +2,7 @@ import { Button } from "@ui/button"
 import { Link, useMatch } from "react-router"
 
 const ProfileTab = ({ title, href }) => {
-    const isCurrentRoute = useMatch(href)
+  const isCurrentRoute = useMatch(href)
   return (
     <li>
       <Link to={href}>

@@ -1,7 +1,27 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
-import { searches, user, reviews, diary, media, likesToReviews, lists, mediaToLists, listFollowers } from "../db/schema"
-import { eq, sql, and, count, countDistinct, desc, asc, gte, avg } from "drizzle-orm"
+import {
+  searches,
+  user,
+  reviews,
+  diary,
+  media,
+  likesToReviews,
+  lists,
+  mediaToLists,
+  listFollowers,
+} from "../db/schema"
+import {
+  eq,
+  sql,
+  and,
+  count,
+  countDistinct,
+  desc,
+  asc,
+  gte,
+  avg,
+} from "drizzle-orm"
 import * as schema from "../db/schema"
 import {
   searchQuerySchema,
@@ -10,7 +30,12 @@ import {
 } from "../utils/searchSchema"
 import { HTTPException } from "hono/http-exception"
 import auth from "./middleware/auth"
-import { userDiarySchema, userListsSchema, userReviewsSchema, usersSchema } from "../utils/usersSchema"
+import {
+  userDiarySchema,
+  userListsSchema,
+  userReviewsSchema,
+  usersSchema,
+} from "../utils/usersSchema"
 import { alias } from "drizzle-orm/sqlite-core"
 import { getAuth } from "../../lib/auth.server"
 
@@ -19,37 +44,46 @@ const app = new Hono().basePath("/api/users")
 app.get("/", async (c) => {
   const db = drizzle(c.env.DB, { schema: schema })
   const itemsPerPage = 20
-  const { page, sort_by, sort_order, "reviews.gte": minReviews, "logs.gte": minLogs} = usersSchema.parse(c.req.query())
+  const {
+    page,
+    sort_by,
+    sort_order,
+    "reviews.gte": minReviews,
+    "logs.gte": minLogs,
+  } = usersSchema.parse(c.req.query())
   const sortCol =
     sort_by === "date"
       ? user.createdAt
-        : sort_by === "reviews"
-          ? countDistinct(reviews.id)
-          : countDistinct(diary.id)
-    const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
-    const offset = page * itemsPerPage - itemsPerPage
+      : sort_by === "reviews"
+        ? countDistinct(reviews.id)
+        : countDistinct(diary.id)
+  const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
+  const offset = page * itemsPerPage - itemsPerPage
   const [usersIndex, aggregates] = await Promise.all([
-    db.select({
-      id: user.id,
-      username: user.username,
-      createdAt: user.createdAt,
-      image: user.image,
-      reviews: countDistinct(reviews.id),
-      logs: countDistinct(diary.id),
-    }).from(user)
-    .leftJoin(reviews, eq(reviews.userId, user.id))
-    .leftJoin(diary, eq(diary.userId, user.id))
-    .groupBy(user.id)
-    .orderBy(sort)
-    .offset(offset)
-    .limit(itemsPerPage)
-    .having(({ reviews, logs }) =>
+    db
+      .select({
+        id: user.id,
+        username: user.username,
+        createdAt: user.createdAt,
+        image: user.image,
+        reviews: countDistinct(reviews.id),
+        logs: countDistinct(diary.id),
+      })
+      .from(user)
+      .leftJoin(reviews, eq(reviews.userId, user.id))
+      .leftJoin(diary, eq(diary.userId, user.id))
+      .groupBy(user.id)
+      .orderBy(sort)
+      .offset(offset)
+      .limit(itemsPerPage)
+      .having(({ reviews, logs }) =>
         and(gte(reviews, minReviews), gte(logs, minLogs)),
       ),
-    db.select({
+    db
+      .select({
         total: count(user.id),
       })
-    .from(user)
+      .from(user),
   ])
   const total = aggregates[0].total
   const totalPages = Math.ceil(total / itemsPerPage)
@@ -166,7 +200,8 @@ app.delete("/searches/:id", auth, async (c) => {
 app.get("/:id", async (c) => {
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
-  const result = await db.select({
+  const result = await db
+    .select({
       id: user.id,
       username: user.username,
       image: user.image,
@@ -181,30 +216,35 @@ app.get("/:id/diary", async (c) => {
   const db = drizzle(c.env.DB, { schema: schema })
   const { sort_by, sort_order, page } = userDiarySchema.parse(c.req.query())
   const itemsPerPage = 5
-  const group = sort_by === "monthly" ? sql`strftime('%Y-%m', ${diary.date}, 'unixepoch')`
-  : sql`strftime('%Y', ${diary.date}, 'unixepoch')`
+  const group =
+    sort_by === "monthly"
+      ? sql`strftime('%Y-%m', ${diary.date}, 'unixepoch')`
+      : sql`strftime('%Y', ${diary.date}, 'unixepoch')`
   const sort = sort_order === 1 ? asc(group) : desc(group)
   const offset = page * itemsPerPage - itemsPerPage
   const [result, aggregations] = await Promise.all([
-    db.select({
-      group: group,
-      entries: sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}, 'isTv', ${media.isTv}))`.mapWith(
-        JSON.parse
-      ),
-    })
-    .from(diary)
-    .innerJoin(media, eq(diary.mediaId, media.id))
-    .where(eq(diary.userId, id))
-    .groupBy(group)
-    .orderBy(sort)
-    .offset(offset)
-    .limit(itemsPerPage),
-    db.select({
-      totalGroups: countDistinct(group),
-      totalEntries: count(diary.id)
-    })
-    .from(diary)
-    .where(eq(diary.userId, id))
+    db
+      .select({
+        group: group,
+        entries:
+          sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}, 'isTv', ${media.isTv}))`.mapWith(
+            JSON.parse,
+          ),
+      })
+      .from(diary)
+      .innerJoin(media, eq(diary.mediaId, media.id))
+      .where(eq(diary.userId, id))
+      .groupBy(group)
+      .orderBy(sort)
+      .offset(offset)
+      .limit(itemsPerPage),
+    db
+      .select({
+        totalGroups: countDistinct(group),
+        totalEntries: count(diary.id),
+      })
+      .from(diary)
+      .where(eq(diary.userId, id)),
   ])
   const total = aggregations[0].totalEntries
   const totalGroups = aggregations[0].totalGroups
@@ -218,54 +258,63 @@ app.get("/:id/diary", async (c) => {
 
 app.get("/:id/reviews", async (c) => {
   const session = await getAuth(c.env.DB).api.getSession({
-      headers: c.req.header(),
+    headers: c.req.header(),
   })
   const userId = session?.user.id || null
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
   const { sort_by, sort_order, page } = userReviewsSchema.parse(c.req.query())
   const itemsPerPage = 10
-  const sortCol = sort_by === "rating" ? reviews.rating : sort_by === "likes" ? count(likesToReviews.reviewId) : reviews.createdAt
+  const sortCol =
+    sort_by === "rating"
+      ? reviews.rating
+      : sort_by === "likes"
+        ? count(likesToReviews.reviewId)
+        : reviews.createdAt
   const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
   const offset = page * itemsPerPage - itemsPerPage
   const currentUserLike = alias(likesToReviews, "currentUserLike")
   const [result, aggregations] = await Promise.all([
-    db.select({
-      id: reviews.id,
-      text: reviews.text,
-      rating: reviews.rating,
-      createdAt: reviews.createdAt,
-      likes: count(likesToReviews.reviewId),
-      currentUserLiked: sql`case when ${currentUserLike.userId} is not null then true else false end`.as(
+    db
+      .select({
+        id: reviews.id,
+        text: reviews.text,
+        rating: reviews.rating,
+        createdAt: reviews.createdAt,
+        likes: count(likesToReviews.reviewId),
+        currentUserLiked:
+          sql`case when ${currentUserLike.userId} is not null then true else false end`.as(
             "currentUserLiked",
           ),
-      media: {
-        id: media.id,
-        poster_path: media.poster,
-        title: media.title,
-        isTv: media.isTv
-      }
-    })
-    .from(reviews)
-    .innerJoin(media, eq(reviews.mediaId, media.id))
-    .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
-    .leftJoin(currentUserLike,
-      and(
+        media: {
+          id: media.id,
+          poster_path: media.poster,
+          title: media.title,
+          isTv: media.isTv,
+        },
+      })
+      .from(reviews)
+      .innerJoin(media, eq(reviews.mediaId, media.id))
+      .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
+      .leftJoin(
+        currentUserLike,
+        and(
           eq(reviews.id, currentUserLike.reviewId),
           eq(currentUserLike.userId, userId),
         ),
       )
-    .groupBy(reviews.id)
-    .where(eq(reviews.userId, id))
-    .orderBy(sort)
-    .offset(offset)
-    .limit(itemsPerPage),
-    db.select({
-      total: count(reviews.id),
-      averageRating: avg(reviews.rating)
-    })
-    .from(reviews)
-    .where(eq(reviews.userId, id))
+      .groupBy(reviews.id)
+      .where(eq(reviews.userId, id))
+      .orderBy(sort)
+      .offset(offset)
+      .limit(itemsPerPage),
+    db
+      .select({
+        total: count(reviews.id),
+        averageRating: avg(reviews.rating),
+      })
+      .from(reviews)
+      .where(eq(reviews.userId, id)),
   ])
   const total = aggregations[0].total
   const averageRating = aggregations[0].averageRating
@@ -274,7 +323,7 @@ app.get("/:id/reviews", async (c) => {
     reviews: result,
     total: total,
     totalPages: totalPages,
-    averageRating: averageRating
+    averageRating: averageRating,
   })
 })
 
@@ -283,32 +332,39 @@ app.get("/:id/lists", async (c) => {
   const db = drizzle(c.env.DB, { schema: schema })
   const { sort_by, sort_order, page } = userListsSchema.parse(c.req.query())
   const itemsPerPage = 10
-  const sortCol = sort_by === "date" ? lists.createdAt : sort_by === "media" ? countDistinct(mediaToLists.mediaId) : countDistinct(listFollowers.userId)
+  const sortCol =
+    sort_by === "date"
+      ? lists.createdAt
+      : sort_by === "media"
+        ? countDistinct(mediaToLists.mediaId)
+        : countDistinct(listFollowers.userId)
   const sort = sort_order === 1 ? asc(sortCol) : desc(sortCol)
   const offset = page * itemsPerPage - itemsPerPage
   const [result, aggregations] = await Promise.all([
-    db.select({
-      id: lists.id,
-      name: lists.name,
-      description: lists.description,
-      createdAt: lists.createdAt,
-      isWatchlist: lists.isWatchlist,
-      media: countDistinct(mediaToLists.mediaId),
-      followers: countDistinct(listFollowers.userId)
-    })
-    .from(lists)
-    .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))
-    .leftJoin(listFollowers, eq(lists.id, listFollowers.listId))
-    .groupBy(lists.id)
-    .where(and(eq(lists.userId, id), eq(lists.isPrivate, false)))
-    .orderBy(sort)
-    .offset(offset)
-    .limit(itemsPerPage),
-    db.select({
-      total: count(lists.id),
-    })
-    .from(lists)
-    .where(and(eq(lists.userId, id), eq(lists.isPrivate, false)))
+    db
+      .select({
+        id: lists.id,
+        name: lists.name,
+        description: lists.description,
+        createdAt: lists.createdAt,
+        isWatchlist: lists.isWatchlist,
+        media: countDistinct(mediaToLists.mediaId),
+        followers: countDistinct(listFollowers.userId),
+      })
+      .from(lists)
+      .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))
+      .leftJoin(listFollowers, eq(lists.id, listFollowers.listId))
+      .groupBy(lists.id)
+      .where(and(eq(lists.userId, id), eq(lists.isPrivate, false)))
+      .orderBy(sort)
+      .offset(offset)
+      .limit(itemsPerPage),
+    db
+      .select({
+        total: count(lists.id),
+      })
+      .from(lists)
+      .where(and(eq(lists.userId, id), eq(lists.isPrivate, false))),
   ])
   const total = aggregations[0].total
   const totalPages = Math.ceil(total / itemsPerPage)

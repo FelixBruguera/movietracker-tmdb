@@ -1,10 +1,6 @@
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { useState } from "react"
-import {
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@ui/dialog"
+import { DialogContent, DialogDescription, DialogTitle } from "@ui/dialog"
 import { Input } from "@ui/input"
 import { Button } from "@ui/button"
 import Poster from "../shared/Poster"

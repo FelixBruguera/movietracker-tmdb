@@ -3,12 +3,7 @@ import { Button } from "@ui/button"
 import { ChevronDown, Edit, Plus, Trash } from "lucide-react"
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@ui/dialog"
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@ui/dialog"
 import AuthInput from "../auth/AuthInput"
 import { toast } from "sonner"
 import TriggerWrap from "../shared/TriggerWrap"
@@ -181,7 +176,9 @@ const SavedSearch = () => {
           aria-label="Saved searches"
         >
           <div className="flex items-center justify-evenly gap-2">
-            <p className="text-sm whitespace-nowrap overflow-hidden text-ellipsis">{selectedSearch}</p>
+            <p className="text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+              {selectedSearch}
+            </p>
             <ChevronDown />
           </div>
         </DialogTrigger>

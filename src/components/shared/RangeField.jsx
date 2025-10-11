@@ -2,11 +2,7 @@ import FiltersField from "./FiltersField"
 import { Input } from "@ui//input"
 import { Label } from "@ui//label"
 import { useRef, useState } from "react"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover"
 import TriggerWrap from "./TriggerWrap"
 import NumberField from "./NumberField"
 

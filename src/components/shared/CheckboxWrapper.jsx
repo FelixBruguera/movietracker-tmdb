@@ -2,11 +2,7 @@ import { ChevronDown } from "lucide-react"
 import { Button } from "@ui/button"
 import { Checkbox } from "@ui/checkbox"
 import { Label } from "@ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover"
 import TriggerWrap from "./TriggerWrap"
 
 const CheckboxWrapper = ({

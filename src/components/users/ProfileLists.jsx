@@ -65,9 +65,7 @@ const ProfileLists = () => {
         <p>No public lists yet</p>
       )}
       <div className="mt-4">
-        {data.totalPages > 1 && (
-          <PaginationWrap totalPages={data.totalPages} />
-        )}
+        {data.totalPages > 1 && <PaginationWrap totalPages={data.totalPages} />}
       </div>
     </div>
   )

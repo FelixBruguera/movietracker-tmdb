@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 import axios from "axios"
 import { peopleSchema } from "../utils/peopleSchema"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/people")
 const hourToSeconds = 3600
@@ -28,7 +29,11 @@ app.get("/:person", async (c) => {
 
 app.get("/:person/credits", async (c) => {
   const query = c.req.query()
-  const parsedQuery = peopleSchema.parse(query)
+  const validation = peopleSchema.safeParse(query)
+  if (!validation.success) {
+    return c.json(formatValidationError(validation), 400)
+  }
+  const parsedQuery = validation.data
   const person = c.req.param("person")
   const { page, scope, department, sort_by } = parsedQuery
   console.log(c.req)
@@ -52,6 +57,7 @@ app.get("/:person/credits", async (c) => {
     })
     console.log(cacheresult)
   }
+  console.log(response)
   if (department === "All") {
     response = { results: [...response.cast, ...response.crew] }
   } else if (department === "Acting") {

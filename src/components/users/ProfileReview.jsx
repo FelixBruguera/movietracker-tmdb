@@ -32,15 +32,8 @@ const ProfileReview = ({ data, color, profileId }) => {
       className="flex items-center flex-col md:flex-row max-w-500 mx-auto justify-start gap-2"
       key={data.id}
     >
-      <Link
-        to={linkTo}
-        className="p-1 rounded-t-2xl  md:p-auto"
-      >
-        <Poster
-          src={data.media.poster_path}
-          alt={data.media.title}
-          size="xs"
-        />
+      <Link to={linkTo} className="p-1 rounded-t-2xl  md:p-auto">
+        <Poster src={data.media.poster_path} alt={data.media.title} size="xs" />
       </Link>
       <Review
         data={data}

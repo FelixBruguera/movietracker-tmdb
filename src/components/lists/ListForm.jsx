@@ -5,9 +5,7 @@ import { Label } from "@ui/label"
 import { useState } from "react"
 import { Button } from "@ui/button"
 import DialogWrapper from "../shared/DialogWrapper"
-import {
-  CircleQuestionMark,
-} from "lucide-react"
+import { CircleQuestionMark } from "lucide-react"
 
 const ListForm = ({ list, mutation }) => {
   const privateStartingValue = list?.isPrivate === false ? false : true

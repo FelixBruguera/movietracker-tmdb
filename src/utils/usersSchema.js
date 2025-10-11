@@ -8,13 +8,13 @@ export const usersSchema = baseSchema.extend({
 })
 
 export const userDiarySchema = baseSchema.extend({
-  sort_by: z.enum(["monthly", "yearly"]).default("monthly")
+  sort_by: z.enum(["monthly", "yearly"]).default("monthly"),
 })
 
 export const userReviewsSchema = baseSchema.extend({
-  sort_by: z.enum(["date", "rating", "likes"]).default("date")
+  sort_by: z.enum(["date", "rating", "likes"]).default("date"),
 })
 
 export const userListsSchema = baseSchema.extend({
-  sort_by: z.enum(["date", "followers", "movies"]).default("date")
+  sort_by: z.enum(["date", "followers", "movies"]).default("date"),
 })

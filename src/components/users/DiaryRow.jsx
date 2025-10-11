@@ -3,23 +3,23 @@ import Poster from "../shared/Poster"
 import { Link } from "react-router"
 
 const DiaryRow = ({ data, group }) => {
-    console.log([data, group])
+  console.log([data, group])
   const date =
     group === "yearly"
       ? formatInTimeZone(new Date(data.group), "UTC", "yyyy")
       : formatInTimeZone(new Date(data.group), "UTC", "MMMM u")
   return (
-    <li
-      key={date}
-      className="flex flex-col items-center justify-start group"
-    >
+    <li key={date} className="flex flex-col items-center justify-start group">
       <p className="my-3 p-1 w-full text-center font-bold text-lg lg:text-xl border-b-1 border-border dark:border-border">
         {date}
       </p>
       <div className="flex flex-wrap w-full items-center justify-start gap-1 lg:gap-5">
         {data.entries.map((movie) => {
           const path = movie.isTv ? "tv" : "movies"
-          const logDate = group === "yearly" ? formatInTimeZone(new Date(movie.date * 1000), "UTC", "MMMM do") :formatInTimeZone(new Date(movie.date * 1000), "UTC", "EEEE do")
+          const logDate =
+            group === "yearly"
+              ? formatInTimeZone(new Date(movie.date * 1000), "UTC", "MMMM do")
+              : formatInTimeZone(new Date(movie.date * 1000), "UTC", "EEEE do")
           return (
             <Link
               key={movie.diaryId}
@@ -31,8 +31,8 @@ const DiaryRow = ({ data, group }) => {
                 {logDate}
               </p>
             </Link>
-        )}
-        )}
+          )
+        })}
       </div>
     </li>
   )

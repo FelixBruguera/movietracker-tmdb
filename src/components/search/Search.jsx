@@ -24,7 +24,10 @@ const Search = ({ renderFn }) => {
   })
   const { setOpen } = useContext(DialogContext)
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-2 lg:w-full">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="flex flex-col gap-2 lg:w-full"
+    >
       <div className="mx-auto w-3/4 lg:w-2/4 flex flex-col items-center gap-1">
         <Input
           type="text"

@@ -38,14 +38,24 @@ const Likes = ({ currentUserLiked, count, onLike, onDislike }) => {
   )
 }
 
-const Review = ({ data, title, avatar, path, color, displayLikes = true, className, likeMutation, dislikeMutation }) => {
+const Review = ({
+  data,
+  title,
+  avatar,
+  path,
+  color,
+  displayLikes = true,
+  className,
+  likeMutation,
+  dislikeMutation,
+}) => {
   const { data: session } = authClient.useSession()
   return (
     <li
       key={data.id}
       className={`border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring flex items-center justify-between transition-colors ${className}`}
     >
-      <ReviewRating rating={data.rating} color={color}/>
+      <ReviewRating rating={data.rating} color={color} />
       <div
         className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-center"}`}
       >
@@ -55,7 +65,7 @@ const Review = ({ data, title, avatar, path, color, displayLikes = true, classNa
               to={path}
               className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
             >
-              {avatar && <Avatar src={avatar} /> }
+              {avatar && <Avatar src={avatar} />}
               {title}
             </Link>
             <p className="text-xs text-muted-foreground whitespace-nowrap">
@@ -67,7 +77,7 @@ const Review = ({ data, title, avatar, path, color, displayLikes = true, classNa
           </p>
         </div>
         <div className="flex justify-end gap-2 items-start w-2/10 lg:w-1/10">
-          {(session && displayLikes) && (
+          {session && displayLikes && (
             <Likes
               currentUserLiked={data.currentUserLiked}
               count={data.likes}

@@ -7,7 +7,7 @@ import people from "./people"
 import tv from "./tv"
 import users from "./users"
 import search from "./search"
-import reviews from "./reviews"
+import reviews from "./reviews/index"
 import lists from "./lists"
 import diary from "./diary"
 

@@ -18,11 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import CheckboxWrapper from "../shared/CheckboxWrapper"
 import NumberField from "../shared/NumberField"
 import TriggerWrap from "../shared/TriggerWrap"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover"
 import { toast } from "sonner"
 import moviesSchema from "../../utils/moviesSchema"
 import KeywordSearch from "./KeywordSearch"

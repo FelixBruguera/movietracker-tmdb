@@ -14,15 +14,15 @@ import ReviewsSkeleton from "../reviews/ReviewsSkeleton"
 import { useParams, useSearchParams } from "react-router"
 
 const ProfileReviews = () => {
-    const [searchParams, setSearchParams] = useSearchParams()
-    const { id } = useParams()
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ["userReviews", id, searchParams.toString()],
-        queryFn: () =>
-        axios
-            .get(`/api/users/${id}/reviews`, { params: searchParams})
-            .then((response) => response.data),
-    })
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { id } = useParams()
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["userReviews", id, searchParams.toString()],
+    queryFn: () =>
+      axios
+        .get(`/api/users/${id}/reviews`, { params: searchParams })
+        .then((response) => response.data),
+  })
   if (isLoading) {
     return <ReviewsSkeleton />
   }
@@ -33,8 +33,7 @@ const ProfileReviews = () => {
   const sortOptions = reviewsInfo.sortOptions
   const ratingScale = reviewsInfo.ratingScale
   const sortBy = searchParams.get("sort_by") || "date"
-  const averageRating =
-    data.averageRating && Math.ceil(data.averageRating)
+  const averageRating = data.averageRating && Math.ceil(data.averageRating)
 
   return (
     <div>
