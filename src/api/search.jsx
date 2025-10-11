@@ -3,6 +3,7 @@ import axios from "axios"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
 import { z } from "zod"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/search")
 const hourToSeconds = 3600
@@ -18,8 +19,7 @@ app.get("/", async (c) => {
   query.language = "en-US"
   const validation = searchSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   const queryKey = await createCacheKey(stableStringify(parsedQuery))

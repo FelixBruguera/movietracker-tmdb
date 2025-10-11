@@ -3,6 +3,7 @@ import axios from "axios"
 import moviesSchema from "../utils/moviesSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/movies")
 const hourToSeconds = 3600
@@ -11,12 +12,11 @@ app.get("/", async (c) => {
   const query = c.req.query()
   query.include_adult = false
   query.language = "en-US"
-  console.log(query)
   const validation = moviesSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
+  console.log(query)
   const parsedQuery = validation.data
   const key = await createCacheKey(stableStringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
@@ -102,8 +102,7 @@ app.get("/company/:company", async (c) => {
   const query = c.req.query()
   const validation = moviesSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   parsedQuery.with_companies = c.req.param("company")

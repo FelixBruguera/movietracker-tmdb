@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 import axios from "axios"
 import { peopleSchema } from "../utils/peopleSchema"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/people")
 const hourToSeconds = 3600
@@ -30,8 +31,7 @@ app.get("/:person/credits", async (c) => {
   const query = c.req.query()
   const validation = peopleSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   const person = c.req.param("person")

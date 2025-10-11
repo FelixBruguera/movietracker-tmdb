@@ -3,6 +3,7 @@ import axios from "axios"
 import tvSchema from "../utils/tvSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
+import { formatValidationError } from "./functions"
 
 const app = new Hono().basePath("/api/tv")
 const hourToSeconds = 3600
@@ -13,8 +14,7 @@ app.get("/", async (c) => {
   query.language = "en-US"
   const validation = tvSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   const queryKey = await createCacheKey(stableStringify(parsedQuery))
@@ -99,8 +99,7 @@ app.get("/company/:company", async (c) => {
   const query = c.req.query()
  const validation = tvSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   console.log(c.req)
@@ -117,8 +116,7 @@ app.get("/network/:network", async (c) => {
   const query = c.req.query()
  const validation = tvSchema.safeParse(query)
   if (!validation.success) {
-    const error = JSON.parse(validation.error.message)[0]
-    return c.json({error: `${error.path} validation failed: ${error.message}`}, 400)
+      return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
   console.log(c.req)
