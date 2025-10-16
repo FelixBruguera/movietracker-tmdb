@@ -26,6 +26,8 @@ import {
 import { watchlistQuery } from "../lists/queries"
 import { insertLog } from "../diary/queries"
 import z from "zod"
+import { filterCredits } from "../movies/functions.js"
+import axios from "axios"
 
 const app = new Hono().basePath("/api/reviews")
 
@@ -82,29 +84,42 @@ app.post("/", auth, async (c) => {
     return c.json(formatValidationError(validation), 400)
   }
   const session = c.get("session")
-  const { movie, text, rating, addToDiary } = validation.data
-  console.log(movie)
-  const moviePeople = movie.cast.concat(movie.directors)
+  const { mediaId, text, rating, addToDiary } = validation.data
+  const tmdbId = mediaId.split("_")[1]
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/movie/${tmdbId}?append_to_response=credits`,
+    { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
+  )
+  const movie = response.data
+  const directors = movie.credits.crew.filter(person => person.job === "Director")
+  const moviePeople = movie.credits.cast.concat(directors)
+  const movieData = {      
+    id: mediaId,
+    title: movie.title,
+    releaseDate: new Date(movie.release_date).getFullYear(),
+    poster: movie.poster_path
+  }
   const genres = movie.genres
   const db = drizzle(c.env.DB, { schema: schema })
   const userId = session.user.id
+  console.log(moviePeople)
   const queries = [
-    insertMedia(db, movie, false),
+    insertMedia(db, movieData),
     ...moviePeople.map((person) => insertPerson(db, person)),
     ...moviePeople.map((person) =>
       insertPersonMedia({
         db: db,
         personId: person.id,
-        mediaId: movie.id,
+        mediaId: mediaId,
         isDirector: person.job === "Director",
       }),
     ),
-    ...genres.map((genre) => insertGenreMedia(db, genre.id, movie.id)),
-    watchlistQuery(db, session.user.id, movie.id),
-    insertReview(db, text, rating, userId, movie.id),
+    ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
+    watchlistQuery(db, session.user.id, mediaId),
+    insertReview(db, text, rating, userId, mediaId),
   ]
   if (addToDiary) {
-    queries.push(insertLog(db, userId, movie.id, new Date()))
+    queries.push(insertLog(db, userId, mediaId, new Date()))
   }
   const result = await db.batch(queries)
   if (result[0].success) {
@@ -121,38 +136,50 @@ app.post("/tv", auth, async (c) => {
     return c.json(formatValidationError(validation), 400)
   }
   const session = c.get("session")
-  const { movie: show, text, rating, addToDiary } = validation.data
-  const cast = show.cast
+  const { mediaId, text, rating, addToDiary } = validation.data
+  const tmdbId = mediaId.split("_")[1]
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/tv/${tmdbId}?append_to_response=credits`,
+    { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
+  )
+  const show = response.data
+  const cast = show.credits.cast
   const creators = show.created_by
   const showPeople = cast.concat(creators)
   const genres = show.genres
   const networkData = show.networks
   const db = drizzle(c.env.DB, { schema: schema })
   const userId = session.user.id
+  const showData = {      
+    id: mediaId,
+    title: show.name,
+    releaseDate: new Date(show.first_air_date).getFullYear(),
+    poster: show.poster_path
+  }
   const queries = [
-    insertMedia(db, show, true),
+    insertMedia(db, showData),
     ...showPeople.map((person) => insertPerson(db, person)),
     ...cast.map((person) =>
-      insertPersonMedia({ db: db, personId: person.id, mediaId: show.id }),
+      insertPersonMedia({ db: db, personId: person.id, mediaId: mediaId }),
     ),
     ...networkData.map((network) => insertNetwork(db, network)),
     ...networkData.map((network) =>
-      insertNetworkMedia(db, network.id, show.id),
+      insertNetworkMedia(db, network.id, mediaId),
     ),
     ...creators.map((person) =>
       insertPersonMedia({
         db: db,
         personId: person.id,
-        mediaId: show.id,
+        mediaId: mediaId,
         isCreator: true,
       }),
     ),
-    ...genres.map((genre) => insertGenreMedia(db, genre.id, show.id)),
-    watchlistQuery(db, session.user.id, show.id),
-    insertReview(db, text, rating, userId, show.id),
+    ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
+    watchlistQuery(db, session.user.id, mediaId),
+    insertReview(db, text, rating, userId, mediaId),
   ]
   if (addToDiary) {
-    queries.push(insertLog(db, userId, show.id, new Date()))
+    queries.push(insertLog(db, userId, mediaId, new Date()))
   }
   const result = await db.batch(queries)
   if (result[0].success) {
@@ -164,13 +191,7 @@ app.post("/tv", auth, async (c) => {
 })
 
 app.patch("/:id", auth, async (c) => {
-  const validation = newReviewSchema
-    .extend({
-      movie: z.object({
-        id: z.number().max(9999999999),
-      }),
-    })
-    .safeParse(await c.req.json())
+  const validation = newReviewSchema.safeParse(await c.req.json())
   if (!validation.success) {
     return c.json(formatValidationError(validation), 400)
   }

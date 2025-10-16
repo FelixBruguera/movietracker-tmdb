@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import PaginationWrap from "../shared/PaginationWrap.jsx"
-import { useSearchParams } from "react-router"
+import { useLocation, useSearchParams } from "react-router"
 import Review from "./Review.jsx"
 import SortOrderToggle from "../shared/SortOrderToggle.jsx"
 import SelectSortBy from "../shared/SelectSortBy.jsx"
@@ -18,19 +18,21 @@ import { toast } from "sonner"
 export default function Reviews({ movie }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data: session } = authClient.useSession()
+  const location = useLocation()
   const queryClient = useQueryClient()
   const currentUser = session?.user
+  const mediaId = location.pathname.includes("tv") ? `tv_${movie.id}` : `movies_${movie.id}`
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["reviews", movie.id, searchParams.toString(), currentUser?.id],
+    queryKey: ["reviews", mediaId, searchParams.toString(), currentUser?.id],
     queryFn: () =>
       axios
-        .get(`/api/reviews/${movie.id}`, { params: searchParams })
+        .get(`/api/reviews/${mediaId}`, { params: searchParams })
         .then((response) => response.data),
   })
   const likeMutation = useMutation({
     mutationFn: (id) => axios.post(`/api/reviews/like/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reviews", movie.id] })
+      queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] })
       toast("Like added")
     },
     onError: (error) =>
@@ -39,7 +41,7 @@ export default function Reviews({ movie }) {
   const dislikeMutation = useMutation({
     mutationFn: (id) => axios.delete(`/api/reviews/like/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reviews", movie.id] })
+      queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] })
       toast("Like removed")
     },
     onError: (error) =>

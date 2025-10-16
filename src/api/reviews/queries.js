@@ -79,7 +79,7 @@ export function getUserReview(db, mediaId, userId) {
     .where(and(eq(reviews.mediaId, mediaId), eq(reviews.userId, userId)))
 }
 
-export function insertMedia(db, mediaData, isTv) {
+export function insertMedia(db, mediaData) {
   return db
     .insert(media)
     .values({
@@ -87,7 +87,6 @@ export function insertMedia(db, mediaData, isTv) {
       title: mediaData.title,
       poster: mediaData.poster,
       releaseDate: mediaData.releaseDate,
-      isTv: isTv,
     })
     .onConflictDoNothing()
 }

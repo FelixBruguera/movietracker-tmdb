@@ -15,7 +15,7 @@ test.describe("as a logged in user", () => {
   test.describe("movie reviews", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole('button', { name: 'test' })).toBeVisible()
       await page.goto("/movies/5")
     })
     test("Creating a review", async ({ page }) => {
@@ -66,6 +66,7 @@ test.describe("as a logged in user", () => {
       await page.getByRole("button", { name: "Close" }).click()
       await page.getByLabel("Manage your logs").click()
       await expect(page.getByRole("listitem")).toHaveCount(1)
+      await expect(page.getByText("No logs")).not.toBeVisible()
     })
     test("Deleting log created with the review form", async ({ page }) => {
       await page.getByLabel("Manage your logs").click()
@@ -83,7 +84,7 @@ test.describe("as a logged in user", () => {
   test.describe("tv reviews", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole('button', { name: 'test' })).toBeVisible()
       await page.goto("/tv/5")
     })
     test("Creating a review", async ({ page }) => {
@@ -105,7 +106,7 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review updated")).toBeVisible()
       await expect(page.getByText("Not that great")).toHaveCount(2)
     })
-    test("Deleting a review", async ({ page }) => {
+    test("Deleting a liked review", async ({ page }) => {
       await page.getByLabel("Like").click()
       await page.getByLabel("Add or manage your review").click()
       await page.getByLabel("Delete your review").click()

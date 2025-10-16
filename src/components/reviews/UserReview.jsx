@@ -25,7 +25,7 @@ const UserReviewButton = (props) => {
   )
 }
 
-const UserReview = ({ movieId, data, color }) => {
+const UserReview = ({ mediaId, data, color }) => {
   const { data: session } = authClient.useSession()
   const currentUser = session.user
   const [isEditing, setIsEditing] = useState(false)
@@ -35,11 +35,11 @@ const UserReview = ({ movieId, data, color }) => {
     mutationFn: () => axios.delete(`/api/reviews/${data.id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reviews", movieId, searchParams.toString(), currentUser.id],
+        queryKey: ["reviews", mediaId, searchParams.toString(), currentUser.id],
         exact: true,
       })
       queryClient.resetQueries({
-        queryKey: ["user_review", movieId],
+        queryKey: ["user_review", mediaId],
       })
       return toast("Review deleted")
     },
@@ -51,17 +51,20 @@ const UserReview = ({ movieId, data, color }) => {
     onSuccess: (response) => {
       const newReview = response.data
       queryClient.invalidateQueries({
-        queryKey: ["reviews", movieId, searchParams.toString(), currentUser.id],
+        queryKey: ["reviews", mediaId, searchParams.toString(), currentUser.id],
         exact: true,
       })
-      queryClient.setQueryData(["user_review", movieId], (oldData) => [
+      queryClient.setQueryData(["user_review", mediaId], (oldData) => [
         { ...oldData[0], text: newReview.text, rating: newReview.rating },
       ])
-      queryClient.invalidateQueries({ queryKey: ["diary", movieId] })
+      queryClient.invalidateQueries({ queryKey: ["diary", mediaId] })
       setIsEditing(false)
       return toast("Review updated")
     },
-    onError: (error) => toast(error.response.statusText),
+    onError: (error) => {
+      const message = error.response.data.error || error.response.statusText
+      return toast(message)
+    },
   })
   return (
     <div className="flex flex-col gap-2 my-1">
@@ -87,7 +90,7 @@ const UserReview = ({ movieId, data, color }) => {
       {isEditing ? (
         <ReviewForm
           previousReview={data}
-          movie={{ id: movieId }}
+          mediaId={mediaId}
           mutation={updateMutation}
         />
       ) : (

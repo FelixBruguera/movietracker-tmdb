@@ -116,7 +116,7 @@ const Media = ({ isTv }) => {
                     Icon={Star}
                     contentClass="min-w-1/3"
                   >
-                    <ReviewDialog movie={movie} isTv={isTv} />
+                    <ReviewDialog movie={movie} />
                   </DialogWrapper>
                   <DialogWrapper
                     title={`${title} in your lists`}
@@ -124,7 +124,7 @@ const Media = ({ isTv }) => {
                     Icon={List}
                     contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
                   >
-                    <ListMovieDialog movie={movie} isTv={isTv} />
+                    <ListMovieDialog movie={movie} />
                   </DialogWrapper>
                 </>
               )}
