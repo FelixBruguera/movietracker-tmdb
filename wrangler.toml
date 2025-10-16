@@ -10,6 +10,6 @@ not_found_handling = "single-page-application"
 
 [[ d1_databases ]]
 binding = "DB"
-database_name = "movietracker"
-database_id = "8e4c24eb-3c24-4da6-b630-958be192ec45"
+database_name = "movietracker2"
+database_id = "4053cb2b-5211-477c-8354-c4265e2bcb0c"
 migrations_dir = "drizzle"

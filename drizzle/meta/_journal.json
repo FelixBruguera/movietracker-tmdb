@@ -204,6 +204,13 @@
       "when": 1758317177187,
       "tag": "0028_thick_lester",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1760539512514,
+      "tag": "0029_productive_gambit",
+      "breakpoints": true
     }
   ]
 }

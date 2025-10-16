@@ -16,7 +16,7 @@ export const personSchema = z.object({
 })
 
 export const mediaSchema = z.object({
-  id: z.number().max(9999999999),
+  id: z.string().max(20),
   title: z.string().max(200),
   releaseDate: z.number().max(9999),
   poster: z.string().max(400),

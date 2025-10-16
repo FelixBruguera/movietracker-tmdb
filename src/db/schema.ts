@@ -93,11 +93,10 @@ export const searchesRelations = relations(searches, ({ one }) => ({
 }))
 
 export const media = sqliteTable("media", {
-  id: int().primaryKey(),
+  id: text().primaryKey(),
   title: text().notNull(),
   poster: text().notNull(),
   releaseDate: integer("release_date"),
-  isTv: integer("is_tv", { mode: "boolean"}),
   createdAt: integer("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`)
 })
 export const mediaRelations = relations(media, ({ many }) => ({
@@ -129,7 +128,7 @@ export const genresRelations = relations(genres, ({ many }) => ({
 
 export const genresToMedia = sqliteTable("genres_media", {
   genreId: integer('genre_id').notNull().references(() => genres.id),
-  mediaId: integer('media_id').notNull().references(() => media.id),
+  mediaId: text('media_id').notNull().references(() => media.id),
 }, (t) => [unique().on(t.genreId, t.mediaId), index("genres_media_media_id").on(t.mediaId), index("genres_media_genre_id").on(t.genreId)])
 
 export const genresToMediaRelations = relations(genresToMedia, ({ one }) => ({
@@ -145,7 +144,7 @@ export const genresToMediaRelations = relations(genresToMedia, ({ one }) => ({
 
 export const peopleToMedia = sqliteTable("people_media", {
   personId: integer('person_id').notNull().references(() => people.id),
-  mediaId: integer('media_id').notNull().references(() => media.id),
+  mediaId: text('media_id').notNull().references(() => media.id),
   isDirector: integer("is_director", {mode: "boolean"} ).notNull(),
   isCreator: integer("is_creator", {mode: "boolean"} ).notNull()
 }, (t) => [unique().on(t.mediaId, t.personId, t.isDirector, t.isCreator), index("people_media_media_id").on(t.mediaId), index("people_media_person_id").on(t.personId)])
@@ -169,7 +168,7 @@ export const reviews = sqliteTable("reviews", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  mediaId: integer("media_id")
+  mediaId: text("media_id")
     .notNull()
     .references(() => media.id, { onDelete: "cascade" }),
 }, (t) => [unique().on(t.userId, t.mediaId), index("reviews_media_id").on(t.mediaId), index("reviews_user_id").on(t.userId)])
@@ -213,7 +212,7 @@ export const networksRelations = relations(networks, ({ many }) => ({
 
 export const networksToMedia = sqliteTable("networks_media", {
   networkId: integer('network_id').notNull().references(() => networks.id),
-  mediaId: integer('media_id').notNull().references(() => media.id),
+  mediaId: text('media_id').notNull().references(() => media.id),
 }, (t) => [unique().on(t.networkId, t.mediaId), index("networks_media_media_id").on(t.mediaId), index("networks_media_network_id").on(t.networkId)])
 
 export const networksToMediaRelations = relations(networksToMedia, ({ one }) => ({
@@ -250,7 +249,7 @@ export const listsRelations = relations(lists, ({ one, many }) => ({
 
 export const mediaToLists = sqliteTable("media_lists", {
   listId: text('list_id').notNull().references(() => lists.id,  { onDelete: "cascade" }),
-  mediaId: integer('media_id').notNull().references(() => media.id,  { onDelete: "cascade" }),
+  mediaId: text('media_id').notNull().references(() => media.id,  { onDelete: "cascade" }),
   createdAt: integer("created_at").notNull().default(sql`(current_timestamp)`)
 }, (t) => [unique().on(t.listId, t.mediaId), index("media_lists_list_id").on(t.listId), index("media_lists_media_id").on(t.mediaId)])
 
@@ -287,7 +286,7 @@ export const diary = sqliteTable("diary", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  mediaId: integer("media_id")
+  mediaId: text("media_id")
     .notNull()
     .references(() => media.id, { onDelete: "cascade" }),
 }, (t) => [
