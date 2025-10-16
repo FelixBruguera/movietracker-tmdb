@@ -1,34 +1,52 @@
-import { describe, test, expect, assert, beforeAll } from "vitest"
+import { describe, test, expect, assert, beforeAll, it } from "vitest"
+import Database from "better-sqlite3"
+import { drizzle } from "drizzle-orm/better-sqlite3"
+import * as schema from "../../src/db/schema"
+import { newLogSchema } from "../../src/utils/diarySchema"
+import { deleteLog, updateLog } from "../../src/api/diary/queries"
 
-describe("the reviews endpoint", async () => {
-  let cookie = null
-  beforeAll(async () => {
-    await fetch("http://localhost:3000/api/auth/sign-in/username", {
-      method: "POST",
-      body: JSON.stringify({ username: "test", password: "123456789" }),
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => (cookie = response.headers.getSetCookie()))
+const sqlite = new Database(
+  ".wrangler/state/v3/d1/miniflare-D1DatabaseObject/1298067f57f93ced47ab7edeef6597f06c319d51a9c7266417d3fa0df0acf884.sqlite",
+)
+const db = drizzle(sqlite, { schema })
+
+describe("the newReview validation", () => {
+  const mockMovie = {
+    id: 123,
+    title: "mockMovie",
+    releaseDate: 1965,
+    poster: "path/to/poster",
+    cast: [{ id: 1, name: "actor", profile_path: "path" }],
+    directors: [{ id: 1, name: "Director", profile_path: "path" }],
+    genres: [{ id: 1 }],
+  }
+  it("doesn't accept invalid dates", () => {
+    const result = newLogSchema.safeParse({ date: "20155-10-15", movie: mockMovie})
+    expect(result.success).toBe(false)
+    expect(result.error.issues[0].path).toEqual(["date"])
+    expect(result.error.issues[0].code).toBe("invalid_format")
   })
-  describe("with invalid requests", () => {
-    test("it only allows the creator of a log to delete it", async () => {
-      const response = await fetch("http://localhost:3000/api/diary/20", {
-        method: "DELETE",
-        headers: { Cookie: cookie, "Content-Type": "application/json" },
-      })
-      expect(response.status).toBe(404)
-      //   const userAfter = await fetch(
-      //     "http://localhost:3000/api/users/59b99dc7cfa9a34dcd7885dd/reviews",
-      //   ).then((data) => data.json())
-      //   expect(userAfter[0].info.totalReviews).toEqual(1)
-      //   expect(userAfter[0].reviews).toHaveLength(1)
-    })
-    test("it only allows the creator of a log to update it", async () => {
-      const response = await fetch("http://localhost:3000/api/diary/20", {
-        method: "PATCH",
-        body: JSON.stringify({ date: "2005-01-01", movie: { id: 247043 } }),
-        headers: { Cookie: cookie, "Content-Type": "application/json" },
-      })
-      expect(response.status).toBe(404)
-    })
+})
+
+describe("The updateLog query", () => {
+  it("doesn't allow to update another user's log", async () => {
+    const result = await updateLog(
+        db,
+        new Date(),
+        3,
+        "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS",
+      )
+    expect(result).toEqual([])
+  })
+})
+
+describe("The deleteLog query", () => {
+  it("doesn't allow to delete another user's log", async () => {
+    const result = await deleteLog(
+        db,
+        4,
+        "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS",
+      )
+    expect(result.changes).toBe(0)
   })
 })

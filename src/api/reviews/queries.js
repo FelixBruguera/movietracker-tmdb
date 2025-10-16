@@ -86,7 +86,7 @@ export function insertMedia(db, mediaData, isTv) {
       id: mediaData.id,
       title: mediaData.title,
       poster: mediaData.poster,
-      releaseDate: new Date(mediaData.releaseDate),
+      releaseDate: mediaData.releaseDate,
       isTv: isTv,
     })
     .onConflictDoNothing()

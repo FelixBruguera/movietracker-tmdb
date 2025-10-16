@@ -87,7 +87,7 @@ export const searches = sqliteTable("user_search", {
 
 export const searchesRelations = relations(searches, ({ one }) => ({
   user: one(user, {
-    fields: [searches.userId], 
+    fields: [searches.userId],
     references: [user.id]
   })
 }))
@@ -96,7 +96,7 @@ export const media = sqliteTable("media", {
   id: int().primaryKey(),
   title: text().notNull(),
   poster: text().notNull(),
-  releaseDate: integer("release_date", { mode: "timestamp" }),
+  releaseDate: integer("release_date"),
   isTv: integer("is_tv", { mode: "boolean"}),
   createdAt: integer("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`)
 })
@@ -176,11 +176,11 @@ export const reviews = sqliteTable("reviews", {
 
 export const reviewsRelations = relations(reviews, ({ one }) => ({
   media: one(media, {
-    fields: [reviews.mediaId], 
+    fields: [reviews.mediaId],
     references: [media.id]
   }),
   user: one(user, {
-    fields: [reviews.userId], 
+    fields: [reviews.userId],
     references: [user.id]
   })
 }))
@@ -243,7 +243,7 @@ export const listsRelations = relations(lists, ({ one, many }) => ({
   media: many(media),
   followers: many(listFollowers),
   user: one(user, {
-    fields: [lists.userId], 
+    fields: [lists.userId],
     references: [user.id]
   })
 }))
@@ -291,7 +291,7 @@ export const diary = sqliteTable("diary", {
     .notNull()
     .references(() => media.id, { onDelete: "cascade" }),
 }, (t) => [
-  index("diary_media_id").on(t.mediaId), 
+  index("diary_media_id").on(t.mediaId),
   index("diary_user_id").on(t.userId),
   index("diary_yearly_idx").on(sql`strftime('%Y', date)`),
   index("diary_monthly_idx").on(sql`strftime('%Y-%m', date)`)
@@ -307,6 +307,3 @@ export const diaryRelations = relations(diary, ({ one }) => ({
     references: [media.id],
   }),
 }))
-
-
-

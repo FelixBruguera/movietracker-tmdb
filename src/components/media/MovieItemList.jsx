@@ -16,7 +16,7 @@ const MovieItemList = ({ path, title, items }) => {
         {items.length > 0 ? (
           items.map((item) => (
             <PersonLink
-              key={item.id}
+              key={item.credit_id}
               name={item.name}
               id={item.id}
               image={item.profile_path}

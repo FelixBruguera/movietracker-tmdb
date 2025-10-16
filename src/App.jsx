@@ -18,6 +18,7 @@ import ProfileHeader from "./components/users/ProfileHeader"
 import ProfileReviews from "./components/users/ProfileReviews"
 import ProfileLists from "./components/users/ProfileLists"
 import MobileMenu from "./components/shared/MobileMenu"
+import Stats from "./components/users/stats/Stats"
 
 const App = () => {
   const pathname = useLocation()
@@ -56,6 +57,7 @@ const App = () => {
           <Route index={true} element={<ProfileReviews />} />
           <Route path="diary" element={<Diary />} />
           <Route path="lists" element={<ProfileLists />} />
+          <Route path="stats" element={<Stats />} />
         </Route>
       </Routes>
       <MobileMenu />

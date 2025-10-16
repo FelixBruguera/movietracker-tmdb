@@ -4,7 +4,7 @@ import { count } from "drizzle-orm"
 import * as schema from "../../db/schema"
 import { HTTPException } from "hono/http-exception"
 import auth from "../middleware/auth"
-import { getAuth } from "@lib/auth.server"
+import { getAuth } from "./lib/auth.server.ts"
 import { reviews, likesToReviews } from "../../db/schema"
 import { newReviewSchema, reviewsSchema } from "../../utils/reviewsSchema"
 import { formatValidationError, getSort } from "../functions"
@@ -104,7 +104,7 @@ app.post("/", auth, async (c) => {
     insertReview(db, text, rating, userId, movie.id),
   ]
   if (addToDiary) {
-    queries.push(insertLog(db, userId, movie.id))
+    queries.push(insertLog(db, userId, movie.id, new Date()))
   }
   const result = await db.batch(queries)
   if (result[0].success) {
@@ -152,7 +152,7 @@ app.post("/tv", auth, async (c) => {
     insertReview(db, text, rating, userId, show.id),
   ]
   if (addToDiary) {
-    queries.push(insertLog(db, userId, show.id))
+    queries.push(insertLog(db, userId, show.id, new Date()))
   }
   const result = await db.batch(queries)
   if (result[0].success) {
@@ -181,7 +181,7 @@ app.patch("/:id", auth, async (c) => {
   const userId = session.user.id
   const queries = [updateReview(db, text, rating, id, userId)]
   if (addToDiary) {
-    queries.push(insertLog(db, userId, movie.id))
+    queries.push(insertLog(db, userId, movie.id, new Date()))
   }
   const result = await db.batch(queries)
   console.log(result)

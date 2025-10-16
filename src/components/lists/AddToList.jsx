@@ -10,11 +10,12 @@ import SearchItemWrap from "../search/SearchItemWrap.jsx"
 
 const ListSearchItem = ({ itemData, mutation }) => {
   const name = itemData.title || itemData.name
+  const mediaDate = itemData.release_date || itemData.first_air_date
   const mediaData = {
     id: itemData.id,
     title: itemData.title || itemData.name,
     poster: itemData.poster_path,
-    releaseDate: itemData.release_date || itemData.first_air_date,
+    releaseDate: new Date(mediaDate).getFullYear(),
     isTv: itemData.media_type === "tv",
   }
   return (

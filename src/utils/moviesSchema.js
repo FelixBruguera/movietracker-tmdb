@@ -3,28 +3,10 @@ import { baseSchema } from "./baseSchema"
 
 const moviesSchema = baseSchema
   .extend({
-    query: z.string().max(100).optional(),
     with_cast: z.string().max(50).optional(),
     with_people: z.string().max(20).optional(),
-    with_genres: z
-      .union([
-        z.array(z.string()).max(50),
-        z
-          .string()
-          .max(80)
-          .transform((genres) => genres?.split(",").join("|")),
-      ])
-      .optional(),
-    with_watch_providers: z
-      .union([
-        z.array(z.number()).max(50),
-        z
-          .string()
-          .max(150)
-          .transform((providers) => providers?.split(",")),
-      ])
-      .transform((providers) => providers.join("|"))
-      .optional(),
+    with_genres: z.string().max(80).optional(),
+    with_watch_providers: z.string().max(150).optional(),
     watch_region: z.string().max(2).optional(),
     with_watch_monetization_types: z
       .literal("flatrate|rent|buy|ads|free")
@@ -41,11 +23,11 @@ const moviesSchema = baseSchema
         keywords.length > 0
           ? JSON.parse(decodeURIComponent(keywords))
               .map((obj) => obj.id)
-              .join("|")
+              .join(",")
           : keywords,
       )
       .default(""),
-    "vote_count.gte": z.coerce.number().min(1).optional(),
+    "vote_count.gte": z.coerce.number().min(1).max(999999).optional(),
     "vote_average.gte": z.coerce.number().min(1).max(10).default(1),
     "vote_average.lte": z.coerce.number().min(1).max(10).default(10),
     "with_runtime.gte": z.coerce.number().min(1).max(1256).optional(),

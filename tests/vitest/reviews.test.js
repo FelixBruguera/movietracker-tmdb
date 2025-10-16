@@ -33,7 +33,7 @@ describe("The new review validation", () => {
   const mockMovie = {
     id: 123,
     title: "mockMovie",
-    releaseDate: "1965-10-10",
+    releaseDate: 1965,
     poster: "path/to/poster",
     cast: [{ id: 1, name: "actor", profile_path: "path" }],
     directors: [{ id: 1, name: "Director", profile_path: "path" }],

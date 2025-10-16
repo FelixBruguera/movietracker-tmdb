@@ -34,20 +34,28 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
   const maxYear = new Date().getFullYear()
   const genres = filtersData.genres
   const genreIds = useMemo(() => genres.map((genre) => genre.id), [genres])
+  const searchParamsGenres = searchParams.get("with_genres")
+  const genresAndOrInitialValue = searchParamsGenres?.includes(",")
+    ? "and"
+    : "or"
+  const initialGenres = searchParamsGenres
+    ? genresAndOrInitialValue === "and"
+      ? searchParamsGenres.split(",")
+      : searchParamsGenres.split("|")
+    : genreIds
   const initialServices = searchParams.get("with_watch_providers")
     ? new Set(
         searchParams
           .get("with_watch_providers")
-          .split(",")
+          .split("|")
           .map((item) => parseInt(item)),
       )
     : new Set()
   const initialKeywords = searchParams.get("with_keywords")
     ? JSON.parse(decodeURIComponent(searchParams.get("with_keywords")))
     : []
-  const [selectedGenres, setSelectedGenres] = useState(
-    searchParams.get("with_genres")?.split(",") || genreIds,
-  )
+  const [selectedGenres, setSelectedGenres] = useState(initialGenres)
+  const [genresAndOr, setGenresAndOr] = useState(genresAndOrInitialValue)
   const [selectedServices, setSelectedServices] = useState(initialServices)
   const isInitialMount = useRef(true)
   useEffect(() => {
@@ -79,9 +87,12 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
             console.log(data)
-            data.with_genres = selectedGenres
+            data.with_genres =
+              genresAndOr === "and"
+                ? selectedGenres.join(",")
+                : selectedGenres.join("|")
             data.watch_region = region
-            data.with_watch_providers = [...selectedServices]
+            data.with_watch_providers = [...selectedServices].join("|")
             data.with_keywords = encodeURIComponent(
               JSON.stringify(selectedKeywords),
             )
@@ -105,6 +116,8 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               items={genres}
               selected={selectedGenres}
               setSelected={setSelectedGenres}
+              andOr={genresAndOr}
+              setAndOr={setGenresAndOr}
               selectAll={() => setSelectedGenres(genreIds)}
             />
           </FiltersField>

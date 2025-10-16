@@ -18,12 +18,13 @@ const ReviewForm = ({ previousReview, movie, mutation }) => {
   const [rating, setRating] = useState(previousRating || 1)
   const [createLog, setCreateLog] = useState(false)
   const ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const mediaReleaseDate = movie.release_date || movie.first_air_date
   const movieData = previousReview
     ? { id: movie.id }
     : {
         id: movie.id,
         title: movie.title || movie.name,
-        releaseDate: movie.release_date || movie.first_air_date,
+        releaseDate: new Date(mediaReleaseDate).getFullYear(),
         poster: movie.poster_path,
         cast: movie.credits.cast,
         directors: movie.credits.directors,

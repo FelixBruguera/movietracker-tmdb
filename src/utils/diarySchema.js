@@ -1,9 +1,7 @@
 import { z } from "zod"
+import { mediaSchema } from "./baseSchema"
 
 export const newLogSchema = z.object({
-  date: z
-    .string()
-    .max(10)
-    .transform((str) => new Date(str)),
-  movie: z.json(),
+  date: z.iso.date().transform((str) => new Date(str)),
+  movie: mediaSchema,
 })

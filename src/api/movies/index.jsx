@@ -1,9 +1,10 @@
 import { Hono } from "hono"
 import axios from "axios"
-import moviesSchema from "../utils/moviesSchema"
-import { createCacheKey } from "../utils/createCacheKey"
+import moviesSchema from "../../utils/moviesSchema"
+import { createCacheKey } from "../../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
-import { formatValidationError } from "./functions"
+import { filterCredits } from "./functions"
+import { formatValidationError } from "../functions"
 
 const app = new Hono().basePath("/api/movies")
 const hourToSeconds = 3600
@@ -43,7 +44,6 @@ app.get("/:id", async (c) => {
   console.log(c.req)
   const id = c.req.param("id")
   const { region } = c.req.query()
-  console.log(id)
   const key = `movies_${id}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {
@@ -59,11 +59,7 @@ app.get("/:id", async (c) => {
       { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
     )
     console.log(response)
-    response.data.credits.cast = response.data.credits.cast.slice(0, 20)
-    response.data.credits.directors = response.data.credits.crew.filter(
-      (person) => person.job === "Director",
-    )
-    response.data.credits.crew = response.data.credits.crew.slice(0, 10)
+    response.data.credits = filterCredits(response.data.credits)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
       expirationTtl: hourToSeconds * 24,
     })

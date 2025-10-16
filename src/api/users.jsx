@@ -38,8 +38,10 @@ import {
 } from "../utils/usersSchema"
 import { alias } from "drizzle-orm/sqlite-core"
 import { getAuth } from "../../lib/auth.server"
+import stats from "./users/stats/index"
 
 const app = new Hono().basePath("/api/users")
+app.route("/:id", stats)
 
 app.get("/", async (c) => {
   const db = drizzle(c.env.DB, { schema: schema })

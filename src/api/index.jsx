@@ -2,14 +2,14 @@ import axios from "axios"
 import { getAuth } from "../../lib/auth.server"
 import { Hono } from "hono"
 import { cors } from "hono/cors"
-import movies from "./movies"
-import people from "./people"
+import movies from "./movies/index"
+import people from "./people/index"
 import tv from "./tv"
 import users from "./users"
 import search from "./search"
 import reviews from "./reviews/index"
 import lists from "./lists"
-import diary from "./diary"
+import diary from "./diary/index"
 
 const app = new Hono()
 const hourToSeconds = 3600

@@ -11,11 +11,12 @@ const ListMovieDialog = ({ movie, isTv = false }) => {
   const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const currentUser = session.user
+  const movieDate = movie.release_date || movie.first_air_date
   const movieData = {
     id: movie.id,
     title: movie.title || movie.name,
     poster: movie.poster_path,
-    releaseDate: movie.release_date || movie.first_air_date,
+    releaseDate: new Date(movieDate).getFullYear(),
     isTv: isTv,
   }
   const {

@@ -26,12 +26,13 @@ const DiaryLogForm = ({ movie, isTv }) => {
       className="flex flex-col gap-10 w-full"
       onSubmit={(e) => {
         e.preventDefault()
+        const movieDate = movie.release_date || movie.first_air_date
         mutation.mutate({
           date: e.target.date.value,
           movie: {
             id: movie.id,
             title: movie.title || movie.name,
-            releaseDate: movie.release_date || movie.first_air_date,
+            releaseDate: new Date(movieDate).getFullYear(),
             poster: movie.poster_path,
             cast: movie.credits.cast,
             directors: movie.credits.directors,

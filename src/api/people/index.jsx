@@ -1,7 +1,8 @@
 import { Hono } from "hono"
 import axios from "axios"
-import { peopleSchema } from "../utils/peopleSchema"
-import { formatValidationError } from "./functions"
+import { peopleSchema } from "../../utils/peopleSchema"
+import { formatValidationError } from "../functions"
+import { filterByDepartment, paginate, sortBy } from "./functions"
 
 const app = new Hono().basePath("/api/people")
 const hourToSeconds = 3600
@@ -18,7 +19,6 @@ app.get("/:person", async (c) => {
       `https://api.themoviedb.org/3/person/${person}`,
       { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
     )
-    console.log(response.request)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response.data), {
       expirationTtl: hourToSeconds * 168, // 7 days,
     })
@@ -36,7 +36,7 @@ app.get("/:person/credits", async (c) => {
   const parsedQuery = validation.data
   const person = c.req.param("person")
   const { page, scope, department, sort_by } = parsedQuery
-  console.log(c.req)
+  const itemsPerPage = 20
   const key = `people_credits_${person}_${scope}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   let response = null
@@ -51,40 +51,16 @@ app.get("/:person/credits", async (c) => {
       },
     )
     response = request.data
-    console.log(response.request)
     const cacheresult = await c.env.KV.put(key, JSON.stringify(response), {
       expirationTtl: hourToSeconds * 24,
     })
     console.log(cacheresult)
   }
-  console.log(response)
-  if (department === "All") {
-    response = { results: [...response.cast, ...response.crew] }
-  } else if (department === "Acting") {
-    response = { results: response.cast }
-  } else {
-    response = {
-      results: response.crew.filter((movie) => movie.department === department),
-    }
-  }
-  if (sort_by === "Best rated") {
-    response.results = response.results.sort(
-      (a, b) => b.vote_average - a.vote_average,
-    )
-  } else if (sort_by === "Most votes") {
-    response.results = response.results.sort(
-      (a, b) => b.vote_count - a.vote_count,
-    )
-  } else {
-    response.results = response.results.sort((a, b) =>
-      scope === "tv_credits"
-        ? new Date(b.first_credit_air_date) - new Date(a.first_credit_air_date)
-        : new Date(b.release_date) - new Date(a.release_date),
-    )
-  }
+  response.results = filterByDepartment(department, response)
+  response.results = sortBy(sort_by, scope, response.results)
   const totalPages = Math.ceil(response.results.length / 20)
   response = {
-    results: response.results.slice(page * 20 - 20, page * 20),
+    results: paginate(page, itemsPerPage, response.results),
     page: page,
     total_pages: totalPages,
   }

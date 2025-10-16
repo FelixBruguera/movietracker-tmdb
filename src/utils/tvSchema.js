@@ -21,6 +21,7 @@ const tvSchema = moviesSchema
     data["first_air_date.gte"] && data["first_air_date.gte"]
       ? data["first_air_date.gte"] <= data["first_air_date.lte"]
       : true,
+      { error: "Invalid release year range" }
   )
 
 export default tvSchema
