@@ -11,6 +11,7 @@ import {
   user,
 } from "../../db/schema"
 import { alias } from "drizzle-orm/sqlite-core"
+import { chunkInserts } from "./functions"
 
 export function getMediaReviews(
   db,
@@ -91,33 +92,35 @@ export function insertMedia(db, mediaData) {
     .onConflictDoNothing()
 }
 
-export function insertPerson(db, person) {
-  return db
-    .insert(people)
-    .values({
+export function insertPeople(db, peopleToInsert) {
+  const queries = peopleToInsert.map(person => { 
+    return {
       id: person.id,
       name: person.name,
-      profile_path: person.profile_path,
-    })
+      profile_path: person.profile_path
+  }})
+  const chunckedQueries = chunkInserts(queries, 25)
+  return chunckedQueries.map(query =>
+    db.insert(people)
+    .values(query)
     .onConflictDoNothing()
+  )
 }
 
-export function insertPersonMedia({
-  db,
-  personId,
-  mediaId,
-  isDirector = false,
-  isCreator = false,
-}) {
-  return db
-    .insert(peopleToMedia)
-    .values({
-      personId: personId,
+export function insertPeopleMedia(db, peopleToInsert, mediaId) {
+  const queries = peopleToInsert.map(person => {
+    return {
+      personId: person.id,
       mediaId: mediaId,
-      isDirector: isDirector,
-      isCreator: isCreator,
-    })
+      isDirector: person.job === "Director",
+      isCreator: person.job === "Creator"
+    }})
+  const chunckedQueries = chunkInserts(queries, 25)
+  return chunckedQueries.map(query => 
+    db.insert(peopleToMedia)
+    .values(query)
     .onConflictDoNothing()
+  )
 }
 
 export function insertGenreMedia(db, genreId, mediaId) {

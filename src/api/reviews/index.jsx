@@ -17,8 +17,8 @@ import {
   insertMedia,
   insertNetwork,
   insertNetworkMedia,
-  insertPerson,
-  insertPersonMedia,
+  insertPeople,
+  insertPeopleMedia,
   insertReview,
   likeReview,
   updateReview,
@@ -104,15 +104,8 @@ app.post("/", auth, async (c) => {
   const userId = session.user.id
   const queries = [
     insertMedia(db, movieData),
-    ...moviePeople.map((person) => insertPerson(db, person)),
-    ...moviePeople.map((person) =>
-      insertPersonMedia({
-        db: db,
-        personId: person.id,
-        mediaId: mediaId,
-        isDirector: person.job === "Director",
-      }),
-    ),
+    ...insertPeople(db, moviePeople),
+    ...insertPeopleMedia(db, moviePeople, mediaId),
     ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
     watchlistQuery(db, session.user.id, mediaId),
     insertReview(db, text, rating, userId, mediaId),
@@ -143,7 +136,9 @@ app.post("/tv", auth, async (c) => {
   )
   const show = response.data
   const cast = show.credits.cast
-  const creators = show.created_by
+  const creators = show.created_by.map(creator => {
+    return {...creator, job: "Creator"} 
+  })
   const showPeople = cast.concat(creators)
   const genres = show.genres
   const networkData = show.networks
@@ -157,21 +152,11 @@ app.post("/tv", auth, async (c) => {
   }
   const queries = [
     insertMedia(db, showData),
-    ...showPeople.map((person) => insertPerson(db, person)),
-    ...cast.map((person) =>
-      insertPersonMedia({ db: db, personId: person.id, mediaId: mediaId }),
-    ),
+    ...insertPeople(db, showPeople),
+    ...insertPeopleMedia(db, showPeople, mediaId),
     ...networkData.map((network) => insertNetwork(db, network)),
     ...networkData.map((network) =>
       insertNetworkMedia(db, network.id, mediaId),
-    ),
-    ...creators.map((person) =>
-      insertPersonMedia({
-        db: db,
-        personId: person.id,
-        mediaId: mediaId,
-        isCreator: true,
-      }),
     ),
     ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
     watchlistQuery(db, session.user.id, mediaId),

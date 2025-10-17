@@ -5,7 +5,7 @@ import { HTTPException } from "hono/http-exception"
 import auth from "../middleware/auth"
 import { newLogSchema } from "../../utils/diarySchema"
 import { watchlistQuery } from "../lists/queries"
-import { insertGenreMedia, insertMedia, insertNetwork, insertNetworkMedia, insertPerson, insertPersonMedia } from "../reviews/queries"
+import { insertGenreMedia, insertMedia, insertNetwork, insertNetworkMedia, insertPeople, insertPeopleMedia } from "../reviews/queries"
 import { deleteLog, getUserMediaLogs, insertLog, updateLog } from "./queries"
 import { formatValidationError } from "../functions"
 import axios from "axios"
@@ -39,13 +39,8 @@ app.post("/", async (c) => {
   const userId = session.user.id
   const result = await db.batch([
     insertMedia(db, movieData),
-    ...moviePeople.map(person => insertPerson(db, person)),
-    ...moviePeople.map(person => insertPersonMedia({
-        db: db,
-        mediaId: mediaId,
-        personId: person.id,
-        isDirector: person.job === "Director"
-    })),
+    ...insertPeople(db, moviePeople),
+    ...insertPeopleMedia(db, moviePeople, mediaId),
     ...genres.map(genre => insertGenreMedia(db, genre.id, mediaId)),
     watchlistQuery(db, session.user.id, mediaId),
     insertLog(db, userId, mediaId, date)
@@ -72,7 +67,9 @@ app.post("/tv", async (c) => {
   )
   const show = response.data
   const cast = show.credits.cast
-  const creators = show.created_by
+  const creators = show.created_by.map(creator => {
+    return {...creator, job: "Creator"} 
+  })
   const showPeople = cast.concat(creators)
   const genres = show.genres
   const networkData = show.networks
@@ -86,18 +83,8 @@ app.post("/tv", async (c) => {
   }
   const result = await db.batch([
     insertMedia(db, showData),
-    ...showPeople.map(person => insertPerson(db, person)),
-    ...cast.map(person => insertPersonMedia({
-        db: db,
-        mediaId: mediaId,
-        personId: person.id
-    })),
-    ...creators.map(person => insertPersonMedia({
-        db: db,
-        mediaId: mediaId,
-        personId: person.id,
-        isCreator: true
-    })),
+    ...insertPeople(db, showPeople),
+    ...insertPeopleMedia(db, showPeople, mediaId),
     ...genres.map(genre => insertGenreMedia(db, genre.id, mediaId)),
     ...networkData.map(network => insertNetwork(db, network)),
     ...networkData.map(network => insertNetworkMedia(db, network.id, mediaId)),
