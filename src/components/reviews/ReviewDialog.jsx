@@ -9,14 +9,13 @@ import { useLocation, useSearchParams } from "react-router"
 import { authClient } from "../../../lib/auth-client"
 import { toast } from "sonner"
 
-const ReviewDialog = ({ movie }) => {
+const ReviewDialog = ({ mediaId }) => {
   const queryClient = useQueryClient()
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const { data: session } = authClient.useSession()
   const currentUser = session.user
   const path = location.pathname.includes("tv") ? "/tv" : ""
-  const mediaId = location.pathname.includes("tv") ? `tv_${movie.id}`: `movies_${movie.id}`
   const { data, isLoading, isError } = useQuery({
     queryKey: ["user_review", mediaId],
     queryFn: () =>

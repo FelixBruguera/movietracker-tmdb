@@ -102,7 +102,6 @@ app.post("/", auth, async (c) => {
   const genres = movie.genres
   const db = drizzle(c.env.DB, { schema: schema })
   const userId = session.user.id
-  console.log(moviePeople)
   const queries = [
     insertMedia(db, movieData),
     ...moviePeople.map((person) => insertPerson(db, person)),

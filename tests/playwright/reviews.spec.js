@@ -126,6 +126,7 @@ test.describe("as a logged in user", () => {
       await page.getByRole("button", { name: "Close" }).click()
       await page.getByLabel("Manage your logs").click()
       await expect(page.getByRole("listitem")).toHaveCount(1)
+      await expect(page.getByText("No logs")).not.toBeVisible()
     })
     test("Deleting log created with the review form", async ({ page }) => {
       await page.getByLabel("Manage your logs").click()
