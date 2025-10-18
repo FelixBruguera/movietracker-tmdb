@@ -58,10 +58,11 @@ app.get("/:mediaId", async (c) => {
     itemsPerPage,
   )
   const reviewList = result[0]
-  const aggregates = result[1]
+  const aggregates = result[1][0]
   return c.json({
     reviews: reviewList,
     totalReviews: aggregates.totalReviews,
+    totalPages: Math.ceil(aggregates.totalReviews/ itemsPerPage),
     averageRating: aggregates.averageRating,
   })
 })

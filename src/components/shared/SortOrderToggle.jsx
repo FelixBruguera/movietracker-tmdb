@@ -14,9 +14,11 @@ const SortOrderToggle = memo(() => {
       return params
     })
   }
+  const label = isAscending ? "Ascending order" : "Descending order"
   return (
     <Button
-      title={isAscending ? "Ascending order" : "Descending order"}
+      title={label}
+      aria-label={label}
       onClick={() => handleSortOrder()}
       className="bg-muted dark:bg-card border-1 border-border hover:bg-accent dark:hover:bg-accent hover:cursor-pointer group"
     >

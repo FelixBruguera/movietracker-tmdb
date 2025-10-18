@@ -206,3 +206,51 @@ test.describe("as a logged in user", () => {
     })
   })
 })
+
+test.describe("sorting reviews", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/movies/755898")
+  })
+  test("sorting by rating", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", {name: "Rating"}).click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    await expect(firstReview).toContainText("gandalf")
+    await expect(firstReview).toContainText("10")
+  })
+  test("sorting by likes", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", {name: "Likes"}).click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    const secondReview = page.getByLabel("Reviews").getByRole("listitem").nth(1)
+    const thirdReview = page.getByLabel("Reviews").getByRole("listitem").nth(2)
+    await expect(firstReview).toContainText("test")
+    await expect(secondReview).toContainText("samwise")
+    await expect(thirdReview).toContainText("arwen")
+  })
+  test("sorting by date", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", {name: "Date"}).click()
+    await page.getByLabel("Descending order").click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    const secondReview = page.getByLabel("Reviews").getByRole("listitem").nth(1)
+    await expect(firstReview).toContainText("samwise")
+    await expect(firstReview).toContainText("30-05-2008")
+    await expect(secondReview).toContainText("saruman")
+    await expect(secondReview).toContainText("01-05-2019")
+  })
+})
+
+test.describe("pagination", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/movies/755898")
+  })
+  test("going to the next page", async ({ page }) => {
+    await expect(page.getByLabel("Go to previous page")).toBeDisabled()
+    await page.getByLabel("Go to next page").click()
+    const lastReview = page.getByLabel("Reviews").getByRole("listitem").nth(2)
+    await expect(lastReview).toContainText("samwise")
+    await expect(lastReview).toContainText("30-05-2008")
+    await expect(page.getByLabel("Go to next page")).toBeDisabled()
+  })
+})

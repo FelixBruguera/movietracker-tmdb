@@ -53,13 +53,13 @@ const Review = ({
   return (
     <li
       key={data.id}
-      className={`border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring flex items-center justify-between transition-colors ${className}`}
+      className={`border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring flex items-start justify-between transition-colors ${className}`}
     >
       <ReviewRating rating={data.rating} color={color} />
       <div
-        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-center"}`}
+        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-start"}`}
       >
-        <div className="flex flex-col gap-1 w-full px-3">
+        <div className="flex flex-col gap-1 w-full px-3 py-1">
           <div className="flex gap-2 items-center">
             <Link
               to={path}

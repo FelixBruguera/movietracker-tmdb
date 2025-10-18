@@ -80,7 +80,7 @@ export default function Reviews({ movie, mediaId }) {
       </ListHeading>
       {data.reviews?.length > 0 ? (
         <>
-          <ul className="space-y-4">
+          <ul className="space-y-4" aria-label="Reviews">
             {data.reviews.map((review) => (
               <Review
                 key={review.id}
