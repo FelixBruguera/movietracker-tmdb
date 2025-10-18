@@ -126,7 +126,7 @@ const Media = ({ isTv }) => {
                     Icon={List}
                     contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
                   >
-                    <ListMovieDialog movie={movie} />
+                    <ListMovieDialog mediaId={mediaId} />
                   </DialogWrapper>
                 </>
               )}
@@ -200,7 +200,7 @@ const Media = ({ isTv }) => {
           <ActiveTab movie={movie} tab={activeTab} isTv={isTv} />
         </div>
       </div>
-      <Reviews movie={movie} />
+      <Reviews movie={movie} mediaId={mediaId} />
     </div>
   )
 }

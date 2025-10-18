@@ -8,7 +8,7 @@ import tv from "./tv"
 import users from "./users"
 import search from "./search"
 import reviews from "./reviews/index"
-import lists from "./lists"
+import lists from "./lists/index"
 import diary from "./diary/index"
 
 const app = new Hono()

@@ -44,10 +44,20 @@ export default function List() {
         .get(`/api/lists/${id}/media`, { params: searchParams })
         .then((response) => response.data),
   })
+  const isListOwner = data?.user?.id === session?.user?.id
+  const {
+    data: mediaIds,
+  } = useQuery({
+    queryKey: ["list_media", id, "ids"],
+    queryFn: () => axios.get(`/api/lists/${id}/media/ids`).then(response => new Set(response.data)),
+    enabled: isListOwner,
+    staleTime: 60 * 60000,
+    gcTime: 60 * 60000, // 1 hour
+  })
   const mutation = useMutation({
     mutationFn: (mediaId) => axios.delete(`/api/lists/${id}/media/${mediaId}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["list_media", id] })
+      queryClient.invalidateQueries({ queryKey: ["list_media", id] }),
       toast("Succesfully removed")
     },
     onError: (error) => toast(error.response.statusText),
@@ -63,7 +73,6 @@ export default function List() {
     return <ErrorMessage />
   }
   const list = data
-  const user = data.user
   console.log(media)
   const isFollowed = data.currentUserFollows === 1 ? true : false
 
@@ -77,19 +86,19 @@ export default function List() {
             <h1 className="text-2xl lg:text-3xl font-bold">{list.name}</h1>
             <div className="flex gap-2 lg:w-fit">
               {session && <CopyList list={list} />}
-              {session?.user.id === user.id && (
+              {isListOwner && (
                 <>
-                  <AddToList list={list} />
+                  <AddToList list={list} ids={mediaIds} />
                   <UpdateList list={list} />
                   <DeleteList list={list} />
                 </>
               )}
-              {session && session.user.id !== user.id && (
+              {session && !isListOwner && (
                 <FollowList listId={list.id} isFollowed={isFollowed} />
               )}
             </div>
           </div>
-          <ListDetails user={user} list={list} />
+          <ListDetails user={data.user} list={list} />
           <p className="text-base lg:text-lg w-8/10 text-stone-600 dark:text-stone-200 text-justify">
             {list.description}
           </p>
@@ -113,14 +122,15 @@ export default function List() {
       >
         {media.media.length > 0 &&
           media.media.map((movie) =>
-            session?.user.id === user.id ? (
+            isListOwner ? (
               <ListMovieWithContext
+                key={movie.id}
                 listName={list.name}
                 movie={movie}
                 mutation={mutation}
               />
             ) : (
-              <ListMovie movie={movie} />
+              <ListMovie key={movie.id} movie={movie} />
             ),
           )}
       </ul>
