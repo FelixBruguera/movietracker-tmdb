@@ -15,13 +15,12 @@ import ListHeading from "../shared/ListHeading"
 import axios from "axios"
 import { toast } from "sonner"
 
-export default function Reviews({ movie }) {
+export default function Reviews({ movie, mediaId }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data: session } = authClient.useSession()
   const location = useLocation()
   const queryClient = useQueryClient()
   const currentUser = session?.user
-  const mediaId = location.pathname.includes("tv") ? `tv_${movie.id}` : `movies_${movie.id}`
   const { data, isLoading, isError } = useQuery({
     queryKey: ["reviews", mediaId, searchParams.toString(), currentUser?.id],
     queryFn: () =>

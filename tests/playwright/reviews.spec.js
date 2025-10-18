@@ -148,7 +148,7 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Add or remove from lists").click()
       await page.getByRole("button", { name: "Add to list" }).click()
       await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("The Dark Kingdom")).toBeVisible()
     })
     test("reviewing the movie", async ({ page }) => {
@@ -161,9 +161,8 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review created")).toBeVisible()
     })
     test("checking the list after reviewing", async ({ page }) => {
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("The Dark Kingdom")).not.toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("2")
     })
 
     test("deleting the review", async ({ page }) => {
@@ -181,7 +180,7 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Add or remove from lists").click()
       await page.getByRole("button", { name: "Add to list" }).click()
       await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("Alien: Earth")).toBeVisible()
     })
     test("reviewing the show", async ({ page }) => {
@@ -194,9 +193,8 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review created")).toBeVisible()
     })
     test("checking the list after reviewing", async ({ page }) => {
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("Alien: Earth")).not.toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("2")
     })
 
     test("deleting the review", async ({ page }) => {

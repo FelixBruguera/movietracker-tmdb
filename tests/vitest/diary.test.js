@@ -41,3 +41,23 @@ describe("The deleteLog query", () => {
     expect(result.changes).toBe(0)
   })
 })
+describe("the diary endpoint", async () => {
+  let cookie = null
+    await fetch("http://localhost:3000/api/auth/sign-in/username", {
+      method: "POST",
+      body: JSON.stringify({ username: "test", password: "123456789" }),
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => (cookie = response.headers.getSetCookie()))
+  it("returns the correct error when the mediaId is invalid", async () => {
+    const response = await fetch(
+      "http://localhost:3000/api/diary/tv",
+      {
+        method: "POST",
+        body: JSON.stringify({mediaId: "movies_abc", date:"2025-06-06"}),
+        headers: { Cookie: cookie, "Content-Type": "application/json" },
+      },
+    )
+    expect(response.status).toBe(404)
+    expect(await response.text()).toEqual("Invalid mediaId")
+  })
+})

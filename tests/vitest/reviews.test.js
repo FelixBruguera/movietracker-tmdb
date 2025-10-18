@@ -139,7 +139,7 @@ describe("The likeReview query", () => {
     }
     expect(result.code).toBe("SQLITE_CONSTRAINT_UNIQUE")
   })
-  it("doesn't allow to like unexistant reviews", async () => {
+  it("doesn't allow to like unexistent reviews", async () => {
     let result
     try {
       result = await likeReview(db, "ABC", "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS")
@@ -147,5 +147,25 @@ describe("The likeReview query", () => {
       result = e
     }
     expect(result.code).toBe("SQLITE_CONSTRAINT_FOREIGNKEY")
+  })
+})
+describe("the reviews endpoint", async () => {
+  let cookie = null
+    await fetch("http://localhost:3000/api/auth/sign-in/username", {
+      method: "POST",
+      body: JSON.stringify({ username: "test", password: "123456789" }),
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => (cookie = response.headers.getSetCookie()))
+  it("returns the correct error when the mediaId is invalid", async () => {
+    const response = await fetch(
+      "http://localhost:3000/api/reviews",
+      {
+        method: "POST",
+        body: JSON.stringify({mediaId: "movies_abc", text: "testing", rating: "5"}),
+        headers: { Cookie: cookie, "Content-Type": "application/json" },
+      },
+    )
+    expect(response.status).toBe(404)
+    expect(await response.text()).toEqual("Invalid mediaId")
   })
 })
