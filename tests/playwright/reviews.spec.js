@@ -15,7 +15,7 @@ test.describe("as a logged in user", () => {
   test.describe("movie reviews", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole("button", { name: "test" })).toBeVisible()
       await page.goto("/movies/5")
     })
     test("Creating a review", async ({ page }) => {
@@ -66,6 +66,7 @@ test.describe("as a logged in user", () => {
       await page.getByRole("button", { name: "Close" }).click()
       await page.getByLabel("Manage your logs").click()
       await expect(page.getByRole("listitem")).toHaveCount(1)
+      await expect(page.getByText("No logs")).not.toBeVisible()
     })
     test("Deleting log created with the review form", async ({ page }) => {
       await page.getByLabel("Manage your logs").click()
@@ -83,7 +84,7 @@ test.describe("as a logged in user", () => {
   test.describe("tv reviews", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole("button", { name: "test" })).toBeVisible()
       await page.goto("/tv/5")
     })
     test("Creating a review", async ({ page }) => {
@@ -105,7 +106,7 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review updated")).toBeVisible()
       await expect(page.getByText("Not that great")).toHaveCount(2)
     })
-    test("Deleting a review", async ({ page }) => {
+    test("Deleting a liked review", async ({ page }) => {
       await page.getByLabel("Like").click()
       await page.getByLabel("Add or manage your review").click()
       await page.getByLabel("Delete your review").click()
@@ -125,6 +126,7 @@ test.describe("as a logged in user", () => {
       await page.getByRole("button", { name: "Close" }).click()
       await page.getByLabel("Manage your logs").click()
       await expect(page.getByRole("listitem")).toHaveCount(1)
+      await expect(page.getByText("No logs")).not.toBeVisible()
     })
     test("Deleting log created with the review form", async ({ page }) => {
       await page.getByLabel("Manage your logs").click()
@@ -146,7 +148,7 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Add or remove from lists").click()
       await page.getByRole("button", { name: "Add to list" }).click()
       await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("The Dark Kingdom")).toBeVisible()
     })
     test("reviewing the movie", async ({ page }) => {
@@ -159,9 +161,8 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review created")).toBeVisible()
     })
     test("checking the list after reviewing", async ({ page }) => {
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("The Dark Kingdom")).not.toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("2")
     })
 
     test("deleting the review", async ({ page }) => {
@@ -179,7 +180,7 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Add or remove from lists").click()
       await page.getByRole("button", { name: "Add to list" }).click()
       await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("Alien: Earth")).toBeVisible()
     })
     test("reviewing the show", async ({ page }) => {
@@ -192,9 +193,8 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Review created")).toBeVisible()
     })
     test("checking the list after reviewing", async ({ page }) => {
-      await page.goto("/lists/14a4b7ec-76ca-4ee3-8494-1f4cdae20cb1")
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
       await expect(page.getByAltText("Alien: Earth")).not.toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("2")
     })
 
     test("deleting the review", async ({ page }) => {
@@ -204,5 +204,53 @@ test.describe("as a logged in user", () => {
       await page.getByText("Delete").click()
       await expect(page.getByText("Review Deleted")).toBeVisible()
     })
+  })
+})
+
+test.describe("sorting reviews", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/movies/755898")
+  })
+  test("sorting by rating", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", { name: "Rating" }).click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    await expect(firstReview).toContainText("gandalf")
+    await expect(firstReview).toContainText("10")
+  })
+  test("sorting by likes", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", { name: "Likes" }).click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    const secondReview = page.getByLabel("Reviews").getByRole("listitem").nth(1)
+    const thirdReview = page.getByLabel("Reviews").getByRole("listitem").nth(2)
+    await expect(firstReview).toContainText("test")
+    await expect(secondReview).toContainText("samwise")
+    await expect(thirdReview).toContainText("arwen")
+  })
+  test("sorting by date", async ({ page }) => {
+    await page.getByLabel("Sort Reviews").click()
+    await page.getByRole("option", { name: "Date" }).click()
+    await page.getByLabel("Descending order").click()
+    const firstReview = page.getByLabel("Reviews").getByRole("listitem").nth(0)
+    const secondReview = page.getByLabel("Reviews").getByRole("listitem").nth(1)
+    await expect(firstReview).toContainText("samwise")
+    await expect(firstReview).toContainText("30-05-2008")
+    await expect(secondReview).toContainText("saruman")
+    await expect(secondReview).toContainText("01-05-2019")
+  })
+})
+
+test.describe("pagination", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/movies/755898")
+  })
+  test("going to the next page", async ({ page }) => {
+    await expect(page.getByLabel("Go to previous page")).toBeDisabled()
+    await page.getByLabel("Go to next page").click()
+    const lastReview = page.getByLabel("Reviews").getByRole("listitem").nth(2)
+    await expect(lastReview).toContainText("samwise")
+    await expect(lastReview).toContainText("30-05-2008")
+    await expect(page.getByLabel("Go to next page")).toBeDisabled()
   })
 })

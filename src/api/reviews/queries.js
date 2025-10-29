@@ -11,6 +11,7 @@ import {
   user,
 } from "../../db/schema"
 import { alias } from "drizzle-orm/sqlite-core"
+import { chunkInserts } from "./functions"
 
 export function getMediaReviews(
   db,
@@ -21,47 +22,40 @@ export function getMediaReviews(
   itemsPerPage,
 ) {
   const currentUserLike = alias(likesToReviews, "currentUserLike")
-  return db.batch([
-    db
-      .select({
-        id: reviews.id,
-        text: reviews.text,
-        rating: reviews.rating,
-        createdAt: reviews.createdAt,
-        user: {
-          id: reviews.userId,
-          username: user.username,
-          image: user.image,
-        },
-        likes: count(likesToReviews.reviewId),
-        currentUserLiked:
-          sql`case when ${currentUserLike.userId} is not null then true else false end`.as(
-            "currentUserLiked",
-          ),
-      })
-      .from(reviews)
-      .fullJoin(user, eq(reviews.userId, user.id))
-      .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
-      .leftJoin(
-        currentUserLike,
-        and(
-          eq(reviews.id, currentUserLike.reviewId),
-          eq(currentUserLike.userId, userId),
+  return db
+    .select({
+      id: reviews.id,
+      text: reviews.text,
+      rating: reviews.rating,
+      createdAt: reviews.createdAt,
+      user: {
+        id: reviews.userId,
+        username: user.username,
+        image: user.image,
+      },
+      likes: count(likesToReviews.reviewId),
+      currentUserLiked:
+        sql`case when ${currentUserLike.userId} is not null then true else false end`.as(
+          "currentUserLiked",
         ),
-      )
-      .groupBy(reviews.id)
-      .where(eq(reviews.mediaId, mediaId))
-      .orderBy(sort)
-      .offset(offset)
-      .limit(itemsPerPage),
-    db
-      .select({
-        totalReviews: count(reviews.id),
-        averageRating: avg(reviews.rating),
-      })
-      .from(reviews)
-      .where(eq(reviews.mediaId, mediaId)),
-  ])
+      total: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
+      averageRating: sql`CAST(AVG(reviews.rating) OVER() AS FLOAT)`,
+    })
+    .from(reviews)
+    .fullJoin(user, eq(reviews.userId, user.id))
+    .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
+    .leftJoin(
+      currentUserLike,
+      and(
+        eq(reviews.id, currentUserLike.reviewId),
+        eq(currentUserLike.userId, userId),
+      ),
+    )
+    .groupBy(reviews.id)
+    .where(eq(reviews.mediaId, mediaId))
+    .orderBy(sort)
+    .offset(offset)
+    .limit(itemsPerPage)
 }
 
 export function getUserReview(db, mediaId, userId) {
@@ -79,7 +73,7 @@ export function getUserReview(db, mediaId, userId) {
     .where(and(eq(reviews.mediaId, mediaId), eq(reviews.userId, userId)))
 }
 
-export function insertMedia(db, mediaData, isTv) {
+export function insertMedia(db, mediaData) {
   return db
     .insert(media)
     .values({
@@ -87,38 +81,37 @@ export function insertMedia(db, mediaData, isTv) {
       title: mediaData.title,
       poster: mediaData.poster,
       releaseDate: mediaData.releaseDate,
-      isTv: isTv,
     })
     .onConflictDoNothing()
 }
 
-export function insertPerson(db, person) {
-  return db
-    .insert(people)
-    .values({
+export function insertPeople(db, peopleToInsert) {
+  const queries = peopleToInsert.map((person) => {
+    return {
       id: person.id,
       name: person.name,
       profile_path: person.profile_path,
-    })
-    .onConflictDoNothing()
+    }
+  })
+  const chunckedQueries = chunkInserts(queries, 25)
+  return chunckedQueries.map((query) =>
+    db.insert(people).values(query).onConflictDoNothing(),
+  )
 }
 
-export function insertPersonMedia({
-  db,
-  personId,
-  mediaId,
-  isDirector = false,
-  isCreator = false,
-}) {
-  return db
-    .insert(peopleToMedia)
-    .values({
-      personId: personId,
+export function insertPeopleMedia(db, peopleToInsert, mediaId) {
+  const queries = peopleToInsert.map((person) => {
+    return {
+      personId: person.id,
       mediaId: mediaId,
-      isDirector: isDirector,
-      isCreator: isCreator,
-    })
-    .onConflictDoNothing()
+      isDirector: person.job === "Director",
+      isCreator: person.job === "Creator",
+    }
+  })
+  const chunckedQueries = chunkInserts(queries, 25)
+  return chunckedQueries.map((query) =>
+    db.insert(peopleToMedia).values(query).onConflictDoNothing(),
+  )
 }
 
 export function insertGenreMedia(db, genreId, mediaId) {

@@ -7,8 +7,9 @@ import { toast } from "sonner"
 
 const ProfileReview = ({ data, color, profileId }) => {
   const queryClient = useQueryClient()
-  const path = data.media.isTv ? "tv" : "movies"
-  const linkTo = `/${path}/${data.media.id}`
+  const path = data.media.id.includes("tv") ? "tv" : "movies"
+  const id = data.media.id.split("_")[1]
+  const linkTo = `/${path}/${id}`
   const likeMutation = useMutation({
     mutationFn: (id) => axios.post(`/api/reviews/like/${id}`),
     onSuccess: () => {

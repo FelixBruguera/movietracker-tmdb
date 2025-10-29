@@ -16,5 +16,5 @@ export const userReviewsSchema = baseSchema.extend({
 })
 
 export const userListsSchema = baseSchema.extend({
-  sort_by: z.enum(["date", "followers", "movies"]).default("date"),
+  sort_by: z.enum(["date", "followers", "media"]).default("date"),
 })

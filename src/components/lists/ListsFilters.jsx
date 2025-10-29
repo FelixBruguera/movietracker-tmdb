@@ -32,8 +32,8 @@ const ListsFilters = ({ filterOpen, setFilterOpen }) => {
             e.preventDefault()
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
-            console.log(data)
             setSearchParams((params) => {
+              params.set("page", 1)
               params.set("followers.gte", data["followers.gte"])
               params.set("media.gte", data["media.gte"])
               return params

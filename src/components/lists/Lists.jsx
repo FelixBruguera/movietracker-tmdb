@@ -19,7 +19,7 @@ const Lists = () => {
   const totalPages = data?.totalPages
 
   return (
-    <div className="flex flex-col justify-start h-dvh">
+    <div className="flex flex-col justify-start items-start h-full min-h-dvh">
       <ListsMenu />
       <ItemsGrid
         items={lists}

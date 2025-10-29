@@ -30,8 +30,13 @@ describe("The getSort function", () => {
 
 describe("The formatValidation function", () => {
   it("formats zod errors correctly", () => {
-    const result = formatValidationError(baseSchema.safeParse({ sort_order: 0}))
-    expect(result).toEqual({error: "sort_order validation failed: Invalid option: expected one of \"1\"|\"-1\"" })
+    const result = formatValidationError(
+      baseSchema.safeParse({ sort_order: 0 }),
+    )
+    expect(result).toEqual({
+      error:
+        'sort_order validation failed: Invalid option: expected one of "1"|"-1"',
+    })
   })
 })
 
@@ -52,7 +57,7 @@ describe("The GET /company/:company endpoint", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     axios.get.mockResolvedValue({
-      data: { results: {mock: "response"} },
+      data: { results: { mock: "response" } },
       request: {},
     })
   })
@@ -72,14 +77,17 @@ describe("The GET /company/:company endpoint", () => {
     )
   })
   it("doesnt fetch the external api when there's a cache hit", async () => {
-    env.KV.get = () => Promise.resolve(JSON.stringify({ data: {mock: "response"} }))
+    env.KV.get = () =>
+      Promise.resolve(JSON.stringify({ data: { mock: "response" } }))
     const request = new Request(`${baseUrl}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
     const response = await app.fetch(request, env)
     const responseBody = await response.json()
-    expect(responseBody).toStrictEqual(JSON.stringify({ data: {mock: "response"} }))
+    expect(responseBody).toStrictEqual(
+      JSON.stringify({ data: { mock: "response" } }),
+    )
     expect(axios.get).not.toHaveBeenCalled()
   })
 })
@@ -90,7 +98,7 @@ describe("The GET /network/:company endpoint", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     axios.get.mockResolvedValue({
-      data: { results: {mock: "response"} },
+      data: { results: { mock: "response" } },
       request: {},
     })
   })
@@ -110,14 +118,17 @@ describe("The GET /network/:company endpoint", () => {
     )
   })
   it("doesnt fetch the external api when there's a cache hit", async () => {
-    env.KV.get = () => Promise.resolve(JSON.stringify({ data: {mock: "response"} }))
+    env.KV.get = () =>
+      Promise.resolve(JSON.stringify({ data: { mock: "response" } }))
     const request = new Request(`${baseUrl}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
     const response = await app.fetch(request, env)
     const responseBody = await response.json()
-    expect(responseBody).toStrictEqual(JSON.stringify({ data: {mock: "response"} }))
+    expect(responseBody).toStrictEqual(
+      JSON.stringify({ data: { mock: "response" } }),
+    )
     expect(axios.get).not.toHaveBeenCalled()
   })
 })
@@ -128,7 +139,7 @@ describe("The GET /services/:region endpoint", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     axios.get.mockResolvedValue({
-      data: { results: [{mock: "response"}] },
+      data: { results: [{ mock: "response" }] },
       request: {},
     })
   })
@@ -148,14 +159,17 @@ describe("The GET /services/:region endpoint", () => {
     )
   })
   it("doesnt fetch the external api when there's a cache hit", async () => {
-    env.KV.get = () => Promise.resolve(JSON.stringify({ data: {mock: "response"} }))
+    env.KV.get = () =>
+      Promise.resolve(JSON.stringify({ data: { mock: "response" } }))
     const request = new Request(`${baseUrl}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
     const response = await app.fetch(request, env)
     const responseBody = await response.json()
-    expect(responseBody).toStrictEqual(JSON.stringify({ data: {mock: "response"} }))
+    expect(responseBody).toStrictEqual(
+      JSON.stringify({ data: { mock: "response" } }),
+    )
     expect(axios.get).not.toHaveBeenCalled()
   })
 })

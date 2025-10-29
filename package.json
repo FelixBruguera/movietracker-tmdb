@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "test": "vitest test"
+    "test": "vitest test",
+    "playwright": "playwright test --ui"
   },
   "keywords": [],
   "author": "",

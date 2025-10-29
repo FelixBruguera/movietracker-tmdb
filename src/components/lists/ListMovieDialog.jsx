@@ -7,48 +7,47 @@ import { Eye, Lock, Minus, MinusCircle, Plus, Trash } from "lucide-react"
 import ReviewSkeleton from "../reviews/ReviewSkeleton"
 import ErrorMessage from "../shared/ErrorMessage"
 
-const ListMovieDialog = ({ movie, isTv = false }) => {
+const ListMovieDialog = ({ mediaId }) => {
   const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const currentUser = session.user
-  const movieDate = movie.release_date || movie.first_air_date
-  const movieData = {
-    id: movie.id,
-    title: movie.title || movie.name,
-    poster: movie.poster_path,
-    releaseDate: new Date(movieDate).getFullYear(),
-    isTv: isTv,
-  }
   const {
     data: lists,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["user_lists", currentUser.id, movie.id],
+    queryKey: ["user_lists", currentUser.id, mediaId],
     queryFn: () =>
-      axios
-        .get(`/api/lists/user/${movie.id}`)
-        .then((response) => response.data),
+      axios.get(`/api/lists/user/${mediaId}`).then((response) => response.data),
   })
 
   const addToListMutation = useMutation({
-    mutationFn: (listId) => axios.post(`/api/lists/${listId}/media`, movieData),
-    onSuccess: () => {
+    mutationFn: (listId) =>
+      axios.post(`/api/lists/${listId}/media`, { mediaId: mediaId }),
+    onSuccess: (data, listId) => {
       queryClient.invalidateQueries({
-        queryKey: ["user_lists", currentUser.id, movie.id],
+        queryKey: ["user_lists", currentUser.id, mediaId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["list_media", listId],
       })
       toast("Succesfully Added")
     },
-    onError: (error) =>
-      toast(error.response.data.error || error.response.statusText),
+    onError: (error) => {
+      const message = error.response.data.error || error.response.statusText
+      return toast(message)
+    },
   })
 
   const removeFromListMutation = useMutation({
     mutationFn: (listId) =>
-      axios.delete(`/api/lists/${listId}/media/${movie.id}`),
-    onSuccess: () => {
+      axios.delete(`/api/lists/${listId}/media/${mediaId}`),
+    onSuccess: (data, listId) => {
       queryClient.invalidateQueries({
-        queryKey: ["user_lists", currentUser.id, movie.id],
+        queryKey: ["user_lists", currentUser.id, mediaId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["list_media", listId],
       })
       toast("Succesfully removed")
     },

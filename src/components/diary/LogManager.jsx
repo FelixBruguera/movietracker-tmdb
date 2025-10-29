@@ -127,7 +127,10 @@ const LogManager = ({ mediaId, mediaTitle }) => {
       )
       toast("Succesfully updated")
     },
-    onError: (error) => toast(error.message),
+    onError: (error) => {
+      const message = error.response.data.error || error.response.statusText
+      return toast(message)
+    },
   })
   const deleteMutation = useMutation({
     mutationFn: (data) => axios.delete(`${url}/${data.logId}`),
@@ -137,7 +140,10 @@ const LogManager = ({ mediaId, mediaTitle }) => {
       )
       toast("Succesfully deleted")
     },
-    onError: (error) => toast(error.message),
+    onError: (error) => {
+      const message = error.response.data.error || error.response.statusText
+      return toast(message)
+    },
   })
   return (
     <Dialog>

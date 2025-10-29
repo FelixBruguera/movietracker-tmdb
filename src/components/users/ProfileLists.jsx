@@ -26,7 +26,7 @@ const ProfileLists = () => {
     return {
       followers: "Followers",
       date: "Creation date",
-      movies: "Movies",
+      media: "Media",
     }
   }, [])
   if (isLoading) {
@@ -36,7 +36,7 @@ const ProfileLists = () => {
   if (isError) {
     return <ErrorMessage />
   }
-  const sort = searchParams.get("sort_by") || "movies"
+  const sort = searchParams.get("sort_by") || "date"
   const lists = data.lists
   return (
     <div>

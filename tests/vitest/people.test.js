@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import app from "./src/api/index"
 import axios from "axios"
-import { filterByDepartment, paginate, sortBy } from "../../src/api/people/functions"
+import {
+  filterByDepartment,
+  paginate,
+  sortBy,
+} from "../../src/api/people/functions"
 
 vi.mock("axios")
 const createTestEnv = () => {
@@ -20,47 +24,47 @@ const defaultParams = {
   sort_by: "Most recent",
 }
 
-    const mockData = {
-    cast: [
-      {
-        id: 1,
-        character: "Lorem",
-        vote_average: 5,
-        vote_count: 50,
-        release_date: "2025-03-03",
-      },
-      {
-        id: 2,
-        character: "Ipsum",
-        vote_average: 8,
-        vote_count: 10,
-        release_date: "2025-01-03",
-      },
-    ],
-    crew: [
-      {
-        id: 3,
-        department: "Camera",
-        vote_average: 9,
-        vote_count: 9,
-        release_date: "2022-03-03",
-      },
-      {
-        id: 4,
-        department: "Production",
-        vote_average: 3,
-        vote_count: 5,
-        release_date: "2005-01-31",
-      },
-      {
-        id: 5,
-        department: "Directing",
-        vote_average: 5,
-        vote_count: 100,
-        release_date: "2015-11-18",
-      },
-    ],
-  }
+const mockData = {
+  cast: [
+    {
+      id: 1,
+      character: "Lorem",
+      vote_average: 5,
+      vote_count: 50,
+      release_date: "2025-03-03",
+    },
+    {
+      id: 2,
+      character: "Ipsum",
+      vote_average: 8,
+      vote_count: 10,
+      release_date: "2025-01-03",
+    },
+  ],
+  crew: [
+    {
+      id: 3,
+      department: "Camera",
+      vote_average: 9,
+      vote_count: 9,
+      release_date: "2022-03-03",
+    },
+    {
+      id: 4,
+      department: "Production",
+      vote_average: 3,
+      vote_count: 5,
+      release_date: "2005-01-31",
+    },
+    {
+      id: 5,
+      department: "Directing",
+      vote_average: 5,
+      vote_count: 100,
+      release_date: "2015-11-18",
+    },
+  ],
+}
 
 describe("The GET /people/:person endpoint", () => {
   const baseUrl = "http://localhost/api/people/25"
@@ -114,13 +118,15 @@ describe("The filterByDepartment function", () => {
   it("filters the data by custom deparments", () => {
     const result = filterByDepartment("Production", mockData)
     expect(result.length).toBe(1)
-    expect(result).toEqual([{
+    expect(result).toEqual([
+      {
         id: 4,
         department: "Production",
         vote_average: 3,
         vote_count: 5,
         release_date: "2005-01-31",
-    }])
+      },
+    ])
   })
   it("returns an empty array when the department doesn't match", () => {
     const result = filterByDepartment("Coding", mockData)
@@ -145,7 +151,11 @@ describe("The sortBy function", () => {
     expect(result.at(-1).id).toBe(4)
   })
   it("sorts by date when the scope is tv", () => {
-    const data = [{id: 1, first_credit_air_date: "1999-12-25"}, {id: 2, first_credit_air_date: "1999-12-12"}, {id: 3, first_credit_air_date: "1999-12-15"}]
+    const data = [
+      { id: 1, first_credit_air_date: "1999-12-25" },
+      { id: 2, first_credit_air_date: "1999-12-12" },
+      { id: 3, first_credit_air_date: "1999-12-15" },
+    ]
     const result = sortBy("Most recent", "tv_credits", data)
     expect(result[0].id).toBe(1)
     expect(result.at(-1).id).toBe(2)
@@ -153,7 +163,9 @@ describe("The sortBy function", () => {
 })
 
 describe("The paginate function", () => {
-  const data = Array(50).fill(1).map((e, i) => e + i * 1)
+  const data = Array(50)
+    .fill(1)
+    .map((e, i) => e + i * 1)
   it("returns the first page", () => {
     const result = paginate(1, 20, data)
     expect(result).toHaveLength(20)

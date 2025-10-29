@@ -29,11 +29,14 @@ const defaultParams = {
 
 describe("The tv validation", () => {
   it("doesn't allow the maximum year to be before the minimum year", () => {
-    const result = tvSchema.safeParse({...defaultParams, "first_air_date.gte": 2015, "first_air_date.lte": 2011})
+    const result = tvSchema.safeParse({
+      ...defaultParams,
+      "first_air_date.gte": 2015,
+      "first_air_date.lte": 2011,
+    })
     expect(result.success).toBe(false)
     expect(result.error.issues[0].message).toBe("Invalid release year range")
   })
-
 })
 describe("The GET /tv endpoint", () => {
   const baseUrl = "http://localhost/api/tv"
@@ -106,7 +109,7 @@ describe("The GET /tv/:id endpoint", () => {
     vi.clearAllMocks()
     axios.get.mockResolvedValue({
       data: structuredClone(mockResponse),
-      request: {}
+      request: {},
     })
   })
   it("filters the watch providers from a region", async () => {

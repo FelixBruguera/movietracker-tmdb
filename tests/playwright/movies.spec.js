@@ -4,7 +4,7 @@ test.describe("the index route", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await page.getByLabel("Settings").click()
-    await page.getByLabel("Your region").click()
+    await page.getByRole("button", { name: "Your region" }).click()
     await page.getByPlaceholder("Search").fill("Ven")
     await page.getByText("Venezuela").click()
     await page
@@ -12,7 +12,9 @@ test.describe("the index route", () => {
       .click({ force: true })
     await expect(page.getByText("Select your country")).not.toBeVisible()
     await page.getByLabel("Settings").click({ force: true })
-    await expect(page.getByLabel("Your region")).not.toBeVisible()
+    await expect(
+      page.getByRole("button", { name: "Your region" }),
+    ).not.toBeVisible()
   })
   test.describe("sorting", () => {
     test("sorting by vote count", async ({ page }) => {
@@ -43,10 +45,13 @@ test.describe("the index route", () => {
       await page.getByPlaceholder("Search").fill("siete pecados")
       await page.getByLabel("Add").click()
       await page.getByRole("button", { name: "Close", exact: true }).click()
+      await expect(
+        page.getByText("los siete pecados").first(),
+      ).not.toBeVisible()
       await page.getByText("Submit").click()
+      await expect(page.getByAltText("Se7en")).toBeVisible()
       const posters = page.getByRole("listitem").getByRole("img")
       await expect(posters).toHaveCount(1)
-      await expect(page.getByAltText("Se7en")).toBeVisible()
     })
     test("displays the correct messages for empty responses", async ({
       page,
@@ -77,11 +82,15 @@ test.describe("the index route", () => {
   test.describe("Saving searches", () => {
     test.describe.configure({ mode: "serial" })
     test.beforeEach(async ({ page }) => {
-      await page.locator("a").filter({ hasText: "Login" }).click()
-      await page.getByLabel("Username").fill("tester")
-      await page.getByLabel("Password").fill("12345678")
-      await page.getByText("Send").click()
-      await expect(page.getByText("Already signed in")).toBeVisible()
+      await page.goto("/users/login")
+      const existingSession = await page
+        .getByText("Already signed in")
+        .isVisible()
+      if (!existingSession) {
+        await page.getByLabel("Username").fill("test")
+        await page.getByLabel("Password").fill("123456789")
+        await page.getByText("Send").click()
+      }
     })
     test("saving a search", async ({ page }) => {
       await page.getByText("Filters").click()
@@ -102,6 +111,16 @@ test.describe("the index route", () => {
       await page.getByLabel("Saved searches").click()
       await page.getByText("Test", { exact: true }).click()
       await expect(page.getByAltText("Waiting for the Hearse")).toBeVisible()
+      await page.getByRole("button", { name: "Close", exact: true }).click()
+      await page.getByText("Filters").click()
+      await expect(
+        page.getByRole("combobox", { name: "Languages" }),
+      ).toHaveText("Spanish")
+      await expect(page.getByLabel("Release year minimum")).toHaveValue("1985")
+      await expect(page.getByLabel("Release year maximum")).toHaveValue("1985")
+      await expect(page.getByLabel("TMDB Vote Count minimum")).toHaveValue(
+        "100",
+      )
     })
     test("saving a search with a duplicated name", async ({ page }) => {
       await page.getByLabel("Save Search").click()

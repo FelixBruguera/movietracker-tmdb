@@ -20,7 +20,7 @@ import LogManager from "../diary/LogManager.jsx"
 import { authClient } from "@lib/auth-client.ts"
 import axios from "axios"
 import MovieRating from "./MovieRating.jsx"
-import { useParams } from "react-router"
+import { useLocation, useParams } from "react-router"
 import { useState } from "react"
 import MovieTab from "./MovieTab.jsx"
 import useRegion from "@stores/region"
@@ -33,6 +33,7 @@ import DiaryLogForm from "../diary/DiaryLogForm.jsx"
 
 const Media = ({ isTv }) => {
   const { id } = useParams()
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState("Cast")
   const region = useRegion((state) => state.details.code)
   console.log(id)
@@ -88,6 +89,9 @@ const Media = ({ isTv }) => {
   const minutes = movie.runtime && Math.floor(movie.runtime % 60)
   const runtime = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
   const title = movie.title || movie.name
+  const mediaId = location.pathname.includes("tv")
+    ? `tv_${movie.id}`
+    : `movies_${movie.id}`
   return (
     <div className="mx-auto w-9/10 lg:w-full">
       <title>{title}</title>
@@ -101,14 +105,14 @@ const Media = ({ isTv }) => {
             <div className="flex items-center gap-4 lg:gap-2">
               {session && (
                 <>
-                  <LogManager mediaId={movie.id} mediaTitle={title} />
+                  <LogManager mediaId={mediaId} mediaTitle={title} />
                   <DialogWrapper
                     title={`Adding a log for ${title}`}
                     label="Add to your diary"
                     Icon={NotebookPen}
                     contentClass="min-w-1/3"
                   >
-                    <DiaryLogForm movie={movie} isTv={isTv} />
+                    <DiaryLogForm mediaId={mediaId} />
                   </DialogWrapper>
                   <DialogWrapper
                     title={`Your review of ${title}`}
@@ -116,7 +120,7 @@ const Media = ({ isTv }) => {
                     Icon={Star}
                     contentClass="min-w-1/3"
                   >
-                    <ReviewDialog movie={movie} isTv={isTv} />
+                    <ReviewDialog mediaId={mediaId} />
                   </DialogWrapper>
                   <DialogWrapper
                     title={`${title} in your lists`}
@@ -124,7 +128,7 @@ const Media = ({ isTv }) => {
                     Icon={List}
                     contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
                   >
-                    <ListMovieDialog movie={movie} isTv={isTv} />
+                    <ListMovieDialog mediaId={mediaId} />
                   </DialogWrapper>
                 </>
               )}
@@ -198,7 +202,7 @@ const Media = ({ isTv }) => {
           <ActiveTab movie={movie} tab={activeTab} isTv={isTv} />
         </div>
       </div>
-      <Reviews movie={movie} />
+      <Reviews movie={movie} mediaId={mediaId} />
     </div>
   )
 }

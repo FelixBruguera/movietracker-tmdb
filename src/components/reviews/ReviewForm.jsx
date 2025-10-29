@@ -11,27 +11,13 @@ import { useState } from "react"
 import { Checkbox } from "@ui/checkbox"
 import { Label } from "@ui/label"
 
-const ReviewForm = ({ previousReview, movie, mutation }) => {
+const ReviewForm = ({ previousReview, mediaId, mutation }) => {
   const previousText = previousReview?.text
   const previousRating = previousReview?.rating
   const [text, setText] = useState(previousText || "")
   const [rating, setRating] = useState(previousRating || 1)
   const [createLog, setCreateLog] = useState(false)
   const ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  const mediaReleaseDate = movie.release_date || movie.first_air_date
-  const movieData = previousReview
-    ? { id: movie.id }
-    : {
-        id: movie.id,
-        title: movie.title || movie.name,
-        releaseDate: new Date(mediaReleaseDate).getFullYear(),
-        poster: movie.poster_path,
-        cast: movie.credits.cast,
-        directors: movie.credits.directors,
-        genres: movie.genres,
-        created_by: movie.created_by,
-        networks: movie.networks,
-      }
   return (
     <form
       className="flex flex-col gap-3 lg:gap-2 w-full items-center justify-center my-2"
@@ -40,7 +26,7 @@ const ReviewForm = ({ previousReview, movie, mutation }) => {
         mutation.mutate({
           text: text,
           rating: rating,
-          movie: movieData,
+          mediaId: mediaId,
           addToDiary: createLog,
         })
       }}

@@ -7,15 +7,15 @@ import axios from "axios"
 import { useContext } from "react"
 import { DialogContext } from "../shared/DialogWrapper"
 
-const DiaryLogForm = ({ movie, isTv }) => {
+const DiaryLogForm = ({ mediaId }) => {
   const queryClient = useQueryClient()
   const { setOpen } = useContext(DialogContext)
-  const endpoint = isTv ? "/api/diary/tv" : "/api/diary"
+  const endpoint = mediaId.includes("tv") ? "/api/diary/tv" : "/api/diary"
   const mutation = useMutation({
     mutationFn: (newEntry) => axios.post(endpoint, newEntry),
     onSuccess: () => {
       setOpen(false)
-      queryClient.invalidateQueries({ queryKey: ["diary", movie.id] })
+      queryClient.invalidateQueries({ queryKey: ["diary", mediaId] })
       toast("Succesfully Added")
     },
     onError: (error) => toast(error.response.data),
@@ -26,20 +26,9 @@ const DiaryLogForm = ({ movie, isTv }) => {
       className="flex flex-col gap-10 w-full"
       onSubmit={(e) => {
         e.preventDefault()
-        const movieDate = movie.release_date || movie.first_air_date
         mutation.mutate({
           date: e.target.date.value,
-          movie: {
-            id: movie.id,
-            title: movie.title || movie.name,
-            releaseDate: new Date(movieDate).getFullYear(),
-            poster: movie.poster_path,
-            cast: movie.credits.cast,
-            directors: movie.credits.directors,
-            genres: movie.genres,
-            created_by: movie.created_by,
-            networks: movie.networks,
-          },
+          mediaId: mediaId,
         })
       }}
     >

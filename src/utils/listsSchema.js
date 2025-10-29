@@ -20,9 +20,5 @@ export const newListSchema = z.object({
 })
 
 export const listMovieSchema = z.object({
-  id: z.int(),
-  title: z.string(),
-  releaseDate: z.string(),
-  poster: z.string().max(100),
-  isTv: z.boolean(),
+  mediaId: z.string().max(20),
 })

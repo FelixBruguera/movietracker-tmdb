@@ -17,7 +17,7 @@ test.describe("as a logged in user", () => {
     test.describe.configure({ mode: "serial" })
 
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole("button", { name: "test" })).toBeVisible()
       await page.goto("/movies/15")
     })
 
@@ -51,7 +51,7 @@ test.describe("as a logged in user", () => {
     test.describe.configure({ mode: "serial" })
 
     test.beforeEach(async ({ page }) => {
-      await expect(page.getByText("Test")).toBeVisible()
+      await expect(page.getByRole("button", { name: "test" })).toBeVisible()
       await page.goto("/tv/15")
     })
 

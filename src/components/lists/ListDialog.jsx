@@ -23,7 +23,10 @@ const ListDialog = memo(() => {
       queryClient.invalidateQueries({ queryKey: ["lists"] })
       toast("Succesfully Added")
     },
-    onError: (error) => toast(error.response.data) || "Something went wrong",
+    onError: (error) => {
+      const message = error.response.data || error.response.statusText
+      toast(message)
+    },
   })
   return (
     <Dialog open={open} onOpenChange={setOpen}>

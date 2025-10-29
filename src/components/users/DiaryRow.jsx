@@ -15,7 +15,8 @@ const DiaryRow = ({ data, group }) => {
       </p>
       <div className="flex flex-wrap w-full items-center justify-start gap-1 lg:gap-5">
         {data.entries.map((movie) => {
-          const path = movie.isTv ? "tv" : "movies"
+          const path = movie.mediaId.includes("tv") ? "tv" : "movies"
+          const id = movie.mediaId.split("_")[1]
           const logDate =
             group === "yearly"
               ? formatInTimeZone(new Date(movie.date * 1000), "UTC", "MMMM do")
@@ -23,7 +24,7 @@ const DiaryRow = ({ data, group }) => {
           return (
             <Link
               key={movie.diaryId}
-              to={`/${path}/${movie.mediaId}`}
+              to={`/${path}/${id}`}
               className="flex flex-col items-center gap-1"
             >
               <Poster src={movie.poster_path} alt={movie.title} size="small" />

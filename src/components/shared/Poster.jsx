@@ -24,7 +24,7 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
       />
       {!src && type === "movie" && alt && (
         <p className="max-w-9/10 mx-auto text-ellipsis overflow-hidden whitespace-nowrap">
-          {alt.slice(0,35)}
+          {alt.slice(0, 35)}
         </p>
       )}
     </>

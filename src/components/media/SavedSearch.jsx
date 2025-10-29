@@ -21,8 +21,10 @@ const DeleteSearch = ({ id, name }) => {
       )
       toast("Search deleted")
     },
-    onError: (error) =>
-      toast(error.response.data) || toast("Something went wrong"),
+    onError: (error) => {
+      const message = error.response.data || "Something went wrong"
+      toast(message)
+    },
   })
   return (
     <Remove
@@ -57,8 +59,10 @@ const UpdateSearch = ({ id, name }) => {
       toast("Search updated")
       setOpen(false)
     },
-    onError: (error) =>
-      toast(error.response.data) || toast("Something went wrong"),
+    onError: (error) => {
+      const message = error.response.data || "Something went wrong"
+      toast(message)
+    },
   })
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -119,8 +123,8 @@ const NewSearch = () => {
       setOpen(false)
     },
     onError: (error) => {
-      console.log(error)
-      toast(error.response.data) || toast("Something went wrong")
+      const message = error.response.data || "Something went wrong"
+      toast(message)
     },
   })
   return (
@@ -166,7 +170,6 @@ const SavedSearch = () => {
   })
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedSearch = searchParams.get("search") || "None"
-  console.log(data)
   return (
     <div className="flex items-center gap-2 max-w-4/10">
       <Dialog>

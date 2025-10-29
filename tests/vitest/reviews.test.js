@@ -12,7 +12,7 @@ import {
 import * as schema from "../../src/db/schema"
 
 const sqlite = new Database(
-  ".wrangler/state/v3/d1/miniflare-D1DatabaseObject/1298067f57f93ced47ab7edeef6597f06c319d51a9c7266417d3fa0df0acf884.sqlite",
+  ".wrangler/state/v3/d1/miniflare-D1DatabaseObject/eea796519a30eaaaf60d174741657467b3f25c541bde63023800a5f8bb62f591.sqlite",
 )
 const db = drizzle(sqlite, { schema })
 
@@ -30,20 +30,11 @@ describe("The media reviews validation", () => {
 })
 
 describe("The new review validation", () => {
-  const mockMovie = {
-    id: 123,
-    title: "mockMovie",
-    releaseDate: 1965,
-    poster: "path/to/poster",
-    cast: [{ id: 1, name: "actor", profile_path: "path" }],
-    directors: [{ id: 1, name: "Director", profile_path: "path" }],
-    genres: [{ id: 1 }],
-  }
   it("doesnt allow negative ratings", () => {
     const result = newReviewSchema.safeParse({
       rating: -1,
       text: "new review",
-      movie: mockMovie,
+      mediaId: "movies_123",
     })
     expect(result).toEqual(expect.objectContaining({ success: false }))
     expect(result.error.issues[0].path).toEqual(["rating"])
@@ -53,7 +44,7 @@ describe("The new review validation", () => {
     const result = newReviewSchema.safeParse({
       rating: 11,
       text: "new review",
-      movie: mockMovie,
+      mediaId: "movies_123",
     })
     expect(result).toEqual(expect.objectContaining({ success: false }))
     expect(result.error.issues[0].path).toEqual(["rating"])
@@ -63,7 +54,7 @@ describe("The new review validation", () => {
     const result = newReviewSchema.safeParse({
       rating: 5,
       text: "new review",
-      movie: mockMovie,
+      mediaId: "movies_123",
     })
     expect(result).toEqual(expect.objectContaining({ success: true }))
   })
@@ -73,7 +64,7 @@ describe("The new review validation", () => {
     const result = newReviewSchema.safeParse({
       rating: 6,
       text: longText,
-      movie: mockMovie,
+      mediaId: "movies_123",
     })
     expect(result).toEqual(expect.objectContaining({ success: false }))
     expect(result.error.issues[0].path).toEqual(["text"])
@@ -83,7 +74,7 @@ describe("The new review validation", () => {
     const result = newReviewSchema.safeParse({
       rating: 3,
       text: "test",
-      movie: mockMovie,
+      mediaId: "movies_123",
     })
     expect(result.data.addToDiary).toBe(false)
   })
@@ -104,8 +95,8 @@ describe("The insertReview query", () => {
         db,
         "test",
         1,
-        "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS",
-        755898,
+        "S8m2tU3iSm8IbVVKBeCUloWpcYzPvuBg",
+        "movies_755898",
       )
     } catch (e) {
       result = e
@@ -120,8 +111,8 @@ describe("The updateReview query", () => {
       db,
       "test",
       1,
-      21,
-      "BlIFKjnfQ0HhK0HCJ2B7YXM9YapbEDpU",
+      37,
+      "S8m2tU3iSm8IbVVKBeCUloWpcYzPvuBg",
     )
     expect(result).toEqual([])
   })
@@ -131,8 +122,8 @@ describe("The deleteReview query", () => {
   it("doesn't allow to delete another user's review", async () => {
     const result = await deleteReview(
       db,
-      21,
-      "BlIFKjnfQ0HhK0HCJ2B7YXM9YapbEDpU",
+      37,
+      "S8m2tU3iSm8IbVVKBeCUloWpcYzPvuBg",
     )
     expect(result.changes).toBe(0)
   })
@@ -142,13 +133,13 @@ describe("The likeReview query", () => {
   it("doesn't allow to like a review twice", async () => {
     let result
     try {
-      result = await likeReview(db, 21, "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS")
+      result = await likeReview(db, 45, "S8m2tU3iSm8IbVVKBeCUloWpcYzPvuBg")
     } catch (e) {
       result = e
     }
     expect(result.code).toBe("SQLITE_CONSTRAINT_UNIQUE")
   })
-  it("doesn't allow to like unexistant reviews", async () => {
+  it("doesn't allow to like unexistent reviews", async () => {
     let result
     try {
       result = await likeReview(db, "ABC", "8o0E4dFL8bigp2A35UjKEjFVfr03KOuS")
@@ -156,5 +147,26 @@ describe("The likeReview query", () => {
       result = e
     }
     expect(result.code).toBe("SQLITE_CONSTRAINT_FOREIGNKEY")
+  })
+})
+describe("the reviews endpoint", async () => {
+  let cookie = null
+  await fetch("http://localhost:3000/api/auth/sign-in/username", {
+    method: "POST",
+    body: JSON.stringify({ username: "test", password: "123456789" }),
+    headers: { "Content-Type": "application/json" },
+  }).then((response) => (cookie = response.headers.getSetCookie()))
+  it("returns the correct error when the mediaId is invalid", async () => {
+    const response = await fetch("http://localhost:3000/api/reviews", {
+      method: "POST",
+      body: JSON.stringify({
+        mediaId: "movies_abc",
+        text: "testing",
+        rating: "5",
+      }),
+      headers: { Cookie: cookie, "Content-Type": "application/json" },
+    })
+    expect(response.status).toBe(404)
+    expect(await response.text()).toEqual("Invalid mediaId")
   })
 })

@@ -5,7 +5,7 @@ const moviesSchema = baseSchema
   .extend({
     with_cast: z.string().max(50).optional(),
     with_people: z.string().max(20).optional(),
-    with_genres: z.string().max(80).optional(),
+    with_genres: z.string().max(160).optional(),
     with_watch_providers: z.string().max(150).optional(),
     watch_region: z.string().max(2).optional(),
     with_watch_monetization_types: z

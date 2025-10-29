@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import PaginationWrap from "../shared/PaginationWrap.jsx"
-import { useSearchParams } from "react-router"
+import { useLocation, useSearchParams } from "react-router"
 import Review from "./Review.jsx"
 import SortOrderToggle from "../shared/SortOrderToggle.jsx"
 import SelectSortBy from "../shared/SelectSortBy.jsx"
@@ -15,22 +15,23 @@ import ListHeading from "../shared/ListHeading"
 import axios from "axios"
 import { toast } from "sonner"
 
-export default function Reviews({ movie }) {
+export default function Reviews({ movie, mediaId }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data: session } = authClient.useSession()
+  const location = useLocation()
   const queryClient = useQueryClient()
   const currentUser = session?.user
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["reviews", movie.id, searchParams.toString(), currentUser?.id],
+    queryKey: ["reviews", mediaId, searchParams.toString(), currentUser?.id],
     queryFn: () =>
       axios
-        .get(`/api/reviews/${movie.id}`, { params: searchParams })
+        .get(`/api/reviews/${mediaId}`, { params: searchParams })
         .then((response) => response.data),
   })
   const likeMutation = useMutation({
     mutationFn: (id) => axios.post(`/api/reviews/like/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reviews", movie.id] })
+      queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] })
       toast("Like added")
     },
     onError: (error) =>
@@ -39,7 +40,7 @@ export default function Reviews({ movie }) {
   const dislikeMutation = useMutation({
     mutationFn: (id) => axios.delete(`/api/reviews/like/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reviews", movie.id] })
+      queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] })
       toast("Like removed")
     },
     onError: (error) =>
@@ -57,17 +58,19 @@ export default function Reviews({ movie }) {
     return <ErrorMessage />
   }
   const sortBy = searchParams.get("sort_by") || "date"
-  const averageRating = data.averageRating
   const totalReviews = data.totalReviews
-  const ratingColor = averageRating && ratingScale[Math.floor(averageRating)]
-  console.log(averageRating)
+  const averageRating = data.averageRating && data.averageRating.toFixed(1)
+  const averageRatingColor = data.averageRating && Math.ceil(data.averageRating)
 
   return (
     <div id="reviews" className="max-w-400 mt-10 mx-auto lg:w-8/10 2xl:w-7/10">
       <ListHeading>
         <ListHeadingTitle title="Reviews">
           <Total total={totalReviews} label="Total Reviews" />
-          <AverageRating rating={averageRating} color={ratingColor} />
+          <AverageRating
+            rating={averageRating}
+            color={ratingScale[averageRatingColor]}
+          />
         </ListHeadingTitle>
         <SelectSortBy
           value={sortBy}
@@ -79,7 +82,7 @@ export default function Reviews({ movie }) {
       </ListHeading>
       {data.reviews?.length > 0 ? (
         <>
-          <ul className="space-y-4">
+          <ul className="space-y-4" aria-label="Reviews">
             {data.reviews.map((review) => (
               <Review
                 key={review.id}

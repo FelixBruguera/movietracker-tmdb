@@ -33,7 +33,8 @@ const ProfileReviews = () => {
   const sortOptions = reviewsInfo.sortOptions
   const ratingScale = reviewsInfo.ratingScale
   const sortBy = searchParams.get("sort_by") || "date"
-  const averageRating = data.averageRating && Math.ceil(data.averageRating)
+  const averageRating = data.averageRating && data.averageRating.toFixed(1)
+  const averageRatingColor = data.averageRating && Math.ceil(data.averageRating)
 
   return (
     <div>
@@ -43,7 +44,7 @@ const ProfileReviews = () => {
           {averageRating && (
             <AverageRating
               rating={averageRating}
-              color={ratingScale[averageRating]}
+              color={ratingScale[averageRatingColor]}
             />
           )}
         </ListHeadingTitle>
@@ -57,7 +58,7 @@ const ProfileReviews = () => {
       </ListHeading>
       {data.reviews?.length > 0 ? (
         <>
-          <ul className="space-y-4">
+          <ul className="space-y-4" aria-label="Reviews">
             {data.reviews.map((review) => (
               <ProfileReview
                 key={review.id}

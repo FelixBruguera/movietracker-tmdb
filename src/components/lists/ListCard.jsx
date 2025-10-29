@@ -41,7 +41,7 @@ const ListCard = memo(({ list }) => {
         <div className="flex gap-3">
           <ListCardItem>
             <FilmIcon />
-            <p aria-label="Movies">{list.media}</p>
+            <p aria-label="Media">{list.media}</p>
           </ListCardItem>
           {!list.isPrivate && (
             <ListCardItem>

@@ -34,8 +34,8 @@ const UsersFilters = ({ filterOpen, setFilterOpen }) => {
             e.preventDefault()
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
-            console.log(data)
             setSearchParams((params) => {
+              params.set("page", 1)
               params.set("reviews.gte", data["reviews.gte"])
               params.set("logs.gte", data["logs.gte"])
               return params

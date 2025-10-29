@@ -8,16 +8,11 @@ import Search from "../search/Search.jsx"
 import SearchItemContent from "../search/SearchItemContent.jsx"
 import SearchItemWrap from "../search/SearchItemWrap.jsx"
 
-const ListSearchItem = ({ itemData, mutation }) => {
+const ListSearchItem = ({ itemData, mutation, ids }) => {
   const name = itemData.title || itemData.name
-  const mediaDate = itemData.release_date || itemData.first_air_date
-  const mediaData = {
-    id: itemData.id,
-    title: itemData.title || itemData.name,
-    poster: itemData.poster_path,
-    releaseDate: new Date(mediaDate).getFullYear(),
-    isTv: itemData.media_type === "tv",
-  }
+  const mediaId =
+    itemData.media_type === "tv" ? `tv_${itemData.id}` : `movies_${itemData.id}`
+  const isDisabled = ids.has(mediaId)
   return (
     <SearchItemWrap className="h-fit">
       <div className="w-full flex flex-col gap-2" title={name}>
@@ -27,29 +22,31 @@ const ListSearchItem = ({ itemData, mutation }) => {
           mediaType={itemData.media_type}
         />
         <Button
-          disabled={itemData.media_type === "person"}
-          className="w-3/4 mx-auto"
-          onClick={() => mutation.mutate(mediaData)}
+          disabled={isDisabled}
+          aria-hidden={isDisabled}
+          className={`w-3/4 mx-auto ${isDisabled && "bg-transparent"}`}
+          onClick={() => mutation.mutate({ mediaId: mediaId })}
         >
-          <Plus />
+          {!isDisabled && <Plus />}
         </Button>
       </div>
     </SearchItemWrap>
   )
 }
 
-const AddToList = ({ list }) => {
+const AddToList = ({ list, ids }) => {
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: (newEntry) =>
       axios.post(`/api/lists/${list.id}/media`, newEntry),
     onSuccess: () => {
-      console.log(["list_media", list.id])
-      queryClient.invalidateQueries({ queryKey: ["list_media", list.id] })
-      toast("Succesfully Added")
+      ;(queryClient.invalidateQueries({ queryKey: ["list_media", list.id] }),
+        toast("Succesfully Added"))
     },
-    onError: (error) =>
-      toast(error.response.data.error || error.response.statusText),
+    onError: (error) => {
+      const message = error.response.data || error.response.statusText
+      return toast(message)
+    },
   })
 
   return (
@@ -60,15 +57,23 @@ const AddToList = ({ list }) => {
       contentClass="overflow-auto min-w-2/4"
     >
       <Search
-        renderFn={(items) =>
-          items.map((itemData) => (
-            <ListSearchItem
-              key={[itemData.media_type, itemData.id]}
-              itemData={itemData}
-              mutation={mutation}
-            />
-          ))
-        }
+        renderFn={(items) => {
+          const cleanItems = items.filter(
+            (item) => item.media_type !== "person",
+          )
+          return cleanItems.length > 0 ? (
+            cleanItems.map((itemData) => (
+              <ListSearchItem
+                key={[itemData.media_type, itemData.id]}
+                itemData={itemData}
+                mutation={mutation}
+                ids={ids}
+              />
+            ))
+          ) : (
+            <li>No results</li>
+          )
+        }}
       />
     </DialogWrapper>
   )

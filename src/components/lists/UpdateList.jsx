@@ -32,8 +32,10 @@ const UpdateList = ({ list }) => {
       setOpen(false)
       toast("Succesfully Updated")
     },
-    onError: (error) =>
-      toast(error.response.data) || toast("Something went wrong"),
+    onError: (error) => {
+      const message = error.response.data.error || error.response.statusText
+      return toast(message)
+    },
   })
   return (
     <Dialog open={open} onOpenChange={setOpen}>

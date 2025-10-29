@@ -28,12 +28,6 @@ export const searchQuerySchema = moviesSchema
       .max(9999)
       .optional(),
     with_original_language: z.string().max(2).optional(),
-    with_genres: z
-      .union([z.array(z.string()).max(50), z.string().max(80)])
-      .optional(),
-    with_watch_providers: z
-      .union([z.array(z.number()).max(50), z.string().max(150)])
-      .optional(),
   })
 
 export const searchQuerySchemaTV = searchQuerySchema

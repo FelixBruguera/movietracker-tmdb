@@ -20,7 +20,11 @@ const UserLink = memo(({ user }) => {
 
 const ListDetail = (props) => {
   return (
-    <div className="flex items-center justify-center gap-2 text-base lg:text-lg text-muted-foreground hover:text-primary transition-colors">
+    <div
+      title={props.label}
+      aria-label={props.label}
+      className="flex items-center justify-center gap-2 text-base lg:text-lg text-muted-foreground hover:text-primary transition-colors"
+    >
       {props.children}
     </div>
   )
@@ -38,25 +42,23 @@ const ListDate = memo(({ date }) => {
 })
 
 const ListDetails = ({ user, list }) => {
+  const isPrivate = list.isPrivate
   return (
     <div className="flex items-center gap-3 w-full">
       <UserLink user={user} />
       <ListDate date={list.createdAt} />
       {list.isWatchlist && (
-        <ListDetail>
-          <Eye aria-label="Watchlist" />
+        <ListDetail label="Watchlist">
+          <Eye />
         </ListDetail>
       )}
-      <ListDetail>
-        {list.isPrivate ? (
-          <Lock aria-label="Private List" title="Private List" />
+      <ListDetail label={isPrivate ? "Private list" : "Followers"}>
+        {isPrivate ? (
+          <Lock />
         ) : (
           <>
             <Users />
-            <p
-              className="text-stone-600 dark:text-stone-200 text-sm lg:text-base"
-              aria-label="Followers"
-            >
+            <p className="text-stone-600 dark:text-stone-200 text-sm lg:text-base">
               {list.followers}
             </p>
           </>
