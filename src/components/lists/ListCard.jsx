@@ -40,7 +40,7 @@ const ListCard = memo(({ list }) => {
           {filledPosters?.map((poster) => (
             <li className="w-1/5">
               {poster === null ? (
-                <div className="border-1 border-neutral-800 h-32 rounded-sm"></div>
+                <div className="border-1 border-neutral-200 dark:border-neutral-800 h-32 rounded-sm"></div>
               ) : (
                 <Poster src={poster} size="xs" />
               )}
