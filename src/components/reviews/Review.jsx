@@ -1,6 +1,6 @@
 import { Link } from "react-router"
 import Avatar from "../shared/Avatar"
-import { ThumbsUp } from "lucide-react"
+import { Heart, ThumbsUp } from "lucide-react"
 import { Button } from "@ui/button"
 import { authClient } from "../../../lib/auth-client"
 import ReviewRating from "./ReviewRating"
@@ -18,7 +18,7 @@ const Likes = ({ currentUserLiked, count, onLike, onDislike }) => {
           onClick={onDislike}
           className={`!px-2 h-8 !bg-accent text-white hover:cursor-pointer hover:!bg-accent/50 transition-colors `}
         >
-          <ThumbsUp />
+          <Heart />
         </Button>
       ) : (
         <Button
@@ -28,10 +28,10 @@ const Likes = ({ currentUserLiked, count, onLike, onDislike }) => {
           onClick={onLike}
           className={`!px-2 h-8 hover:cursor-pointer transition-colors`}
         >
-          <ThumbsUp />
+          <Heart />
         </Button>
       )}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {count} {verb}
       </p>
     </div>
