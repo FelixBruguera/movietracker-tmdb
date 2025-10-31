@@ -19,6 +19,7 @@ import ProfileReviews from "./components/users/ProfileReviews"
 import ProfileLists from "./components/users/ProfileLists"
 import MobileMenu from "./components/shared/MobileMenu"
 import Stats from "./components/users/stats/Stats"
+import SearchResults from "./components/search/SearchResults"
 
 const App = () => {
   const pathname = useLocation()
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="lists" element={<ProfileLists />} />
           <Route path="stats" element={<Stats />} />
         </Route>
+        <Route path="/search" element={<SearchResults />} />
       </Routes>
       <MobileMenu />
       <Footer />
