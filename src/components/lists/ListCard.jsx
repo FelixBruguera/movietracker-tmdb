@@ -13,8 +13,8 @@ const ListCardItem = (props) => {
 }
 
 const fillPosters = (posters) => {
-  if (posters.length < 5) {
-    for (let i = posters.length; i < 5; i++) {
+  if (posters.length < 4) {
+    for (let i = posters.length; i < 4; i++) {
       posters.push(null)
     }
   }
@@ -28,7 +28,7 @@ const ListCard = memo(({ list }) => {
   return (
     <li
       key={list.id}
-      className="w-9/10 mx-auto md:w-100 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
+      className="w-9/10 mx-auto md:w-105 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
       bg-card-bg hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent dark:hover:text-white transition-colors group shadow-sm"
     >
       <Link
@@ -38,9 +38,9 @@ const ListCard = memo(({ list }) => {
       >
         <ul className="flex">
           {filledPosters?.map((poster) => (
-            <li className="w-1/5">
+            <li className="min-w-1/4">
               {poster === null ? (
-                <div className="border-1 border-neutral-200 dark:border-neutral-800 h-32 rounded-sm"></div>
+                <div className="border-1 border-neutral-200 dark:border-neutral-800 h-34 w-23 rounded-sm"></div>
               ) : (
                 <Poster src={poster} size="xs" />
               )}
