@@ -1,11 +1,18 @@
 import { Input } from "@ui/input"
 import { useContext, useState } from "react"
 import useDebounce from "../../../hooks/useDebounce"
-import SearchItem from "./SearchItem"
 import MovieSearchSkeleton from "./MovieSearchSkeleton"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { DialogContext } from "../shared/DialogWrapper"
+
+const SearchRenderer = ({ isLoading, dataLoading, isError, data, renderFn }) => {
+  if (isLoading || dataLoading) { return <MovieSearchSkeleton /> }
+  if (isError) { return <li>Something went wrong</li>}
+  return data?.results.length > 0
+    ? renderFn()
+    : data?.results ? <li>No Results</li> : null
+}
 
 const Search = ({ renderFn }) => {
   const [search, setSearch] = useState("")
@@ -39,13 +46,7 @@ const Search = ({ renderFn }) => {
         />
       </div>
       <ul className="h-100 w-full flex flex-wrap items-center justify-evenly gap-3 mt-2">
-        {(isLoading || dataLoading) && <MovieSearchSkeleton />}
-        {isError && <li>Something went wrong</li>}
-        {data?.results.length > 0
-          ? renderFn(data.results, setOpen)
-          : !isLoading &&
-            search.length > 2 &&
-            data?.results && <li>No Results</li>}
+        <SearchRenderer isLoading={isLoading} dataLoading={dataLoading} isError={isError} data={data} renderFn={() => renderFn(data.results, setOpen)}/>
       </ul>
     </form>
   )

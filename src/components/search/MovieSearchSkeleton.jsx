@@ -2,7 +2,7 @@ import { Skeleton } from "@ui/skeleton"
 import StyledSkeleton from "../shared/StyledSkeleton"
 
 const MovieSearchSkeleton = ({}) => {
-  const items = Array.from(Array(8).keys())
+  const items = Array.from(Array(12).keys())
   return items.map((i) => (
     <div
       key={i}
