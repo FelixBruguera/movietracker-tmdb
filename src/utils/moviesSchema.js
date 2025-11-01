@@ -45,8 +45,8 @@ const moviesSchema = baseSchema
       .transform((year) => `${year}-12-31`)
       .optional(),
     sort_by: z
-      .enum(["popularity.desc", "vote_average.desc", "vote_count.desc"])
-      .default("popularity.desc"),
+      .enum(["popularity", "vote_average", "vote_count"])
+      .default("popularity"),
     include_adult: z.literal(false).default(false),
     language: z.literal("en-US").default("en-US"),
     without_keywords: z

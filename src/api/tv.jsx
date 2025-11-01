@@ -4,7 +4,7 @@ import tvSchema from "../utils/tvSchema"
 import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
 import { formatValidationError } from "./functions"
-import { filterCredits } from "./movies/functions"
+import { filterCredits, formatSort } from "./movies/functions"
 
 const app = new Hono().basePath("/api/tv")
 const hourToSeconds = 3600
@@ -18,6 +18,7 @@ app.get("/", async (c) => {
     return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
+  parsedQuery.sort_by = formatSort(parsedQuery.sort_by, parsedQuery.sort_order)
   const queryKey = await createCacheKey(stableStringify(parsedQuery))
   const key = `tv_${queryKey}`
   const cacheHit = await c.env.KV.get(key, { type: "json" })
