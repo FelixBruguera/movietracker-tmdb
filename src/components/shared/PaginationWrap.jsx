@@ -57,15 +57,13 @@ const PaginationWrap = memo(({ totalPages }) => {
           >
             <ChevronLeft />
           </PaginationButton>
-          {[currentPage].map((page) => (
             <PaginationButton
-              onClick={() => handleChange(page)}
-              label={`Page ${page}`}
-              active={page === currentPage}
+              onClick={() => handleChange(currentPage)}
+              label={`Page ${currentPage}`}
+              active={true}
             >
-              {page}
+              {currentPage}
             </PaginationButton>
-          ))}
           <PaginationButton
             disabled={currentPage >= maxPages}
             onClick={() => handleChange(currentPage + 1)}
