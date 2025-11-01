@@ -117,6 +117,17 @@ const TabRenderer = ({ movie, tab, isTv }) => {
           </ItemList>
         </div>
       )
+    case "Seasons":
+      return (
+        <>
+          <MovieListTitle title="Seasons" />
+          <ul>
+            {movie.seasons.map((season) => (
+              <li>{season.name}</li>
+            ))}
+          </ul>
+        </>
+      )
   }
 }
 

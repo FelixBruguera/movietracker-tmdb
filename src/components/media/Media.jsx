@@ -70,6 +70,7 @@ const Media = ({ isTv }) => {
         "Cast",
         "Created by",
         "Crew",
+        "Seasons",
         "Companies",
         "Networks",
         "Keywords",
