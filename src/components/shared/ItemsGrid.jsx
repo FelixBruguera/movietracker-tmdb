@@ -12,7 +12,7 @@ const ItemsGrid = ({ items, isLoading, isError, renderItem, ariaLabel }) => {
   const noResults = items.length === 0
   return (
     <div
-      className={`py-5 flex flex-col items-start gap-2 ${noResults && "mx-auto"}`}
+      className={`py-5 flex flex-col items-start gap-2 w-full ${noResults && "mx-auto"}`}
     >
       <ul
         className="flex flex-wrap w-full items-center gap-5"

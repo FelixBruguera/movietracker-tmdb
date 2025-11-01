@@ -28,7 +28,7 @@ const ListCard = memo(({ list }) => {
   return (
     <li
       key={list.id}
-      className="w-9/10 mx-auto md:w-105 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
+      className="w-9/10 mx-auto md:w-4/10 lg:w-3/10 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
       bg-card-bg hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent dark:hover:text-white transition-colors group shadow-sm"
     >
       <Link
