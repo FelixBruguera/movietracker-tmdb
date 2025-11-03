@@ -1,3 +1,4 @@
+import Description from "../shared/Description"
 import MovieDescription from "./MovieDescription"
 
 const MovieDescriptionContainer = ({ description, length = 800 }) => {
@@ -6,7 +7,7 @@ const MovieDescriptionContainer = ({ description, length = 800 }) => {
       {description?.length > length ? (
         <MovieDescription description={description} length={length} />
       ) : (
-        <p>{description}</p>
+        <Description text={description} />
       )}
     </div>
   )

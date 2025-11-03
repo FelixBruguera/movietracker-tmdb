@@ -31,6 +31,7 @@ import {
 } from "./queries"
 import { insertMedia } from "../reviews/queries"
 import axios from "axios"
+
 const app = new Hono().basePath("/api/lists")
 
 app.get("/", async (c) => {
@@ -41,7 +42,7 @@ app.get("/", async (c) => {
   const session = await getAuth(c.env.DB).api.getSession({
     headers: c.req.header(),
   })
-  const itemsPerPage = 20
+  const itemsPerPage = 12
   const db = drizzle(c.env.DB, { schema: schema })
   const {
     page,

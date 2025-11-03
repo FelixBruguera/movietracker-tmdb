@@ -22,7 +22,7 @@ const defaultParams = {
   include_adult: false,
   language: "en-US",
   without_keywords: "155477,1664,190370,267122,171341,229706,251175",
-  sort_by: "popularity.desc",
+  sort_by: "popularity",
   sort_order: "-1",
   page: 1,
 }

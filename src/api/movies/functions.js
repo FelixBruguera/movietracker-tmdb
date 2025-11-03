@@ -7,3 +7,7 @@ export function filterCredits(credits) {
   response.crew = credits.crew.slice(0, 10)
   return response
 }
+
+export function formatSort(sortBy, sortOrder) {
+  return sortOrder === 1 ? `${sortBy}.asc` : `${sortBy}.desc`
+}

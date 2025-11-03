@@ -156,9 +156,9 @@
     }
   ],
   "ranges": {
-    "popularity.desc": "Most popular",
-    "vote_average.desc": "Best rated",
-    "vote_count.desc": "Most voted"
+    "popularity": "Most popular",
+    "vote_average": "Best rated",
+    "vote_count": "Most voted"
   },
   "departments": [
     "All",

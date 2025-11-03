@@ -6,22 +6,24 @@ test.describe("the lists index", () => {
   })
   test("filtering by media", async ({ page }) => {
     await page.getByText("Filters").click()
-    await page.getByLabel("Media minimum").fill("3")
+    await page.getByLabel("Media minimum").fill("20")
     await page.getByRole("button", { name: "Submit" }).click()
-    await expect(page.getByLabel("lists").getByRole("listitem")).toHaveCount(3)
+    await expect(page.getByLabel("lists").getByRole("link")).toHaveCount(3)
     await expect(
       page.getByRole("heading", { name: "Public list" }),
     ).toBeVisible()
-    await expect(page.getByRole("heading", { name: "test list" })).toBeVisible()
     await expect(
-      page.getByRole("heading", { name: "My Favorite Movies" }),
+      page.getByRole("heading", { name: "Oscar Winners" }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Summer Blockbusters" }),
     ).toBeVisible()
   })
   test("filtering by followers", async ({ page }) => {
     await page.getByText("Filters").click()
     await page.getByLabel("Followers minimum").fill("1")
     await page.getByRole("button", { name: "Submit" }).click()
-    await expect(page.getByLabel("lists").getByRole("listitem")).toHaveCount(4)
+    await expect(page.getByLabel("lists").getByRole("link")).toHaveCount(4)
     await expect(
       page.getByRole("heading", { name: "Public list" }),
     ).toBeVisible()
@@ -38,20 +40,20 @@ test.describe("the lists index", () => {
   test("sorting by followers", async ({ page }) => {
     await page.getByLabel("Sort Lists").click()
     await page.getByRole("option", { name: "Followers" }).click()
-    const firstList = page.getByLabel("Lists").getByRole("listitem").nth(0)
+    const firstList = page.getByLabel("Lists").getByRole("link").nth(0)
     await expect(firstList).toContainText("Public list")
-    const secondList = page.getByLabel("Lists").getByRole("listitem").nth(1)
+    const secondList = page.getByLabel("Lists").getByRole("link").nth(1)
     await expect(secondList).toContainText("My Favorite Movies")
   })
   test("sorting by movies", async ({ page }) => {
     await page.getByLabel("Sort Lists").click()
     await page.getByRole("option", { name: "Movies" }).click()
-    const firstList = page.getByLabel("Lists").getByRole("listitem").nth(0)
+    const firstList = page.getByLabel("Lists").getByRole("link").nth(0)
     await expect(firstList).toContainText("Public list")
-    const secondList = page.getByLabel("Lists").getByRole("listitem").nth(1)
-    await expect(secondList).toContainText("My Favorite Movies")
-    const thirdList = page.getByLabel("Lists").getByRole("listitem").nth(2)
-    await expect(thirdList).toContainText("test list")
+    const secondList = page.getByLabel("Lists").getByRole("link").nth(1)
+    await expect(secondList).toContainText("Oscar Winners")
+    const thirdList = page.getByLabel("Lists").getByRole("link").nth(2)
+    await expect(thirdList).toContainText("Summer Blockbusters")
   })
 })
 
@@ -73,9 +75,7 @@ test.describe("as a logged in user", () => {
     })
     test("filtering by the users lists", async ({ page }) => {
       await page.getByText("Your lists").click()
-      await expect(page.getByLabel("lists").getByRole("listitem")).toHaveCount(
-        1,
-      )
+      await expect(page.getByLabel("lists").getByRole("link")).toHaveCount(1)
       await expect(
         page.getByRole("heading", { name: "test list" }),
       ).not.toBeVisible()
@@ -85,9 +85,7 @@ test.describe("as a logged in user", () => {
     })
     test("filtering by followed lists", async ({ page }) => {
       await page.getByText("Following").click()
-      await expect(page.getByLabel("lists").getByRole("listitem")).toHaveCount(
-        1,
-      )
+      await expect(page.getByLabel("lists").getByRole("link")).toHaveCount(1)
       await expect(
         page.getByRole("heading", { name: "Indie Gems" }),
       ).toBeVisible()

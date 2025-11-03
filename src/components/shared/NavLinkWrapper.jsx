@@ -9,7 +9,7 @@ const NavLinkWrapper = ({ to, title }) => {
         to={to}
         className={`border-1 border-border lg:dark:border-transparent lg:border-transparent bg-transparent
            text-black dark:text-white transition-colors hover:text-white hover:bg-accent hover:dark:bg-accent
-          dark:hover:border-gray-800 ${isActive && "!bg-accent text-white"}`}
+          dark:hover:border-gray-800 !shadow-none ${isActive && "!bg-accent text-white"}`}
       >
         <p className="text-sm lg:text-lg">{title}</p>
       </NavLink>

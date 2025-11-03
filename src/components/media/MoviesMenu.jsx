@@ -31,7 +31,7 @@ const MoviesMenu = ({ title = null }) => {
     }
   }
   const ranges = filtersData.ranges
-  const sort = searchParams.get("sort_by") || "popularity.desc"
+  const sort = searchParams.get("sort_by") || "popularity"
   const genres = [
     "Drama",
     "Comedy",

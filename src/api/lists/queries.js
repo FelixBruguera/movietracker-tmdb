@@ -7,6 +7,7 @@ import {
   or,
   count,
   sql,
+  lte,
 } from "drizzle-orm"
 import {
   listFollowers,
@@ -53,6 +54,7 @@ export function getLists(
       followers: countDistinct(listFollowers.userId),
       media: countDistinct(mediaToLists.mediaId),
       total: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
+      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 4) AS Q)`,
     })
     .from(lists)
     .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))

@@ -129,7 +129,11 @@ const NewSearch = () => {
   })
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger title="Save search" aria-label="Save Search">
+      <DialogTrigger
+        title="Save search"
+        aria-label="Save Search"
+        className="p-1 rounded-md hover:bg-card transition-colors"
+      >
         <Plus />
       </DialogTrigger>
       <DialogContent>

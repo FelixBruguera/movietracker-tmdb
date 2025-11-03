@@ -1,12 +1,7 @@
 import { useState } from "react"
 import { Button } from "@ui/button"
 import { ChevronDown, ChevronsDown, ChevronUp } from "lucide-react"
-
-const Description = ({ text }) => (
-  <p className="text-muted-foreground text-sm lg:text-base text-justify">
-    {text}
-  </p>
-)
+import Description from "../shared/Description"
 
 const MovieDescription = ({ description, length = 800 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +15,7 @@ const MovieDescription = ({ description, length = 800 }) => {
   return (
     <>
       <Description text={isOpen ? description : shortDescription} />
-      <Button className="w-fit" onClick={toggleIsOpen}>
+      <Button variant="outline" className="w-fit" onClick={toggleIsOpen}>
         {" "}
         {title} {isOpen ? <ChevronUp /> : <ChevronDown />}{" "}
       </Button>

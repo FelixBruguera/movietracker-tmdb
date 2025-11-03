@@ -1,80 +1,89 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@ui/pagination"
+import { Pagination, PaginationContent, PaginationItem } from "@ui/pagination"
 import { Button } from "@ui/button"
 import { memo } from "react"
 import { useSearchParams } from "react-router"
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react"
+
+const PaginationButton = memo(
+  ({ onClick, disabled, children, label, active }) => {
+    return (
+      <PaginationItem>
+        <Button
+          variant="ghost"
+          className={`p-3 hover:bg-accent dark:hover:bg-accent/90 hover:cursor-pointer hover:text-white transition-colors ${disabled ? "pointer-events-none text-stone-500" : "pointer-events-auto"} ${active && "bg-accent text-white"}`}
+          title={label}
+          aria-label={label}
+          onClick={() => onClick()}
+          aria-disabled={disabled}
+          tabIndex={disabled ? -1 : 0}
+        >
+          {children}
+        </Button>
+      </PaginationItem>
+    )
+  },
+)
 
 const PaginationWrap = memo(({ totalPages }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const handleChange = (newPage) => {
     setSearchParams((params) => {
       params.set("page", newPage)
-      console.log([newPage, params.toString()])
       return params
     })
   }
   const currentPage = parseInt(searchParams.get("page")) || 1
   const maxPages = totalPages > 500 ? 500 : totalPages
   return (
-    <Pagination className="p-2">
-      <PaginationContent className="gap-10">
-        <PaginationItem>
-          <PaginationPrevious
-            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${currentPage <= 1 ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
-            href=""
-            onClick={(e) => {
-              e.preventDefault()
-              handleChange(currentPage - 1)
-            }}
-            aria-disabled={currentPage <= 1}
-            tabIndex={currentPage <= 1 ? 1 : 0}
-          />
-        </PaginationItem>
-        <form
-          className="flex items-center justify-center gap-3 h-full"
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleChange(e.target.page.value)
-          }}
-        >
-          <span className="flex h-8/10 items-center justify-center gap-1">
-            <input
-              key={currentPage}
-              type="number"
-              defaultValue={currentPage}
-              min={1}
-              max={maxPages}
-              name="page"
-              className="w-13 h-full border-1 dark:border-gray-500 border-stone-500 rounded-md px-1"
-            />
-            <p>of {maxPages}</p>
-          </span>
-          <Button
-            className="h-8/10 w-fit px-3 bg-stone-800 hover:bg-accent hover:cursor-pointer dark:bg-gray-300 dark:hover:bg-accent dark:hover:text-white transition-colors"
-            type="submit"
+    <div className="w-full">
+      <Pagination className="p-2">
+        <PaginationContent className="gap-2">
+          <PaginationButton
+            disabled={currentPage <= 1}
+            onClick={() => handleChange(1)}
+            label="First page"
           >
-            Go
-          </Button>
-        </form>
-        <PaginationItem>
-          <PaginationNext
-            className={`hover:bg-stone-900 dark:hover:bg-stone-950 hover:text-white ${currentPage >= maxPages ? "pointer-events-none text-stone-500" : "pointer-events-auto"}`}
-            href=""
-            onClick={(e) => {
-              e.preventDefault()
-              handleChange(currentPage + 1)
-            }}
-            aria-disabled={currentPage >= maxPages}
-            tabIndex={currentPage >= maxPages ? 1 : 0}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+            <ChevronsLeft />
+          </PaginationButton>
+          <PaginationButton
+            disabled={currentPage <= 1}
+            onClick={() => handleChange(currentPage - 1)}
+            label="Previous page"
+          >
+            <ChevronLeft />
+          </PaginationButton>
+          <PaginationButton
+            onClick={() => handleChange(currentPage)}
+            label={`Page ${currentPage}`}
+            active={true}
+          >
+            {currentPage}
+          </PaginationButton>
+          <PaginationButton
+            disabled={currentPage >= maxPages}
+            onClick={() => handleChange(currentPage + 1)}
+            label="Next page"
+          >
+            <ChevronRight />
+          </PaginationButton>
+          <PaginationButton
+            disabled={currentPage >= maxPages}
+            onClick={() => handleChange(maxPages)}
+            label="Last page"
+          >
+            <ChevronsRight />
+          </PaginationButton>
+        </PaginationContent>
+      </Pagination>
+      <p className="text-center text-xs md:text-sm text-muted-foreground">
+        {maxPages} Pages
+      </p>
+    </div>
   )
 })
 

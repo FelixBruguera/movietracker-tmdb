@@ -17,11 +17,23 @@ test.describe("the index route", () => {
     ).not.toBeVisible()
   })
   test.describe("sorting", () => {
-    test("sorting by vote count", async ({ page }) => {
+    test("sorting by vote count descending", async ({ page }) => {
       await page.getByText("Most Popular").click()
       await page.getByText("Most voted").click()
       const posters = page.getByRole("listitem").getByRole("img")
-      await expect(posters.first()).toHaveAttribute("alt", "Inception")
+      await expect(page.getByAltText("Inception")).toBeVisible()
+      await expect(page.getByAltText("Interstellar")).toBeVisible()
+      await expect(page.getByAltText("The Shawshank Redemption")).toBeVisible()
+    })
+    test("sorting by vote ascending", async ({ page }) => {
+      await page.getByText("Most Popular").click()
+      await page.getByText("Most voted").click()
+      await page.getByLabel("Descending order").click()
+      await expect(page.getByAltText("Inception")).not.toBeVisible()
+      await expect(page.getByAltText("Interstellar")).not.toBeVisible()
+      await expect(
+        page.getByAltText("The Shawshank Redemption"),
+      ).not.toBeVisible()
     })
   })
   test.describe("filtering", () => {

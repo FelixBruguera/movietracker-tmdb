@@ -1,11 +1,41 @@
 import { Input } from "@ui/input"
 import { useContext, useState } from "react"
 import useDebounce from "../../../hooks/useDebounce"
-import SearchItem from "./SearchItem"
 import MovieSearchSkeleton from "./MovieSearchSkeleton"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { DialogContext } from "../shared/DialogWrapper"
+import { Button } from "@ui/button"
+import { Link } from "react-router"
+
+const SearchRenderer = ({
+  isLoading,
+  dataLoading,
+  isError,
+  data,
+  renderFn,
+  linkPath,
+  setOpen,
+}) => {
+  if (isLoading || dataLoading) {
+    return <MovieSearchSkeleton />
+  }
+  if (isError) {
+    return <li>Something went wrong</li>
+  }
+  return data?.results.length > 0 ? (
+    <>
+      {renderFn()}
+      {data.total_pages > 1 && (
+        <Link to={linkPath} className="pb-3">
+          <Button onClick={() => setOpen(false)}>More results</Button>
+        </Link>
+      )}
+    </>
+  ) : data?.results ? (
+    <li>No Results</li>
+  ) : null
+}
 
 const Search = ({ renderFn }) => {
   const [search, setSearch] = useState("")
@@ -38,14 +68,16 @@ const Search = ({ renderFn }) => {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <ul className="h-100 w-full flex flex-wrap items-center justify-evenly gap-3 mt-2">
-        {(isLoading || dataLoading) && <MovieSearchSkeleton />}
-        {isError && <li>Something went wrong</li>}
-        {data?.results.length > 0
-          ? renderFn(data.results, setOpen)
-          : !isLoading &&
-            search.length > 2 &&
-            data?.results && <li>No Results</li>}
+      <ul className="h-100 w-full flex flex-wrap items-center justify-evenly gap-3">
+        <SearchRenderer
+          isLoading={isLoading}
+          dataLoading={dataLoading}
+          isError={isError}
+          data={data}
+          renderFn={() => renderFn(data.results, setOpen)}
+          linkPath={`/search?query=${debouncedValue}&page=2`}
+          setOpen={setOpen}
+        />
       </ul>
     </form>
   )

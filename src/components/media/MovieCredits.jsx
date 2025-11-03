@@ -45,6 +45,9 @@ const MovieCredits = ({ path = "movies" }) => {
       {data.credits.cast?.length > 0 && (
         <CreditsList title="Cast" list={data.credits.cast} />
       )}
+      {data.created_by?.length > 0 && (
+        <CreditsList title="Created by" list={data.created_by} />
+      )}
       {data.credits.crew?.length > 0 && (
         <CreditsList title="Crew" list={data.credits.crew} />
       )}

@@ -4,10 +4,11 @@ import { createCacheKey } from "../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
 import { z } from "zod"
 import { formatValidationError } from "./functions"
+import { baseSchema } from "../utils/baseSchema"
 
 const app = new Hono().basePath("/api/search")
 const hourToSeconds = 3600
-const searchSchema = z.object({
+const searchSchema = baseSchema.pick({ page: true }).extend({
   query: z.string().min(3).max(100),
   include_adult: z.literal(false),
   language: z.literal("en-US"),

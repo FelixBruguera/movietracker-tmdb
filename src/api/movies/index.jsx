@@ -3,7 +3,7 @@ import axios from "axios"
 import moviesSchema from "../../utils/moviesSchema"
 import { createCacheKey } from "../../utils/createCacheKey"
 import stableStringify from "json-stable-stringify"
-import { filterCredits } from "./functions"
+import { filterCredits, formatSort } from "./functions"
 import { formatValidationError } from "../functions"
 
 const app = new Hono().basePath("/api/movies")
@@ -17,8 +17,8 @@ app.get("/", async (c) => {
   if (!validation.success) {
     return c.json(formatValidationError(validation), 400)
   }
-  console.log(query)
   const parsedQuery = validation.data
+  parsedQuery.sort_by = formatSort(parsedQuery.sort_by, parsedQuery.sort_order)
   const key = await createCacheKey(stableStringify(parsedQuery))
   const cacheHit = await c.env.KV.get(key, { type: "json" })
   if (cacheHit) {

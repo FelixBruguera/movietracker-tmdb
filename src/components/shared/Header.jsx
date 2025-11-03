@@ -53,7 +53,7 @@ const Header = () => {
           </DialogWrapper>
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="border-1 border-border p-2 rounded-md"
+              className="border-1 border-transparent p-2 rounded-md hover:bg-card hover:border-border transition-colors"
               aria-label="Settings"
               title="Settings"
             >

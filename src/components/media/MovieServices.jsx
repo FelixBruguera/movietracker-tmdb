@@ -15,7 +15,7 @@ const AvailabilityList = ({ title, services, path = "/" }) => {
             <li key={service.provider_id}>
               <Link
                 to={`${path}?watch_region=${region}&&with_watch_providers=${service.provider_id}`}
-                className="flex flex-col items-center justify-center w-25 lg:w-40 gap-2 mb-2"
+                className="flex flex-col items-center justify-center w-15 lg:w-20 gap-2 mx-2 mb-2"
                 title={service.provider_name}
               >
                 <Poster
@@ -23,9 +23,6 @@ const AvailabilityList = ({ title, services, path = "/" }) => {
                   alt={service.provider_name}
                   size="company"
                 />
-                <p className="text-muted-foreground dark:text-muted-foreground text-sm whitespace-nowrap text-ellipsis max-w-9/10 overflow-hidden">
-                  {service.provider_name}
-                </p>
               </Link>
             </li>
           ))}

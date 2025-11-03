@@ -2,6 +2,7 @@ import { format } from "date-fns"
 import { Calendar, Eye, FilmIcon, Lock, Users } from "lucide-react"
 import { memo } from "react"
 import { Link } from "react-router"
+import Poster from "../shared/Poster"
 
 const ListCardItem = (props) => {
   return (
@@ -11,19 +12,41 @@ const ListCardItem = (props) => {
   )
 }
 
+const fillPosters = (posters) => {
+  if (posters.length < 4) {
+    for (let i = posters.length; i < 4; i++) {
+      posters.push(null)
+    }
+  }
+  return posters
+}
+
 const ListCard = memo(({ list }) => {
   const date = format(new Date(list.createdAt), "MMMM u")
+  const posters = JSON.parse(list.posters)
+  const filledPosters = fillPosters(posters)
   return (
     <li
       key={list.id}
-      className="w-9/10 mx-auto md:w-100 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
-      bg-zinc-200 dark:bg-secondary hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent dark:hover:text-white transition-colors group"
+      className="w-9/10 mx-auto md:w-4/10 lg:w-3/10 h-fit flex flex-col gap-1 border-1 rounded-lg border-border dark:hover:border-stone-700
+      bg-card-bg hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent dark:hover:text-white transition-colors group shadow-sm"
     >
       <Link
         to={`/lists/${list.id}`}
         className="p-4 flex flex-col gap-2"
         title={list.name}
       >
+        <ul className="flex">
+          {filledPosters?.map((poster, i) => (
+            <li key={i} className="min-w-1/4">
+              {poster === null ? (
+                <div className="border-1 border-neutral-200 dark:border-neutral-800 h-30 lg:h-34 w-21 lg:w-23 rounded-sm"></div>
+              ) : (
+                <Poster src={poster} size="xs" />
+              )}
+            </li>
+          ))}
+        </ul>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 max-w-8/10">
             <h3 className="text-lg md:text-xl text-nowrap overflow-hidden text-ellipsis font-bold">
