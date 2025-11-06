@@ -47,9 +47,10 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   overflow-y: scroll;
-  --chart-main: oklch(0.488 0.243 264.376);
-  --chart-accent: oklch(0.388 0.243 264.376);
+  --chart-main: rgb(31, 90, 230);
+  --chart-accent: rgb(31, 50, 190);
   font-family: "Roboto Condensed";
+  --heatmap: 31, 90, 230;
 }
 
 .dark {
@@ -86,6 +87,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+  --chart-main: rgb(31, 50, 210);
+  --chart-accent: rgb(31, 30, 150);
+  --heatmap: 123, 241, 168;
 }
 @layer base {
   :root {

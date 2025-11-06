@@ -58,7 +58,7 @@ const App = () => {
           <Route index={true} element={<ProfileReviews />} />
           <Route path="diary" element={<Diary />} />
           <Route path="lists" element={<ProfileLists />} />
-          <Route path="stats" element={<Stats />} />
+          <Route path="stats/:scope" element={<Stats />} />
         </Route>
         <Route path="/search" element={<SearchResults />} />
       </Routes>

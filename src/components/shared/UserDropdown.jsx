@@ -68,7 +68,7 @@ const UserDropdown = () => {
           <Logs className="group-hover:text-white" />
           <p>Your Lists</p>
         </DropdownLink>
-        <DropdownLink to={`/users/${session.user.id}/stats`}>
+        <DropdownLink to={`/users/${session.user.id}/stats/movies`}>
           <ChartSpline className="group-hover:text-white" />
           <p>Stats</p>
         </DropdownLink>

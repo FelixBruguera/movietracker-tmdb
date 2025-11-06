@@ -101,6 +101,7 @@ app.get("/company/:company", async (c) => {
     return c.json(formatValidationError(validation), 400)
   }
   const parsedQuery = validation.data
+  parsedQuery.sort_by = formatSort(parsedQuery.sort_by, parsedQuery.sort_order)
   parsedQuery.with_companies = c.req.param("company")
   const response = await axios.get(
     `https://api.themoviedb.org/3/discover/movie`,
