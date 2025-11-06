@@ -122,6 +122,7 @@ app.post("/", auth, async (c) => {
       throw new HTTPException(500)
     }
   } catch (e) {
+    console.log(e)
     if (e.cause.message.includes("Request failed with status code 404")) {
       throw new HTTPException(404, { message: "Invalid mediaId" })
     }
