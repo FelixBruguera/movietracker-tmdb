@@ -29,7 +29,6 @@ const TVStats = () => {
   if (isError) {
     return <ErrorMessage />
   }
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   const months = [
     "Jan",
     "Feb",
@@ -66,6 +65,7 @@ const TVStats = () => {
         title="Average Rating by First Aired Decade"
         xAxisDataKey="decade"
         tooltipTitle="Shows"
+        width="base"
       />
       <RatingDistribution data={data.ratingDistribution} tooltipTitle="Shows" />
       <RatingVerticalBarChart

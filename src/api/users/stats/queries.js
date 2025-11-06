@@ -189,13 +189,13 @@ export function getMostWatchedGenres(db, userId, scope) {
 export function getLogsByYear(db, userId, scope) {
   return db
     .select({
-      year: media.releaseDate,
+      year: sql`strftime("%Y", ${diary.date}, 'unixepoch')`,
       total: count(diary.id),
     })
     .from(diary)
     .leftJoin(media, eq(media.id, diary.mediaId))
     .where(and(like(media.id, `${scope}_%`), eq(diary.userId, userId)))
-    .groupBy(media.releaseDate)
+    .groupBy(sql`strftime("%Y", ${diary.date}, 'unixepoch')`)
 }
 
 export function getMostWatchedActors(db, userId, scope) {

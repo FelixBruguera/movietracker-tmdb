@@ -33,7 +33,7 @@ const ProfileHeader = () => {
       <title>{data.username}</title>
       <meta property="og:title" content={data.username} />
       <div className="w-full mx-auto pb-6 flex flex-col gap-2">
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-3 flex-col">
           <Avatar
             src={data.image}
             alt={`${data.username}'s avatar`}
