@@ -5,6 +5,10 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
+  ComposedChart,
+  LineChart,
+  Line,
+  Area,
 } from "recharts"
 import { ChartTooltip } from "@/components/ui/chart"
 import ChartHeading from "./ChartHeading"
@@ -37,16 +41,22 @@ const RatingsByYear = ({
   return (
     <ChartHeading title={title} width={width}>
       <ResponsiveContainer width="95%" height={250}>
-        <BarChart accessibilityLayer data={data}>
+        <ComposedChart accessibilityLayer data={data}>
           <CartesianGrid
             vertical={false}
             className="stroke-zinc-300 dark:stroke-stone-800"
           />
-          <Bar
+          <Area
             dataKey="averageRating"
             radius={5}
             maxBarSize={50}
-            fill="var(--chart-main)"
+            fill="var(--chart-area-bg)"
+            activeBar={{ fill: "var(--chart-accent" }}
+          />
+          <Line
+            dataKey="averageRating"
+            radius={5}
+            fill="var(--chart-accent)"
             activeBar={{ fill: "var(--chart-accent" }}
           />
           <XAxis
@@ -60,6 +70,7 @@ const RatingsByYear = ({
             dataKey="averageRating"
             tickLine={false}
             domain={[0, 10]}
+            width={30}
             tickCount={10}
             className="text-xs lg:text-sm"
           />
@@ -67,7 +78,7 @@ const RatingsByYear = ({
             cursor={false}
             content={<RatingCustomTooltip title={tooltipTitle} />}
           />
-        </BarChart>
+        </ComposedChart>
       </ResponsiveContainer>
     </ChartHeading>
   )

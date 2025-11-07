@@ -37,16 +37,13 @@ const LogsByYear = ({ data, title, tooltipTitle }) => {
             vertical={false}
             className="stroke-zinc-300 dark:stroke-stone-800"
           />
-          {data.length > 1 ? (
-            <Line dataKey="total" radius={5} fill="var(--chart-main)" />
-          ) : (
-            <Bar
-              dataKey="total"
-              radius={5}
-              fill="var(--chart-main)"
-              activeBar={{ fill: "var(--chart-accent" }}
-            />
-          )}
+          <Area dataKey="total" radius={5} fill="var(--chart-area-bg)" />
+          <Line
+            dataKey="total"
+            radius={5}
+            fill="var(--chart-main)"
+            activeBar={{ fill: "var(--chart-accent" }}
+          />
           <XAxis
             className="text-xs lg:text-sm"
             dataKey="year"
@@ -56,6 +53,7 @@ const LogsByYear = ({ data, title, tooltipTitle }) => {
           <YAxis
             tickLine={false}
             type="number"
+            width={30}
             allowDecimals={false}
             className="text-xs lg:text-sm"
           />

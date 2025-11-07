@@ -43,7 +43,8 @@ const RatingDistribution = ({ data, tooltipTitle }) => {
           <YAxis
             dataKey="total"
             tickLine={false}
-            domain={[0, 10]}
+            allowDecimals={false}
+            width={30}
             tickCount={10}
             className="text-xs lg:text-sm"
           />

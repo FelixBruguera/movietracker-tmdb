@@ -104,7 +104,7 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("2025")).toBeVisible()
       await expect(page.getByAltText("Se7en")).toBeVisible()
       await expect(
-        page.getByAltText("Back to the Future", { exact: true }),
+        page.getByAltText("Fight Club", { exact: true }),
       ).toBeVisible()
     })
     test("sorting by yearly ascending", async ({ page }) => {

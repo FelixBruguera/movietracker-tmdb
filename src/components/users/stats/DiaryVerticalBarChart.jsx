@@ -39,7 +39,7 @@ const DiaryVerticalBarChart = ({ data, title, yAxisKey, tooltipTitle }) => {
             className="text-xs lg:text-sm"
           />
           <YAxis
-            width={100}
+            width={60}
             dataKey={yAxisKey}
             type="category"
             tickLine={false}

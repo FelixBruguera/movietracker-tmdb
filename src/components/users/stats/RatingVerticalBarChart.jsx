@@ -40,7 +40,7 @@ const RatingVerticalBarChart = ({ data, title, tooltipTitle }) => {
             className="text-xs lg:text-sm"
           />
           <YAxis
-            width={100}
+            width={60}
             dataKey="genre"
             type="category"
             tickLine={false}

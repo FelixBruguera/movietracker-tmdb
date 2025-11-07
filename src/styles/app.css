@@ -49,8 +49,9 @@
   overflow-y: scroll;
   --chart-main: rgb(31, 90, 230);
   --chart-accent: rgb(31, 50, 190);
+  --chart-area-bg: rgb(31, 90, 210);
   font-family: "Roboto Condensed";
-  --heatmap: 31, 90, 230;
+  --heatmap: 0, 130, 53;
 }
 
 .dark {
@@ -89,6 +90,7 @@
   --sidebar-ring: oklch(0.439 0 0);
   --chart-main: rgb(31, 50, 210);
   --chart-accent: rgb(31, 30, 150);
+  --chart-area-bg: rgb(31, 70, 210);
   --heatmap: 123, 241, 168;
 }
 @layer base {
