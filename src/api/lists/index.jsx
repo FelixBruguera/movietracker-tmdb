@@ -31,6 +31,7 @@ import {
 } from "./queries"
 import { insertMedia } from "../reviews/queries"
 import axios from "axios"
+import { transformFilter } from "../users/functions"
 
 const app = new Hono().basePath("/api/lists")
 
@@ -97,13 +98,21 @@ app.get("/:listId/media", async (c) => {
   const itemsPerPage = 20
   const listId = c.req.param("listId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_order, page } = validation.data
+  const { sort_order, page, filter } = validation.data
   const sort = getSort(
     { sort_order: sort_order, sort_by: "date" },
     { date: mediaToLists.createdAt },
   )
   const offset = page * itemsPerPage - itemsPerPage
-  const listMedia = await getListMedia(db, listId, sort, offset, itemsPerPage)
+  const filterCondition = transformFilter(filter, mediaToLists)
+  const listMedia = await getListMedia(
+    db,
+    listId,
+    sort,
+    offset,
+    itemsPerPage,
+    filterCondition,
+  )
   const total = listMedia.at(0)?.total || 0
   const totalPages = Math.ceil(total / itemsPerPage)
   return c.json({

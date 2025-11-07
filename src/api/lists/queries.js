@@ -118,7 +118,14 @@ export function getListOwner(db, listId, userId) {
     .where(and(eq(lists.id, listId), eq(lists.userId, userId)))
 }
 
-export function getListMedia(db, listId, sort, offset, itemsPerPage) {
+export function getListMedia(
+  db,
+  listId,
+  sort,
+  offset,
+  itemsPerPage,
+  filterCondition,
+) {
   return db
     .select({
       id: media.id,
@@ -128,7 +135,7 @@ export function getListMedia(db, listId, sort, offset, itemsPerPage) {
     })
     .from(mediaToLists)
     .fullJoin(media, eq(mediaToLists.mediaId, media.id))
-    .where(and(eq(mediaToLists.listId, listId)))
+    .where(and(eq(mediaToLists.listId, listId), filterCondition))
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)

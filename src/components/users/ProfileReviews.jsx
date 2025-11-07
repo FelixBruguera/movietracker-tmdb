@@ -12,6 +12,7 @@ import ErrorMessage from "../shared/ErrorMessage"
 import axios from "axios"
 import ReviewsSkeleton from "../reviews/ReviewsSkeleton"
 import { useParams, useSearchParams } from "react-router"
+import SelectFilter from "../shared/SelectFilter"
 
 const ProfileReviews = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -48,6 +49,7 @@ const ProfileReviews = () => {
             />
           )}
         </ListHeadingTitle>
+        <SelectFilter />
         <SelectSortBy
           value={sortBy}
           selectedValue={sortOptions[sortBy]}

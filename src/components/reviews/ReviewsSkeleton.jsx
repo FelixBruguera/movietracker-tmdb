@@ -4,7 +4,7 @@ const ReviewsSkeleton = () => {
   return (
     <div
       id="reviews"
-      className="max-w-400 flex flex-col gap-3 mt-10 mx-auto lg:w-8/10 2xl:w-7/10"
+      className="max-w-400 flex flex-col gap-3 mt-10 mx-auto w-full"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

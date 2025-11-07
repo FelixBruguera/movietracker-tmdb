@@ -51,7 +51,11 @@ export default function Reviews({ movie, mediaId }) {
   const ratingScale = reviewsInfo.ratingScale
 
   if (isLoading) {
-    return <ReviewsSkeleton />
+    return (
+      <div className="lg:w-8/10 2xl:w-7/10 mx-auto">
+        <ReviewsSkeleton />
+      </div>
+    )
   }
 
   if (isError) {

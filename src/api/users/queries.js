@@ -46,14 +46,22 @@ export function getUser(db, id) {
     .where(eq(user.id, id))
 }
 
-export function getDiary(db, group, sort, offset, itemsPerPage, userId) {
+export function getDiary(
+  db,
+  group,
+  sort,
+  offset,
+  itemsPerPage,
+  userId,
+  filterCondition,
+) {
   const totalCount = db.$with("totalCount").as(
     db
       .select({
         total: sql`CAST(COUNT(DISTINCT ${diary.id}) AS INTEGER)`.as("total"),
       })
       .from(diary)
-      .where(eq(diary.userId, userId)),
+      .where(and(eq(diary.userId, userId), filterCondition)),
   )
   return db
     .with(totalCount)
@@ -69,14 +77,22 @@ export function getDiary(db, group, sort, offset, itemsPerPage, userId) {
     .from(diary)
     .crossJoin(totalCount)
     .innerJoin(media, eq(diary.mediaId, media.id))
-    .where(eq(diary.userId, userId))
+    .where(and(eq(diary.userId, userId), filterCondition))
     .groupBy(group)
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)
 }
 
-export function getUserReviews(db, id, userId, sort, offset, itemsPerPage) {
+export function getUserReviews(
+  db,
+  id,
+  userId,
+  sort,
+  offset,
+  itemsPerPage,
+  filterCondition,
+) {
   const currentUserLike = alias(likesToReviews, "currentUserLike")
   return db
     .select({
@@ -108,7 +124,7 @@ export function getUserReviews(db, id, userId, sort, offset, itemsPerPage) {
       ),
     )
     .groupBy(reviews.id)
-    .where(eq(reviews.userId, id))
+    .where(and(eq(reviews.userId, id), filterCondition))
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)

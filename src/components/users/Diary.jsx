@@ -12,6 +12,7 @@ import DiarySkeleton from "./DiarySkeleton"
 import ProfileHeader from "./ProfileHeader"
 import { useParams, useSearchParams } from "react-router"
 import PosterList from "../shared/PosterList"
+import SelectFilter from "../shared/SelectFilter"
 
 const Diary = () => {
   const { id } = useParams()
@@ -38,6 +39,7 @@ const Diary = () => {
         <ListHeadingTitle title="Diary Logs">
           <Total total={data.total} label="Total logs" />
         </ListHeadingTitle>
+        <SelectFilter />
         <SelectSortBy
           value={sortBy}
           selectedValue={sortOptions[sortBy]}

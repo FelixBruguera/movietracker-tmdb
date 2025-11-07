@@ -20,6 +20,7 @@ import ListDetails from "./ListDetails"
 import { useMemo } from "react"
 import { useParams, useSearchParams } from "react-router"
 import CopyList from "./CopyList.jsx"
+import SelectFilter from "../shared/SelectFilter.jsx"
 
 export default function List() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -109,6 +110,7 @@ export default function List() {
         <ListHeadingTitle title="Media">
           <Total total={media.total} label="Total Media" />
         </ListHeadingTitle>
+        <SelectFilter />
         <SelectSortBy
           value="date"
           selectedValue={sortOptions["date"]}

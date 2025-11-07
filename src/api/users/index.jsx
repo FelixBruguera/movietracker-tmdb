@@ -38,6 +38,7 @@ import {
   insertSearch,
   updateSearch,
 } from "./queries"
+import { transformFilter } from "./functions"
 
 const app = new Hono().basePath("/api/users")
 app.route("/:id", stats)
@@ -174,7 +175,7 @@ app.get("/:id/diary", async (c) => {
   }
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_by, sort_order, page } = validation.data
+  const { sort_by, sort_order, page, filter } = validation.data
   const itemsPerPage = 5
   const group =
     sort_by === "monthly"
@@ -182,7 +183,16 @@ app.get("/:id/diary", async (c) => {
       : sql`strftime('%Y', ${diary.date}, 'unixepoch')`
   const sort = sort_order === 1 ? asc(group) : desc(group)
   const offset = page * itemsPerPage - itemsPerPage
-  const result = await getDiary(db, group, sort, offset, itemsPerPage, id)
+  const filterCondition = transformFilter(filter, diary)
+  const result = await getDiary(
+    db,
+    group,
+    sort,
+    offset,
+    itemsPerPage,
+    id,
+    filterCondition,
+  )
   console.log(result)
   const total = result.at(0)?.total
   const totalGroups = result.at(0)?.totalGroups
@@ -205,7 +215,7 @@ app.get("/:id/reviews", async (c) => {
   const userId = session?.user.id || null
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { page } = validation.data
+  const { page, filter } = validation.data
   const itemsPerPage = 10
   const sortOptions = {
     rating: reviews.rating,
@@ -214,6 +224,7 @@ app.get("/:id/reviews", async (c) => {
   }
   const sort = getSort(validation.data, sortOptions)
   const offset = page * itemsPerPage - itemsPerPage
+  const filterCondition = transformFilter(filter, reviews)
   const result = await getUserReviews(
     db,
     id,
@@ -221,6 +232,7 @@ app.get("/:id/reviews", async (c) => {
     sort,
     offset,
     itemsPerPage,
+    filterCondition,
   )
   const total = result.at(0)?.total
   const averageRating = result.at(0)?.averageRating

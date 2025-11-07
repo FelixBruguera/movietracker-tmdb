@@ -3,6 +3,7 @@ import { baseSchema } from "./baseSchema"
 
 export const listSchema = baseSchema.extend({
   sort_by: z.enum(["date"]).default("date"),
+  filter: z.enum(["all", "movies", "tv"]).default("all"),
 })
 
 export const listIndexSchema = baseSchema.extend({
