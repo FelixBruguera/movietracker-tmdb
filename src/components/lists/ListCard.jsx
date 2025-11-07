@@ -13,8 +13,8 @@ const ListCardItem = (props) => {
 }
 
 const fillPosters = (posters) => {
-  if (posters.length < 4) {
-    for (let i = posters.length; i < 4; i++) {
+  if (posters.length < 5) {
+    for (let i = posters.length; i < 5; i++) {
       posters.push(null)
     }
   }
@@ -36,9 +36,9 @@ const ListCard = memo(({ list }) => {
         className="p-4 flex flex-col gap-2"
         title={list.name}
       >
-        <ul className="flex">
+        <ul className="flex mr-auto">
           {filledPosters?.map((poster, i) => (
-            <li key={i} className="min-w-1/4">
+            <li key={i} className="min-w-1/5">
               {poster === null ? (
                 <div className="border-1 border-neutral-200 dark:border-neutral-800 h-30 lg:h-34 w-21 lg:w-23 rounded-sm"></div>
               ) : (
