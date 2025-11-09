@@ -9,7 +9,7 @@ import { formatInTimeZone } from "date-fns-tz"
 const Likes = ({ currentUserLiked, count, onLike, onDislike }) => {
   const verb = count === 1 ? "Like" : "Likes"
   return (
-    <div className="flex flex-col gap-1 items-center justify-center">
+    <div className="flex gap-1 items-center justify-center">
       {currentUserLiked === 1 ? (
         <Button
           variant="ghost"
@@ -53,39 +53,39 @@ const Review = ({
   return (
     <li
       key={data.id}
-      className={`border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring flex items-start justify-between transition-colors ${className}`}
+      className={`grid grid-cols-24 auto-rows-min items-center border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring transition-colors ${className}`}
     >
-      <ReviewRating rating={data.rating} color={color} />
+      <div className="col-span-3 lg:col-span-1 row-span-1">
+        <ReviewRating rating={data.rating} color={color} />
+      </div>
       <div
-        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-start"}`}
+        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-start"} col-span-16 lg:col-span-16`}
       >
-        <div className="flex flex-col gap-1 w-full px-3 py-1">
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center flex-wrap">
             <Link
               to={path}
               className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
             >
               {avatar && <Avatar src={avatar} />}
-              {title}
+              <p className="max-w-50 lg:max-w-full overflow-hidden overflow-ellipsis">{title}</p>
             </Link>
             <p className="text-xs text-muted-foreground whitespace-nowrap">
               {formatInTimeZone(data.createdAt, "UTC", "dd-MM-u")}
             </p>
           </div>
-          <p className="w-full lg:w-full text-sm lg:text-base text-justify">
-            {data.text}
-          </p>
-        </div>
-        <div className="flex justify-end gap-2 items-start w-2/10 lg:w-1/10">
-          {session && displayLikes && (
-            <Likes
-              currentUserLiked={data.currentUserLiked}
-              count={data.likes}
-              onLike={() => likeMutation.mutate(data.id)}
-              onDislike={() => dislikeMutation.mutate(data.id)}
-            />
-          )}
-        </div>
+      </div>
+      <p className="w-full lg:w-full text-sm lg:text-base text-justify row-start-2 col-start-4 lg:col-start-2 col-span-22">
+        {data.text}
+      </p>
+      <div className="flex justify-end gap-2 items-start w-full col-start-20 col-span-8 lg:col-start-22 lg:col-span-3 row-span-1">
+        {session && displayLikes && (
+          <Likes
+            currentUserLiked={data.currentUserLiked}
+            count={data.likes}
+            onLike={() => likeMutation.mutate(data.id)}
+            onDislike={() => dislikeMutation.mutate(data.id)}
+          />
+        )}
       </div>
     </li>
   )
