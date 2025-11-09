@@ -110,14 +110,16 @@ export default function List() {
         <ListHeadingTitle title="Media">
           <Total total={media.total} label="Total Media" />
         </ListHeadingTitle>
-        <SelectFilter />
-        <SelectSortBy
-          value="date"
-          selectedValue={sortOptions["date"]}
-          title="Sort Media"
-          options={sortOptions}
-        />
-        <SortOrderToggle />
+        <div className="flex items-center justify-evenly">
+          <SelectFilter />
+          <SelectSortBy
+            value="date"
+            selectedValue={sortOptions["date"]}
+            title="Sort Media"
+            options={sortOptions}
+          />
+          <SortOrderToggle />
+        </div>
       </ListHeading>
       <ul
         className="py-5 flex flex-wrap justify-evenly items-center gap-y-1"
