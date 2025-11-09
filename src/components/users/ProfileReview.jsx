@@ -30,7 +30,7 @@ const ProfileReview = ({ data, color, profileId }) => {
   })
   return (
     <div
-      className="flex items-center flex-col md:flex-row max-w-500 mx-auto justify-start gap-2"
+      className="flex items-center lg:items-start flex-col md:flex-row max-w-500 mx-auto justify-start gap-2"
       key={data.id}
     >
       <Link to={linkTo} className="p-1 rounded-t-2xl  md:p-auto">
