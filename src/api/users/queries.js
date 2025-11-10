@@ -1,6 +1,7 @@
 import { and, countDistinct, eq, gte, sql } from "drizzle-orm"
 import {
   diary,
+  genresToMedia,
   likesToReviews,
   listFollowers,
   lists,
@@ -91,7 +92,7 @@ export function getUserReviews(
   sort,
   offset,
   itemsPerPage,
-  filterCondition,
+  filters,
 ) {
   const currentUserLike = alias(likesToReviews, "currentUserLike")
   return db
@@ -115,6 +116,7 @@ export function getUserReviews(
     })
     .from(reviews)
     .innerJoin(media, eq(reviews.mediaId, media.id))
+    .leftJoin(genresToMedia, eq(genresToMedia.mediaId, reviews.mediaId))
     .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
     .leftJoin(
       currentUserLike,
@@ -124,7 +126,7 @@ export function getUserReviews(
       ),
     )
     .groupBy(reviews.id)
-    .where(and(eq(reviews.userId, id), filterCondition))
+    .where(and(eq(reviews.userId, id), ...filters))
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)

@@ -38,7 +38,8 @@ import {
   insertSearch,
   updateSearch,
 } from "./queries"
-import { transformFilter } from "./functions"
+import { mapGenre, mapMediaType, mapRatingRange, mapYearRange, transformFilter } from "./functions"
+import { profileReviewsSchema } from "../../utils/profileSchema"
 
 const app = new Hono().basePath("/api/users")
 app.route("/:id", stats)
@@ -205,7 +206,7 @@ app.get("/:id/diary", async (c) => {
 })
 
 app.get("/:id/reviews", async (c) => {
-  const validation = userReviewsSchema.safeParse(c.req.query())
+  const validation = profileReviewsSchema.safeParse(c.req.query())
   if (!validation.success) {
     return c.json(formatValidationError(validation), 400)
   }
@@ -215,7 +216,7 @@ app.get("/:id/reviews", async (c) => {
   const userId = session?.user.id || null
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { page, filter } = validation.data
+  const { page, media_type, with_genres, "rating.gte": ratingMin, "rating.lte": ratingMax, "release_year.gte": yearMin, "release_year.lte": yearMax } = validation.data
   const itemsPerPage = 10
   const sortOptions = {
     rating: reviews.rating,
@@ -224,7 +225,7 @@ app.get("/:id/reviews", async (c) => {
   }
   const sort = getSort(validation.data, sortOptions)
   const offset = page * itemsPerPage - itemsPerPage
-  const filterCondition = transformFilter(filter, reviews)
+  const filters = [mapMediaType(media_type, reviews), mapGenre(with_genres, schema.genresToMedia), ...mapRatingRange(ratingMin, ratingMax, reviews), ...mapYearRange(yearMin, yearMax, schema.media)]
   const result = await getUserReviews(
     db,
     id,
@@ -232,7 +233,7 @@ app.get("/:id/reviews", async (c) => {
     sort,
     offset,
     itemsPerPage,
-    filterCondition,
+    filters,
   )
   const total = result.at(0)?.total
   const averageRating = result.at(0)?.averageRating
