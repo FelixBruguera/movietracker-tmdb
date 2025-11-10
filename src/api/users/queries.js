@@ -54,7 +54,7 @@ export function getDiary(
   offset,
   itemsPerPage,
   userId,
-  filterCondition,
+  filters,
 ) {
   const totalCount = db.$with("totalCount").as(
     db
@@ -62,14 +62,15 @@ export function getDiary(
         total: sql`CAST(COUNT(DISTINCT ${diary.id}) AS INTEGER)`.as("total"),
       })
       .from(diary)
-      .where(and(eq(diary.userId, userId), filterCondition)),
+      .innerJoin(media, eq(diary.mediaId, media.id))
+      .where(and(eq(diary.userId, userId), ...filters)),
   )
   return db
     .with(totalCount)
     .select({
       group: group,
       entries:
-        sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}))`.mapWith(
+        sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}) ORDER BY diary.date)`.mapWith(
           JSON.parse,
         ),
       totalGroups: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
@@ -78,7 +79,7 @@ export function getDiary(
     .from(diary)
     .crossJoin(totalCount)
     .innerJoin(media, eq(diary.mediaId, media.id))
-    .where(and(eq(diary.userId, userId), filterCondition))
+    .where(and(eq(diary.userId, userId), ...filters))
     .groupBy(group)
     .orderBy(sort)
     .offset(offset)

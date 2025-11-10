@@ -41,7 +41,7 @@ const ProfileReview = ({ data, color, profileId }) => {
         title={data.media.title}
         path={linkTo}
         color={color}
-        className="w-full md:w-9/10"
+        className="w-full"
         likeMutation={likeMutation}
         dislikeMutation={dislikeMutation}
       />

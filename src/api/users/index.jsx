@@ -39,7 +39,7 @@ import {
   updateSearch,
 } from "./queries"
 import { mapGenre, mapMediaType, mapRatingRange, mapYearRange, transformFilter } from "./functions"
-import { profileReviewsSchema } from "../../utils/profileSchema"
+import { diarySchema, profileReviewsSchema } from "../../utils/profileSchema"
 
 const app = new Hono().basePath("/api/users")
 app.route("/:id", stats)
@@ -170,13 +170,13 @@ app.get("/:id", async (c) => {
 })
 
 app.get("/:id/diary", async (c) => {
-  const validation = userDiarySchema.safeParse(c.req.query())
+  const validation = diarySchema.safeParse(c.req.query())
   if (!validation.success) {
     return c.json(formatValidationError(validation), 400)
   }
   const id = c.req.param("id")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_by, sort_order, page, filter } = validation.data
+  const { sort_by, sort_order, page, media_type, "release_year.gte": yearMin, "release_year.lte": yearMax } = validation.data
   const itemsPerPage = 5
   const group =
     sort_by === "monthly"
@@ -184,7 +184,7 @@ app.get("/:id/diary", async (c) => {
       : sql`strftime('%Y', ${diary.date}, 'unixepoch')`
   const sort = sort_order === 1 ? asc(group) : desc(group)
   const offset = page * itemsPerPage - itemsPerPage
-  const filterCondition = transformFilter(filter, diary)
+  const filters = [mapMediaType(media_type, diary), ...mapYearRange(yearMin, yearMax, schema.media)]
   const result = await getDiary(
     db,
     group,
@@ -192,7 +192,7 @@ app.get("/:id/diary", async (c) => {
     offset,
     itemsPerPage,
     id,
-    filterCondition,
+    filters,
   )
   console.log(result)
   const total = result.at(0)?.total

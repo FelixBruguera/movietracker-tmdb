@@ -20,3 +20,16 @@ export const profileReviewsSchema = baseSchema.extend({
         : true,
     { error: "Invalid release year range" },
   )
+export const diarySchema = baseSchema.extend({
+    sort_by: z.enum(["monthly", "yearly"]).default("monthly"),
+    media_type: z.enum(["all", "movies", "tv"]).default("all"),
+    "release_year.gte": z.coerce.number().min(1896).max(9999).default(0),
+    "release_year.lte": z.coerce.number().min(1896).max(9999).default(9999)
+})
+  .refine(
+    (data) =>
+      data["release_year.gte"] && data["release_year.lte"]
+        ? data["release_year.gte"] <= data["release_year.lte"]
+        : true,
+    { error: "Invalid release year range" },
+  )
