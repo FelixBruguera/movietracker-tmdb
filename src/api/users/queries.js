@@ -144,7 +144,7 @@ export function getUserLists(db, id, sort, offset, itemsPerPage) {
       media: countDistinct(mediaToLists.mediaId),
       followers: countDistinct(listFollowers.userId),
       total: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
-      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 4) AS Q)`,
+      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 5) AS Q)`,
     })
     .from(lists)
     .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))
