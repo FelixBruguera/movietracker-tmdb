@@ -12,7 +12,6 @@ import ErrorMessage from "../shared/ErrorMessage"
 import axios from "axios"
 import ReviewsSkeleton from "../reviews/ReviewsSkeleton"
 import { useParams, useSearchParams } from "react-router"
-import SelectFilter from "../shared/SelectFilter"
 import ReviewFilters from "./ReviewFilters"
 
 const ProfileReviews = () => {
