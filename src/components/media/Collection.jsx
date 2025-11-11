@@ -9,6 +9,7 @@ import ListHeading from "../shared/ListHeading"
 import ListHeadingTitle from "../shared/ListHeadingTitle"
 import Total from "../shared/Total"
 import MediaCard from "./MediaCard"
+import CollectionSkeleton from "./CollectionSkeleton"
 
 const Collection = ({}) => {
     const { id } = useParams()
@@ -18,15 +19,12 @@ const Collection = ({}) => {
     })
     const baseUrl = "https://image.tmdb.org/t/p/"
     if (isLoading) {
-        return <MovieSkeleton />
+        return <CollectionSkeleton />
     }
     if (isError) {
         return <ErrorMessage />
     }
-    console.log(data)
     const backdropUrl = `${baseUrl}w1280${data.backdrop_path}`
-    const backdropClass = `bg-[url(${backdropUrl})]`
-    console.log(backdropClass)
     return (
         <div className="min-h-dvh py-5">
             <title>{data.name}</title>
