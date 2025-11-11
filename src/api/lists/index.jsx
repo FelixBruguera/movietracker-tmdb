@@ -29,9 +29,9 @@ import {
   unfollowList,
   updateList,
 } from "./queries"
-import { insertMedia } from "../reviews/queries"
+import { insertGenreMedia, insertMedia } from "../reviews/queries"
 import axios from "axios"
-import { transformFilter } from "../users/functions"
+import { mapGenre, mapMediaType, mapYearRange, transformFilter } from "../users/functions"
 
 const app = new Hono().basePath("/api/lists")
 
@@ -98,20 +98,20 @@ app.get("/:listId/media", async (c) => {
   const itemsPerPage = 20
   const listId = c.req.param("listId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_order, page, filter } = validation.data
+  const { sort_order, page, with_genres, media_type, "release_year.gte": yearMin, "release_year.lte": yearMax } = validation.data
   const sort = getSort(
     { sort_order: sort_order, sort_by: "date" },
     { date: mediaToLists.createdAt },
   )
   const offset = page * itemsPerPage - itemsPerPage
-  const filterCondition = transformFilter(filter, mediaToLists)
+  const filters = [mapGenre(with_genres, schema.genresToMedia), mapMediaType(media_type, mediaToLists), ...mapYearRange(yearMin, yearMax, schema.media)]
   const listMedia = await getListMedia(
     db,
     listId,
     sort,
     offset,
     itemsPerPage,
-    filterCondition,
+    filters,
   )
   const total = listMedia.at(0)?.total || 0
   const totalPages = Math.ceil(total / itemsPerPage)
@@ -266,11 +266,13 @@ app.post("/:listId/media", auth, async (c) => {
       poster: media.poster_path,
       releaseDate: new Date(mediaDate).getFullYear(),
     }
+    const genres = media.genres
     const result = await db.batch([
       insertMedia(db, mediaData),
+      ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
       insertListMedia(db, mediaId, listId),
     ])
-    if (result[1].meta.changes > 0) {
+    if (result.at(-1).meta.changes > 0) {
       return c.newResponse(null, 201)
     }
   } catch (e) {

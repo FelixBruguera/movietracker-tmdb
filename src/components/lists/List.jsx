@@ -20,7 +20,7 @@ import ListDetails from "./ListDetails"
 import { useMemo } from "react"
 import { useParams, useSearchParams } from "react-router"
 import CopyList from "./CopyList.jsx"
-import SelectFilter from "../shared/SelectFilter.jsx"
+import ListFilters from "../users/ListFilters.jsx"
 
 export default function List() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -110,15 +110,17 @@ export default function List() {
         <ListHeadingTitle title="Media">
           <Total total={media.total} label="Total Media" />
         </ListHeadingTitle>
-        <div className="flex items-center justify-evenly">
-          <SelectFilter />
-          <SelectSortBy
-            value="date"
-            selectedValue={sortOptions["date"]}
-            title="Sort Media"
-            options={sortOptions}
-          />
-          <SortOrderToggle />
+        <div className="w-full flex items-center justify-between lg:justify-end gap-1">
+          <ListFilters />
+          <div className="flex items-center justify-center">
+            <SelectSortBy
+              value="date"
+              selectedValue={sortOptions["date"]}
+              title="Sort Media"
+              options={sortOptions}
+            />
+            <SortOrderToggle />
+          </div>
         </div>
       </ListHeading>
       <ul

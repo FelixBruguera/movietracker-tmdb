@@ -10,6 +10,7 @@ import {
   lte,
 } from "drizzle-orm"
 import {
+  genresToMedia,
   listFollowers,
   lists,
   media,
@@ -124,7 +125,7 @@ export function getListMedia(
   sort,
   offset,
   itemsPerPage,
-  filterCondition,
+  filters,
 ) {
   return db
     .select({
@@ -135,7 +136,9 @@ export function getListMedia(
     })
     .from(mediaToLists)
     .fullJoin(media, eq(mediaToLists.mediaId, media.id))
-    .where(and(eq(mediaToLists.listId, listId), filterCondition))
+    .leftJoin(genresToMedia, eq(genresToMedia.mediaId, mediaToLists.mediaId))
+    .where(and(eq(mediaToLists.listId, listId), ...filters))
+    .groupBy(media.id)
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)
