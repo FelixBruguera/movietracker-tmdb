@@ -114,4 +114,16 @@ app.get("/company/:company", async (c) => {
   return c.json(response.data)
 })
 
+app.get("/collection/:id", async (c) => {
+  const id = c.req.param("id")
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/collection/${id}`,
+    {
+      headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}`,
+    },
+  )
+  return c.json(response.data)
+
+})
+
 export default app
