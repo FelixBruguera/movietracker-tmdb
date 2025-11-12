@@ -58,21 +58,21 @@ const Review = ({
       <div className="col-span-3 lg:col-span-1 row-span-1">
         <ReviewRating rating={data.rating} color={color} />
       </div>
-      <div
-        className={`flex w-full gap-2 ${data.text > 0 ? "items-start" : "items-start"} col-span-16 lg:col-span-16`}
-      >
-          <div className="flex gap-2 items-center flex-wrap">
-            <Link
-              to={path}
-              className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
-            >
-              {avatar && <Avatar src={avatar} />}
-              <p className="max-w-50 lg:max-w-full overflow-hidden overflow-ellipsis">{title}</p>
-            </Link>
-            <p className="text-xs text-muted-foreground whitespace-nowrap">
-              {formatInTimeZone(data.createdAt, "UTC", "dd-MM-u")}
+      <div className={`flex w-full gap-2 col-span-16 lg:col-span-16`}>
+        <div className="flex gap-2 items-center flex-wrap">
+          <Link
+            to={path}
+            className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
+          >
+            {avatar && <Avatar src={avatar} />}
+            <p className="max-w-50 lg:max-w-full overflow-hidden overflow-ellipsis">
+              {title}
             </p>
-          </div>
+          </Link>
+          <p className="text-xs text-muted-foreground whitespace-nowrap">
+            {formatInTimeZone(data.createdAt, "UTC", "dd-MM-u")}
+          </p>
+        </div>
       </div>
       <p className="w-full lg:w-full text-sm lg:text-base text-justify row-start-2 col-start-4 lg:col-start-2 col-span-22">
         {data.text}
