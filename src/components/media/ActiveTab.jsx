@@ -7,6 +7,7 @@ import MovieItemList from "./MovieItemList"
 import MovieDetailLink from "./MovieDetailLink"
 import CompanyLink from "./CompanyLink"
 import MediaCard from "./MediaCard"
+import MediaCardDetail from "./MediaCardDetail"
 
 const ItemList = (props) => {
   return (
@@ -119,14 +120,6 @@ const TabRenderer = ({ movie, tab, isTv }) => {
         </div>
       )
     case "Seasons":
-      const SeasonDetail = ({ title, children }) => (
-        <p
-          className="text-xs lg:text-sm bg-card-bg px-2 py-1 rounded-sm text-muted-foreground hover:bg-accent hover:text-white active:bg-accent transition-colors group-hover:bg-background"
-          title={title}
-        >
-          {children}
-        </p>
-      )
       return (
         <>
           <MovieListTitle title="Seasons" />
@@ -134,18 +127,23 @@ const TabRenderer = ({ movie, tab, isTv }) => {
             {movie.seasons?.map((season) => {
               const airYear = season.air_date?.slice(0, 4)
               return (
-                <MediaCard id={season.id} title={season.name} src={season.poster_path} overview={season.overview}>
+                <MediaCard
+                  id={season.id}
+                  title={season.name}
+                  src={season.poster_path}
+                  overview={season.overview}
+                >
                   {airYear && (
-                    <SeasonDetail title="Release year">
+                    <MediaCardDetail title="Release year">
                       {airYear}
-                    </SeasonDetail>
+                    </MediaCardDetail>
                   )}
                   {season.episode_count && (
-                    <SeasonDetail>
+                    <MediaCardDetail>
                       {season.episode_count} Episodes
-                    </SeasonDetail>
+                    </MediaCardDetail>
                   )}
-                </MediaCard> 
+                </MediaCard>
               )
             })}
           </ul>
@@ -156,11 +154,17 @@ const TabRenderer = ({ movie, tab, isTv }) => {
       return (
         <div>
           <MovieListTitle title="Collection" />
-          {collection ? 
+          {collection ? (
             <Link to={`/movies/collection/${collection.id}`}>
-              <MediaCard id={collection.id} title={collection.name} src={collection.poster_path}/>
+              <MediaCard
+                id={collection.id}
+                title={collection.name}
+                src={collection.poster_path}
+              />
             </Link>
-           : <p>No data</p>}
+          ) : (
+            <p>No data</p>
+          )}
         </div>
       )
   }
