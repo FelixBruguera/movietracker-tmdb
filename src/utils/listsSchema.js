@@ -1,13 +1,14 @@
 import { z } from "zod"
 import { baseSchema } from "./baseSchema"
 
-export const listSchema = baseSchema.extend({
-  sort_by: z.enum(["date"]).default("date"),
-  with_genres: z.coerce.number().max(9999999999).default(0),
-  media_type: z.enum(["all", "movies", "tv"]).default("all"),
-  "release_year.gte": z.coerce.number().min(1896).max(9999).default(0),
-  "release_year.lte": z.coerce.number().min(1896).max(9999).default(9999)
-})
+export const listSchema = baseSchema
+  .extend({
+    sort_by: z.enum(["date"]).default("date"),
+    with_genres: z.coerce.number().max(9999999999).default(0),
+    media_type: z.enum(["all", "movies", "tv"]).default("all"),
+    "release_year.gte": z.coerce.number().min(1896).max(9999).default(0),
+    "release_year.lte": z.coerce.number().min(1896).max(9999).default(9999),
+  })
   .refine(
     (data) =>
       data["release_year.gte"] && data["release_year.lte"]
@@ -32,4 +33,8 @@ export const newListSchema = z.object({
 
 export const listMovieSchema = z.object({
   mediaId: z.string().max(20),
+})
+
+export const listCollectionSchema = z.object({
+  collectionId: z.string().max(20),
 })

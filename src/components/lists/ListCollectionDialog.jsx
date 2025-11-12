@@ -6,7 +6,7 @@ import ReviewSkeleton from "../reviews/ReviewSkeleton"
 import ErrorMessage from "../shared/ErrorMessage"
 import UserLists from "./UserLists"
 
-const ListMovieDialog = ({ mediaId }) => {
+const ListCollectionDialog = ({ collectionId }) => {
   const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const currentUser = session.user
@@ -15,17 +15,19 @@ const ListMovieDialog = ({ mediaId }) => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["user_lists", currentUser.id, mediaId],
+    queryKey: ["user_lists", currentUser.id],
     queryFn: () =>
-      axios.get(`/api/lists/user/${mediaId}`).then((response) => response.data),
+      axios.get(`/api/lists/user/0`).then((response) => response.data),
   })
 
   const addToListMutation = useMutation({
     mutationFn: (listId) =>
-      axios.post(`/api/lists/${listId}/media`, { mediaId: mediaId }),
+      axios.post(`/api/lists/${listId}/collection`, {
+        collectionId: collectionId,
+      }),
     onSuccess: (data, listId) => {
       queryClient.invalidateQueries({
-        queryKey: ["user_lists", currentUser.id, mediaId],
+        queryKey: ["user_lists", currentUser.id],
       })
       queryClient.invalidateQueries({
         queryKey: ["list_media", listId],
@@ -36,21 +38,6 @@ const ListMovieDialog = ({ mediaId }) => {
       const message = error.response.data.error || error.response.statusText
       return toast(message)
     },
-  })
-
-  const removeFromListMutation = useMutation({
-    mutationFn: (listId) =>
-      axios.delete(`/api/lists/${listId}/media/${mediaId}`),
-    onSuccess: (data, listId) => {
-      queryClient.invalidateQueries({
-        queryKey: ["user_lists", currentUser.id, mediaId],
-      })
-      queryClient.invalidateQueries({
-        queryKey: ["list_media", listId],
-      })
-      toast("Succesfully removed")
-    },
-    onError: (error) => toast(error.response.statusText),
   })
 
   if (isLoading) {
@@ -65,13 +52,7 @@ const ListMovieDialog = ({ mediaId }) => {
     return <ErrorMessage />
   }
 
-  return (
-    <UserLists
-      lists={lists}
-      addToListMutation={addToListMutation}
-      removeFromListMutation={removeFromListMutation}
-    />
-  )
+  return <UserLists lists={lists} addToListMutation={addToListMutation} />
 }
 
-export default ListMovieDialog
+export default ListCollectionDialog
