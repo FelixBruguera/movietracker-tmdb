@@ -3,6 +3,7 @@ import { Calendar, Eye, FilmIcon, Lock, Users } from "lucide-react"
 import { memo } from "react"
 import { Link } from "react-router"
 import Poster from "../shared/Poster"
+import Avatar from "../shared/Avatar"
 
 const ListCardItem = (props) => {
   return (
@@ -62,6 +63,10 @@ const ListCard = memo(({ list }) => {
           {list.description}
         </p>
         <div className="flex gap-3">
+          <ListCardItem>
+            <Avatar src={list.userAvatar}/>
+            <p>{list.user}</p>
+          </ListCardItem>
           <ListCardItem>
             <FilmIcon />
             <p aria-label="Media">{list.media}</p>
