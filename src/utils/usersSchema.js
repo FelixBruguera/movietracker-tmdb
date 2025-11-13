@@ -9,10 +9,12 @@ export const usersSchema = baseSchema.extend({
 
 export const userDiarySchema = baseSchema.extend({
   sort_by: z.enum(["monthly", "yearly"]).default("monthly"),
+  filter: z.enum(["all", "movies", "tv"]).default("all"),
 })
 
 export const userReviewsSchema = baseSchema.extend({
   sort_by: z.enum(["date", "rating", "likes"]).default("date"),
+  filter: z.enum(["all", "movies", "tv"]).default("all"),
 })
 
 export const userListsSchema = baseSchema.extend({

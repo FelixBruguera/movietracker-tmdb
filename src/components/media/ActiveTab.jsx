@@ -6,6 +6,8 @@ import MovieListTitle from "./MovieListTitle"
 import MovieItemList from "./MovieItemList"
 import MovieDetailLink from "./MovieDetailLink"
 import CompanyLink from "./CompanyLink"
+import MediaCard from "./MediaCard"
+import MediaCardDetail from "./MediaCardDetail"
 
 const ItemList = (props) => {
   return (
@@ -118,14 +120,6 @@ const TabRenderer = ({ movie, tab, isTv }) => {
         </div>
       )
     case "Seasons":
-      const SeasonDetail = ({ title, children }) => (
-        <p
-          className="text-xs lg:text-sm bg-card-bg px-2 py-1 rounded-sm text-muted-foreground hover:bg-accent hover:text-white active:bg-accent transition-colors group-hover:bg-background"
-          title={title}
-        >
-          {children}
-        </p>
-      )
       return (
         <>
           <MovieListTitle title="Seasons" />
@@ -133,38 +127,45 @@ const TabRenderer = ({ movie, tab, isTv }) => {
             {movie.seasons?.map((season) => {
               const airYear = season.air_date?.slice(0, 4)
               return (
-                <li
-                  key={season.id}
-                  className="flex flex-col lg:flex-row justify-start gap-6 lg:gap-2 py-1 hover:bg-card-bg rounded-md transition-colors lg:pr-5 group"
+                <MediaCard
+                  id={season.id}
+                  title={season.name}
+                  src={season.poster_path}
+                  overview={season.overview}
                 >
-                  <Poster src={season.poster_path} size="small" />
-                  <div className="w-full lg:w-9/10 px-2 flex flex-col gap-1">
-                    <div className="flex items-center justify-start gap-2 flex-wrap">
-                      <h2 className="font-bold text-xl lg:text-2xl">
-                        {season.name}
-                      </h2>
-                      <div className="flex items-center justify-start gap-2">
-                        {airYear && (
-                          <SeasonDetail title="Release year">
-                            {airYear}
-                          </SeasonDetail>
-                        )}
-                        {season.episode_count && (
-                          <SeasonDetail>
-                            {season.episode_count} Episodes
-                          </SeasonDetail>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-sm lg:text-base text-muted-foreground text-justify w-full lg:max-w-19/20">
-                      {season.overview}
-                    </p>
-                  </div>
-                </li>
+                  {airYear && (
+                    <MediaCardDetail title="Release year">
+                      {airYear}
+                    </MediaCardDetail>
+                  )}
+                  {season.episode_count && (
+                    <MediaCardDetail>
+                      {season.episode_count} Episodes
+                    </MediaCardDetail>
+                  )}
+                </MediaCard>
               )
             })}
           </ul>
         </>
+      )
+    case "Collection":
+      const collection = movie.belongs_to_collection
+      return (
+        <div>
+          <MovieListTitle title="Collection" />
+          {collection ? (
+            <Link to={`/movies/collection/${collection.id}`}>
+              <MediaCard
+                id={collection.id}
+                title={collection.name}
+                src={collection.poster_path}
+              />
+            </Link>
+          ) : (
+            <p>No data</p>
+          )}
+        </div>
       )
   }
 }

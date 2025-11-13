@@ -9,9 +9,8 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import ErrorMessage from "../shared/ErrorMessage"
 import DiarySkeleton from "./DiarySkeleton"
-import ProfileHeader from "./ProfileHeader"
 import { useParams, useSearchParams } from "react-router"
-import PosterList from "../shared/PosterList"
+import DiaryFilters from "./DiaryFilters"
 
 const Diary = () => {
   const { id } = useParams()
@@ -38,13 +37,18 @@ const Diary = () => {
         <ListHeadingTitle title="Diary Logs">
           <Total total={data.total} label="Total logs" />
         </ListHeadingTitle>
-        <SelectSortBy
-          value={sortBy}
-          selectedValue={sortOptions[sortBy]}
-          title="Group logs"
-          options={sortOptions}
-        />
-        <SortOrderToggle />
+        <div className="w-full flex items-center justify-between lg:justify-end gap-1">
+          <DiaryFilters />
+          <div className="flex items-center justify-center">
+            <SelectSortBy
+              value={sortBy}
+              selectedValue={sortOptions[sortBy]}
+              title="Group logs"
+              options={sortOptions}
+            />
+            <SortOrderToggle />
+          </div>
+        </div>
       </ListHeading>
       {data.media?.length > 0 ? (
         <>

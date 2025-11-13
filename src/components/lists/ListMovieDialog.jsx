@@ -2,10 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { authClient } from "@lib/auth-client"
 import { toast } from "sonner"
-import { Button } from "@ui/button"
-import { Eye, Lock, Minus, MinusCircle, Plus, Trash } from "lucide-react"
 import ReviewSkeleton from "../reviews/ReviewSkeleton"
 import ErrorMessage from "../shared/ErrorMessage"
+import UserLists from "./UserLists"
 
 const ListMovieDialog = ({ mediaId }) => {
   const queryClient = useQueryClient()
@@ -67,46 +66,11 @@ const ListMovieDialog = ({ mediaId }) => {
   }
 
   return (
-    <ul>
-      {lists.length > 0 ? (
-        lists.map((list) => {
-          return (
-            <li
-              key={list.id}
-              className="flex justify-between items-center mb-2"
-            >
-              <div className="flex items-center gap-2">
-                <p>{list.name}</p>
-                {list.isPrivate && <Lock aria-label="Private" />}
-                {list.isWatchlist && <Eye aria-label="Watchlist" />}
-              </div>
-              {list.includesMedia ? (
-                <Button
-                  variant="ghost"
-                  title="Remove from list"
-                  aria-label="Remove from list"
-                  className="text-accent"
-                  onClick={() => removeFromListMutation.mutate(list.id)}
-                >
-                  <MinusCircle />
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  title="Add to list"
-                  aria-label="Add to list"
-                  onClick={() => addToListMutation.mutate(list.id)}
-                >
-                  <Plus />
-                </Button>
-              )}
-            </li>
-          )
-        })
-      ) : (
-        <li className="text-muted-foreground">No lists to show</li>
-      )}
-    </ul>
+    <UserLists
+      lists={lists}
+      addToListMutation={addToListMutation}
+      removeFromListMutation={removeFromListMutation}
+    />
   )
 }
 

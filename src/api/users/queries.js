@@ -1,6 +1,7 @@
 import { and, countDistinct, eq, gte, sql } from "drizzle-orm"
 import {
   diary,
+  genresToMedia,
   likesToReviews,
   listFollowers,
   lists,
@@ -46,21 +47,30 @@ export function getUser(db, id) {
     .where(eq(user.id, id))
 }
 
-export function getDiary(db, group, sort, offset, itemsPerPage, userId) {
+export function getDiary(
+  db,
+  group,
+  sort,
+  offset,
+  itemsPerPage,
+  userId,
+  filters,
+) {
   const totalCount = db.$with("totalCount").as(
     db
       .select({
         total: sql`CAST(COUNT(DISTINCT ${diary.id}) AS INTEGER)`.as("total"),
       })
       .from(diary)
-      .where(eq(diary.userId, userId)),
+      .innerJoin(media, eq(diary.mediaId, media.id))
+      .where(and(eq(diary.userId, userId), ...filters)),
   )
   return db
     .with(totalCount)
     .select({
       group: group,
       entries:
-        sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}))`.mapWith(
+        sql`json_group_array(json_object('mediaId', ${media.id}, 'diaryId', ${diary.id}, 'poster_path', ${media.poster}, 'title', ${media.title}, 'date', ${diary.date}) ORDER BY diary.date)`.mapWith(
           JSON.parse,
         ),
       totalGroups: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
@@ -69,14 +79,22 @@ export function getDiary(db, group, sort, offset, itemsPerPage, userId) {
     .from(diary)
     .crossJoin(totalCount)
     .innerJoin(media, eq(diary.mediaId, media.id))
-    .where(eq(diary.userId, userId))
+    .where(and(eq(diary.userId, userId), ...filters))
     .groupBy(group)
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)
 }
 
-export function getUserReviews(db, id, userId, sort, offset, itemsPerPage) {
+export function getUserReviews(
+  db,
+  id,
+  userId,
+  sort,
+  offset,
+  itemsPerPage,
+  filters,
+) {
   const currentUserLike = alias(likesToReviews, "currentUserLike")
   return db
     .select({
@@ -99,6 +117,7 @@ export function getUserReviews(db, id, userId, sort, offset, itemsPerPage) {
     })
     .from(reviews)
     .innerJoin(media, eq(reviews.mediaId, media.id))
+    .leftJoin(genresToMedia, eq(genresToMedia.mediaId, reviews.mediaId))
     .leftJoin(likesToReviews, eq(reviews.id, likesToReviews.reviewId))
     .leftJoin(
       currentUserLike,
@@ -108,7 +127,7 @@ export function getUserReviews(db, id, userId, sort, offset, itemsPerPage) {
       ),
     )
     .groupBy(reviews.id)
-    .where(eq(reviews.userId, id))
+    .where(and(eq(reviews.userId, id), ...filters))
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)
@@ -125,7 +144,7 @@ export function getUserLists(db, id, sort, offset, itemsPerPage) {
       media: countDistinct(mediaToLists.mediaId),
       followers: countDistinct(listFollowers.userId),
       total: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
-      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 4) AS Q)`,
+      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 5) AS Q)`,
     })
     .from(lists)
     .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))

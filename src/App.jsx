@@ -20,6 +20,7 @@ import ProfileLists from "./components/users/ProfileLists"
 import MobileMenu from "./components/shared/MobileMenu"
 import Stats from "./components/users/stats/Stats"
 import SearchResults from "./components/search/SearchResults"
+import Collection from "./components/media/Collection"
 
 const App = () => {
   const pathname = useLocation()
@@ -37,6 +38,7 @@ const App = () => {
           path="movies/company/:id"
           element={<MoviesWithParam endpoint="company" />}
         />
+        <Route path="movies/collection/:id" element={<Collection />} />
         <Route path="tv" element={<Movies path="tv" />} />
         <Route path="tv/:id" element={<Media isTv={true} />} />
         <Route path="tv/:id/credits" element={<MovieCredits path="tv" />} />

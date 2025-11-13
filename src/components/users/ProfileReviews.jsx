@@ -12,6 +12,7 @@ import ErrorMessage from "../shared/ErrorMessage"
 import axios from "axios"
 import ReviewsSkeleton from "../reviews/ReviewsSkeleton"
 import { useParams, useSearchParams } from "react-router"
+import ReviewFilters from "./ReviewFilters"
 
 const ProfileReviews = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -37,7 +38,7 @@ const ProfileReviews = () => {
   const averageRatingColor = data.averageRating && Math.ceil(data.averageRating)
 
   return (
-    <div>
+    <div className="w-full xl:w-8/10 mx-auto">
       <ListHeading>
         <ListHeadingTitle title="Reviews">
           <Total total={data.total} label="Total Reviews" />
@@ -48,13 +49,18 @@ const ProfileReviews = () => {
             />
           )}
         </ListHeadingTitle>
-        <SelectSortBy
-          value={sortBy}
-          selectedValue={sortOptions[sortBy]}
-          title="Sort Reviews"
-          options={sortOptions}
-        />
-        <SortOrderToggle />
+        <div className="w-full flex items-center justify-between lg:justify-end gap-1">
+          <ReviewFilters />
+          <div className="flex items-center justify-center">
+            <SelectSortBy
+              value={sortBy}
+              selectedValue={sortOptions[sortBy]}
+              title="Sort Reviews"
+              options={sortOptions}
+            />
+            <SortOrderToggle />
+          </div>
+        </div>
       </ListHeading>
       {data.reviews?.length > 0 ? (
         <>

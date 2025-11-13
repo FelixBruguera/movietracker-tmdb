@@ -101,6 +101,7 @@ const UserReview = ({ mediaId, data, color }) => {
           path={`/users/${currentUser.id}`}
           color={color}
           displayLikes={false}
+          className="lg:!grid-cols-10"
         />
       )}
     </div>

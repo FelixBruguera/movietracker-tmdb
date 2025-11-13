@@ -81,6 +81,7 @@ const Media = ({ isTv }) => {
         "Cast",
         "Directors",
         "Crew",
+        "Collection",
         "Companies",
         "Keywords",
         "Services",
@@ -94,14 +95,14 @@ const Media = ({ isTv }) => {
     ? `tv_${movie.id}`
     : `movies_${movie.id}`
   return (
-    <div className="mx-auto w-9/10 lg:w-full">
+    <div className="mx-auto w-9/10 lg:w-full min-h-dvh">
       <title>{title}</title>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="mx-auto w-8/10 lg:w-3/10">
+      <div className="max-w-400 mx-auto flex flex-col lg:flex-row gap-8">
+        <div className="mx-auto w-8/10 md:w-4/10 lg:w-3/10 h-110 lg:h-170">
           <Poster src={movie.poster_path} alt={title} size="large" />
         </div>
         <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">
-          <div className="flex flex-col lg:flex-row items-start justify-between w-full gap-2 lg:gap-0 mb-0">
+          <div className="flex flex-col lg:flex-row items-start justify-between w-full gap-2 lg:gap-0">
             <h1 className="text-2xl lg:text-3xl font-bold">{title}</h1>
             <div className="flex items-center gap-4 lg:gap-2">
               {session && (

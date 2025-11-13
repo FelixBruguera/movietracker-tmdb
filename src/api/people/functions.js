@@ -10,14 +10,18 @@ export function filterByDepartment(department, data) {
 }
 
 export function sortBy(by, scope, data) {
+  const isTv = scope === "tv_credits"
+  const filteredData = isTv
+    ? data.filter((credit) => credit.first_credit_air_date != "")
+    : data.filter((credit) => credit.release_date != "")
   switch (by) {
     case "Best rated":
-      return data.sort((a, b) => b.vote_average - a.vote_average)
+      return filteredData.sort((a, b) => b.vote_average - a.vote_average)
     case "Most votes":
-      return data.sort((a, b) => b.vote_count - a.vote_count)
+      return filteredData.sort((a, b) => b.vote_count - a.vote_count)
     default:
-      return data.sort((a, b) =>
-        scope === "tv_credits"
+      return filteredData.sort((a, b) =>
+        isTv
           ? new Date(b.first_credit_air_date) -
             new Date(a.first_credit_air_date)
           : new Date(b.release_date) - new Date(a.release_date),

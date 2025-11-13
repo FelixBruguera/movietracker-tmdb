@@ -131,27 +131,64 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Add movies or TV Shows").click()
       await page.getByPlaceholder("Search").fill("The Matrix")
       await page
-        .getByRole("listitem")
-        .filter({ hasText: "The Matrix Reloadedmovie" })
+        .getByTitle("The Matrix Revolutions", { exact: true })
         .getByRole("button")
         .click()
+      await expect(page.getByAltText("The Matrix Revolutions")).toBeVisible()
       await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await expect(page.getByAltText("The Matrix Reloaded")).toBeVisible()
     })
     test("Removing media from a list", async ({ page }) => {
       await page.getByText("My updated list").click()
-      await page.getByAltText("The Matrix Reloaded").click({ button: "right" })
+      await page
+        .getByAltText("The Matrix Revolutions")
+        .click({ button: "right" })
       await page.getByText("Remove").click()
       await page.getByText("Delete").click()
       await expect(page.getByText("Succesfully removed")).toBeVisible()
       await expect(page.getByText("The Matrix")).not.toBeVisible()
     })
-
+    test("Adding a collection to a list", async ({ page }) => {
+      await page.goto("/movies/collection/119")
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByLabel("Add to list").first().click()
+      await expect(page.getByText("Succesfully Added")).toBeVisible()
+      await page.goto("/lists")
+      await page.getByText("My updated list").click()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Fellowship of the Ring"),
+      ).toBeVisible()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Two Towers"),
+      ).toBeVisible()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Return of the King"),
+      ).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("3")
+    })
+    test("Adding a duplicated collection to a list", async ({ page }) => {
+      await page.goto("/movies/collection/119")
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByLabel("Add to list").first().click()
+      await expect(page.getByText("Duplicated Media")).toBeVisible()
+      await page.goto("/lists")
+      await page.getByText("My updated list").click()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Fellowship of the Ring"),
+      ).toBeVisible()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Two Towers"),
+      ).toBeVisible()
+      await expect(
+        page.getByAltText("The Lord of the Rings: The Return of the King"),
+      ).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("3")
+    })
     test("Deleting a list", async ({ page }) => {
       await page.getByText("My updated list").click()
       await page.getByLabel("Delete").click()
       await page.getByText("Delete").click()
       await expect(page.getByText("Succesfully Deleted")).toBeVisible()
+      await page.goto("/lists")
       await expect(page.getByText("My updated list")).not.toBeVisible()
     })
     test("Following a list", async ({ page }) => {
@@ -165,6 +202,51 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Unfollow list").click()
       await expect(page.getByText("Succesfully unfollowed")).toBeVisible()
       await expect(page.getByLabel("Followers")).toHaveText("0")
+    })
+  })
+  test.describe("list filters", () => {
+    test.beforeEach(async ({ page }) => {
+      await expect(page.getByRole("button", { name: "test" })).toBeVisible()
+      await page.goto("/lists/c6037ab1-4c29-4cf2-939e-1a8151743f6b")
+    })
+    test("filtering by movies", async ({ page }) => {
+      await page.getByText("Filters").click()
+      await page.getByLabel("Media Type").click()
+      await page.getByRole("option", { name: "Movies" }).click()
+      await page.getByText("Submit").click()
+      await expect(page.getByAltText("Manhattan")).not.toBeVisible()
+      await expect(page.getByAltText("Dunkirk")).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("18")
+    })
+    test("filtering by tv shows", async ({ page }) => {
+      await page.getByText("Filters").click()
+      await page.getByLabel("Media Type").click()
+      await page.getByRole("option", { name: "TV" }).click()
+      await page.getByText("Submit").click()
+      await expect(page.getByAltText("Manhattan")).toBeVisible()
+      await expect(page.getByAltText("Dunkirk")).not.toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("10")
+    })
+    test("filtering by genre", async ({ page }) => {
+      await page.getByText("Filters").click()
+      await page.getByLabel("Genre").click()
+      await page.getByRole("option", { name: "War", exact: true }).click()
+      await page.getByText("Submit").click()
+      await expect(page.getByAltText("Dunkirk")).toBeVisible()
+      await expect(
+        page.getByAltText("All Quiet on the Western Front"),
+      ).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("2")
+    })
+    test("filtering by release year", async ({ page }) => {
+      await page.getByText("Filters").click()
+      await page.getByLabel("Release year minimum").fill("2023")
+      await page.getByLabel("Release year maximum").fill("2023")
+      await page.getByText("Submit").click()
+      await expect(
+        page.getByAltText("The Super Mario Bros. Movie"),
+      ).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("1")
     })
   })
   test.describe("creating a copy of a list", () => {

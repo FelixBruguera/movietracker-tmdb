@@ -30,7 +30,7 @@ const ProfileReview = ({ data, color, profileId }) => {
   })
   return (
     <div
-      className="flex items-center flex-col md:flex-row max-w-500 mx-auto justify-start gap-2"
+      className="flex items-center lg:items-start flex-col md:flex-row max-w-500 mx-auto justify-start gap-2"
       key={data.id}
     >
       <Link to={linkTo} className="p-1 rounded-t-2xl  md:p-auto">
@@ -41,7 +41,7 @@ const ProfileReview = ({ data, color, profileId }) => {
         title={data.media.title}
         path={linkTo}
         color={color}
-        className="w-full md:w-9/10"
+        className="w-full lg:!border-transparent hover:!border-border dark:hover:!border-border !shadow-none"
         likeMutation={likeMutation}
         dislikeMutation={dislikeMutation}
       />

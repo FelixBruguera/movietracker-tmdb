@@ -10,6 +10,7 @@ import {
   lte,
 } from "drizzle-orm"
 import {
+  genresToMedia,
   listFollowers,
   lists,
   media,
@@ -54,7 +55,7 @@ export function getLists(
       followers: countDistinct(listFollowers.userId),
       media: countDistinct(mediaToLists.mediaId),
       total: sql`CAST(COUNT(*) OVER() AS INTEGER)`,
-      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 4) AS Q)`,
+      posters: sql`(SELECT json_group_array(q.poster) FROM (SELECT poster FROM media_lists LEFT JOIN media ON media_lists.media_id = media.id WHERE media_lists.list_id = lists.id ORDER BY media_lists.created_at DESC LIMIT 5) AS Q)`,
     })
     .from(lists)
     .leftJoin(mediaToLists, eq(lists.id, mediaToLists.listId))
@@ -118,7 +119,7 @@ export function getListOwner(db, listId, userId) {
     .where(and(eq(lists.id, listId), eq(lists.userId, userId)))
 }
 
-export function getListMedia(db, listId, sort, offset, itemsPerPage) {
+export function getListMedia(db, listId, sort, offset, itemsPerPage, filters) {
   return db
     .select({
       id: media.id,
@@ -128,7 +129,9 @@ export function getListMedia(db, listId, sort, offset, itemsPerPage) {
     })
     .from(mediaToLists)
     .fullJoin(media, eq(mediaToLists.mediaId, media.id))
-    .where(and(eq(mediaToLists.listId, listId)))
+    .leftJoin(genresToMedia, eq(genresToMedia.mediaId, mediaToLists.mediaId))
+    .where(and(eq(mediaToLists.listId, listId), ...filters))
+    .groupBy(media.id)
     .orderBy(sort)
     .offset(offset)
     .limit(itemsPerPage)

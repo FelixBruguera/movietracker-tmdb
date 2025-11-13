@@ -7,6 +7,7 @@ import auth from "../middleware/auth"
 import { getAuth } from "../../../lib/auth.server"
 import { lists, mediaToLists, listFollowers } from "../../db/schema"
 import {
+  listCollectionSchema,
   listIndexSchema,
   listMovieSchema,
   listSchema,
@@ -29,8 +30,9 @@ import {
   unfollowList,
   updateList,
 } from "./queries"
-import { insertMedia } from "../reviews/queries"
+import { insertGenreMedia, insertMedia } from "../reviews/queries"
 import axios from "axios"
+import { mapGenre, mapMediaType, mapYearRange } from "../users/functions"
 
 const app = new Hono().basePath("/api/lists")
 
@@ -97,13 +99,32 @@ app.get("/:listId/media", async (c) => {
   const itemsPerPage = 20
   const listId = c.req.param("listId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const { sort_order, page } = validation.data
+  const {
+    sort_order,
+    page,
+    with_genres,
+    media_type,
+    "release_year.gte": yearMin,
+    "release_year.lte": yearMax,
+  } = validation.data
   const sort = getSort(
     { sort_order: sort_order, sort_by: "date" },
     { date: mediaToLists.createdAt },
   )
   const offset = page * itemsPerPage - itemsPerPage
-  const listMedia = await getListMedia(db, listId, sort, offset, itemsPerPage)
+  const filters = [
+    mapGenre(with_genres, schema.genresToMedia),
+    mapMediaType(media_type, mediaToLists),
+    ...mapYearRange(yearMin, yearMax, schema.media),
+  ]
+  const listMedia = await getListMedia(
+    db,
+    listId,
+    sort,
+    offset,
+    itemsPerPage,
+    filters,
+  )
   const total = listMedia.at(0)?.total || 0
   const totalPages = Math.ceil(total / itemsPerPage)
   return c.json({
@@ -257,11 +278,13 @@ app.post("/:listId/media", auth, async (c) => {
       poster: media.poster_path,
       releaseDate: new Date(mediaDate).getFullYear(),
     }
+    const genres = media.genres
     const result = await db.batch([
       insertMedia(db, mediaData),
+      ...genres.map((genre) => insertGenreMedia(db, genre.id, mediaId)),
       insertListMedia(db, mediaId, listId),
     ])
-    if (result[1].meta.changes > 0) {
+    if (result.at(-1).meta.changes > 0) {
       return c.newResponse(null, 201)
     }
   } catch (e) {
@@ -323,6 +346,60 @@ app.delete("/:listId/follow", auth, async (c) => {
   if (result.meta.changes > 0) {
     return c.newResponse(null, 204)
   } else {
+    throw new HTTPException(404)
+  }
+})
+
+app.post("/:listId/collection", auth, async (c) => {
+  const validation = listCollectionSchema.safeParse(await c.req.json())
+  if (!validation.success) {
+    return c.json(formatValidationError(validation), 400)
+  }
+  const session = c.get("session")
+  const db = drizzle(c.env.DB, { schema: schema })
+  const userId = session.user.id
+  const listId = c.req.param("listId")
+  const list = await getListOwner(db, listId, userId)
+  console.log(list)
+  if (list?.at(0)?.userId !== userId) {
+    return c.newResponse("Unauthorized", 401)
+  }
+  const { collectionId } = validation.data
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/collection/${collectionId}`,
+      { headers: `Authorization: Bearer ${c.env.TMDB_TOKEN}` },
+    )
+    const collection = response.data
+    const queries = []
+    collection.parts.forEach((movie) => {
+      const movieId = `movies_${movie.id}`
+      queries.push(
+        insertMedia(db, {
+          id: movieId,
+          title: movie.title,
+          poster: movie.poster_path,
+          releaseDate: new Date(movie.release_date).getFullYear(),
+        }),
+      )
+      movie.genre_ids.forEach((genre) =>
+        queries.push(insertGenreMedia(db, genre, movieId)),
+      )
+      queries.push(insertListMedia(db, movieId, listId))
+    })
+    const result = await db.batch(queries)
+    if (result.at(-1).meta.changes > 0) {
+      return c.newResponse(null, 201)
+    }
+  } catch (e) {
+    console.log(e)
+    if (e.cause.message.includes("UNIQUE constraint failed")) {
+      throw new HTTPException(400, { message: "Duplicated media" })
+    } else if (
+      e.cause.message.includes("Request failed with status code 404")
+    ) {
+      throw new HTTPException(404, { message: "Invalid mediaId" })
+    }
     throw new HTTPException(404)
   }
 })
