@@ -63,10 +63,12 @@ const ListCard = memo(({ list }) => {
           {list.description}
         </p>
         <div className="flex gap-3">
-          <ListCardItem>
-            <Avatar src={list.userAvatar}/>
-            <p>{list.user}</p>
-          </ListCardItem>
+          {list.user && (
+            <ListCardItem>
+              <Avatar src={list.userAvatar}/>
+              <p>{list.user}</p>
+            </ListCardItem>
+          )}
           <ListCardItem>
             <FilmIcon />
             <p aria-label="Media">{list.media}</p>
