@@ -41,26 +41,28 @@ const Collection = ({}) => {
       >
         <span className="absolute left-0 w-full bg-linear-to-b from-transparent to-background h-full z-0"></span>
       </div>
-      <div className="flex items-center justify-center gap-3 mt-3 mx-auto w-full">
-        <span className="flex items-end w-4/10 md:w-fit">
-          <Poster src={data.poster_path} size="small" type="movie" />
-        </span>
-        <div className="flex flex-col items-start gap-2 w-lg">
-          <h2 className="text-3xl font-bold">{data.name}</h2>
-          {data.overview && (
-            <p className="text-muted-foreground text-base text-justify max-w-9/10 lg:w-full">
-              {data.overview}
-            </p>
-          )}
-        </div>
-        <DialogWrapper
-          title={`${data.name} in your lists`}
-          label="Add or remove from lists"
-          Icon={List}
-          contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
-        >
-          <ListCollectionDialog collectionId={id} />
-        </DialogWrapper>
+      <div className="flex items-start justify-between gap-3 mt-3 mx-auto w-full">
+        <div className="flex items-start gap-4">
+          <span className="flex items-end w-4/10 md:w-fit">
+            <Poster src={data.poster_path} size="small" type="movie" />
+          </span>
+            <div className="w-fit flex-col">
+              <h2 className="text-3xl font-bold w-fit">{data.name}</h2>
+                         {data.overview && (
+                <p className="text-muted-foreground text-base text-justify w-full lg:max-w-7/10">
+                  {data.overview}
+                </p>
+              )}
+            </div>
+          </div>
+            <DialogWrapper
+              title={`${data.name} in your lists`}
+              label="Add or remove from lists"
+              Icon={List}
+              contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
+            >
+            <ListCollectionDialog collectionId={id} />
+          </DialogWrapper>
       </div>
       <ListHeading>
         <ListHeadingTitle title="Movies">

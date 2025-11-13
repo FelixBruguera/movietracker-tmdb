@@ -35,7 +35,7 @@ const ListCollectionDialog = ({ collectionId }) => {
       toast("Succesfully Added")
     },
     onError: (error) => {
-      const message = error.response.data.error || error.response.statusText
+      const message = error.response.data || error.response.statusText
       return toast(message)
     },
   })
