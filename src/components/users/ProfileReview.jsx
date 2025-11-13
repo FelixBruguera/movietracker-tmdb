@@ -34,14 +34,14 @@ const ProfileReview = ({ data, color, profileId }) => {
       key={data.id}
     >
       <Link to={linkTo} className="p-1 rounded-t-2xl  md:p-auto">
-        <Poster src={data.media.poster_path} alt={data.media.title} size="small" />
+        <Poster src={data.media.poster_path} alt={data.media.title} size="xs" />
       </Link>
       <Review
         data={data}
         title={data.media.title}
         path={linkTo}
         color={color}
-        className="w-full"
+        className="w-full lg:!border-transparent hover:!border-border dark:hover:!border-border !shadow-none"
         likeMutation={likeMutation}
         dislikeMutation={dislikeMutation}
       />

@@ -53,39 +53,39 @@ const Review = ({
   return (
     <li
       key={data.id}
-      className={`grid grid-cols-24 auto-rows-min items-center border px-4 py-3 gap-1 rounded-lg bg-muted dark:bg-card hover:border-ring dark:hover:border-ring transition-colors ${className}`}
+      className={`flex items-start border-1 rounded-lg bg-transparent px-4 py-3 gap-3 dark:bg-transparent hover:border-ring dark:hover:border-border-foreground border-border shadow-sm transition-colors ${className}`}
     >
-      <div className="col-span-3 lg:col-span-1 row-span-1">
-        <ReviewRating rating={data.rating} color={color} />
-      </div>
-      <div className={`flex w-full gap-2 col-span-16 lg:col-span-16`}>
-        <div className="flex gap-2 items-center flex-wrap">
-          <Link
-            to={path}
-            className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
-          >
-            {avatar && <Avatar src={avatar} />}
-            <p className="max-w-50 lg:max-w-full overflow-hidden overflow-ellipsis">
-              {title}
+      <ReviewRating rating={data.rating} color={color} />
+      <div className="flex flex-col w-full gap-2">
+        <div className="flex gap-2 items-center justify-between flex-wrap">
+          <div className="flex gap-2 flex-wrap lg:flex-nowrap items-center max-w-7/10 lg:w-8/10">
+            <Link
+              to={path}
+              className="flex items-center gap-2 justify-center font-bold hover:text-accent transition-colors"
+            >
+              {avatar && <Avatar src={avatar} />}
+              <p className="overflow-hidden overflow-ellipsis">
+                {title}
+              </p>
+            </Link>
+            <p className="text-xs text-muted-foreground whitespace-nowrap">
+              {formatInTimeZone(data.createdAt, "UTC", "dd-MM-u")}
             </p>
-          </Link>
-          <p className="text-xs text-muted-foreground whitespace-nowrap">
-            {formatInTimeZone(data.createdAt, "UTC", "dd-MM-u")}
-          </p>
+          </div>
+          <div className="flex justify-end gap-2 items-start w-fit">
+            {session && displayLikes && (
+              <Likes
+                currentUserLiked={data.currentUserLiked}
+                count={data.likes}
+                onLike={() => likeMutation.mutate(data.id)}
+                onDislike={() => dislikeMutation.mutate(data.id)}
+              />
+            )}
+          </div>
         </div>
-      </div>
-      <p className="w-full lg:w-full text-sm lg:text-base text-justify row-start-2 col-start-4 lg:col-start-2 col-span-22">
+      <p className="w-full text-sm lg:text-base text-justify lg:w-full">
         {data.text}
       </p>
-      <div className="flex justify-end gap-2 items-start w-full col-start-20 col-span-8 lg:col-start-22 lg:col-span-3 row-span-1">
-        {session && displayLikes && (
-          <Likes
-            currentUserLiked={data.currentUserLiked}
-            count={data.likes}
-            onLike={() => likeMutation.mutate(data.id)}
-            onDislike={() => dislikeMutation.mutate(data.id)}
-          />
-        )}
       </div>
     </li>
   )

@@ -95,10 +95,10 @@ const Media = ({ isTv }) => {
     ? `tv_${movie.id}`
     : `movies_${movie.id}`
   return (
-    <div className="mx-auto w-9/10 lg:w-full">
+    <div className="mx-auto w-9/10 lg:w-full min-h-dvh">
       <title>{title}</title>
       <div className="max-w-400 mx-auto flex flex-col lg:flex-row gap-8">
-        <div className="mx-auto w-8/10 lg:w-fit">
+        <div className="mx-auto w-8/10 md:w-4/10 lg:w-3/10 h-110 lg:h-170">
           <Poster src={movie.poster_path} alt={title} size="large" />
         </div>
         <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">

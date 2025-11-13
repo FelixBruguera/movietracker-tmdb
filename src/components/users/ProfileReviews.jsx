@@ -38,7 +38,7 @@ const ProfileReviews = () => {
   const averageRatingColor = data.averageRating && Math.ceil(data.averageRating)
 
   return (
-    <div>
+    <div className="w-full xl:w-8/10 mx-auto">
       <ListHeading>
         <ListHeadingTitle title="Reviews">
           <Total total={data.total} label="Total Reviews" />

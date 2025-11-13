@@ -2,7 +2,7 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
   const baseUrl = "https://image.tmdb.org/t/p/"
   const sizes = {
     large: {
-      sizeClass: "aspect-2/3 lg:max-w-110",
+      sizeClass: "aspect-2/3",
       sizeParam: "w780",
     },
     base: { sizeClass: "w-40 lg:w-60", sizeParam: "w342" },

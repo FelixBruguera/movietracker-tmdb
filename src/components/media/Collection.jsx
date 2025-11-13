@@ -47,9 +47,9 @@ const Collection = ({}) => {
             <Poster src={data.poster_path} size="small" type="movie" />
           </span>
             <div className="w-fit flex-col">
-              <h2 className="text-3xl font-bold w-fit">{data.name}</h2>
+              <h2 className="text-2xl lg:text-3xl font-bold w-fit">{data.name}</h2>
                          {data.overview && (
-                <p className="text-muted-foreground text-base text-justify w-full lg:max-w-7/10">
+                <p className="text-muted-foreground text-sm lg:text-base text-justify w-full lg:max-w-7/10">
                   {data.overview}
                 </p>
               )}
