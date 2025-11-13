@@ -1,4 +1,4 @@
-import { Eye, MinusCircle, Plus } from "lucide-react"
+import { Eye, Lock, MinusCircle, Plus } from "lucide-react"
 import { Button } from "@ui/button"
 
 const UserLists = ({ lists, addToListMutation, removeFromListMutation }) => {
