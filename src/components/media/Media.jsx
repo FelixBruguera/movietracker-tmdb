@@ -97,112 +97,112 @@ const Media = ({ isTv }) => {
   return (
     <div className="mx-auto w-9/10 lg:w-full">
       <title>{title}</title>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="mx-auto w-8/10 lg:w-3/10">
+      <div className="max-w-400 mx-auto flex flex-col lg:flex-row gap-8">
+        <div className="mx-auto w-8/10 lg:w-fit">
           <Poster src={movie.poster_path} alt={title} size="large" />
         </div>
         <div className="w-full lg:w-7/10 2xl:w-8/10 flex flex-col gap-3">
-          <div className="flex flex-col lg:flex-row items-start justify-between w-full gap-2 lg:gap-0 mb-0">
-            <h1 className="text-2xl lg:text-3xl font-bold">{title}</h1>
-            <div className="flex items-center gap-4 lg:gap-2">
-              {session && (
-                <>
-                  <LogManager mediaId={mediaId} mediaTitle={title} />
-                  <DialogWrapper
-                    title={`Adding a log for ${title}`}
-                    label="Add to your diary"
-                    Icon={NotebookPen}
-                    contentClass="min-w-1/3"
-                  >
-                    <DiaryLogForm mediaId={mediaId} />
-                  </DialogWrapper>
-                  <DialogWrapper
-                    title={`Your review of ${title}`}
-                    label="Add or manage your review"
-                    Icon={Star}
-                    contentClass="min-w-1/3"
-                  >
-                    <ReviewDialog mediaId={mediaId} />
-                  </DialogWrapper>
-                  <DialogWrapper
-                    title={`${title} in your lists`}
-                    label="Add or remove from lists"
-                    Icon={List}
-                    contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
-                  >
-                    <ListMovieDialog mediaId={mediaId} />
-                  </DialogWrapper>
-                </>
-              )}
+            <div className="flex flex-col lg:flex-row items-start justify-between w-full gap-2 lg:gap-0">
+              <h1 className="text-2xl lg:text-3xl font-bold">{title}</h1>
+              <div className="flex items-center gap-4 lg:gap-2">
+                {session && (
+                  <>
+                    <LogManager mediaId={mediaId} mediaTitle={title} />
+                    <DialogWrapper
+                      title={`Adding a log for ${title}`}
+                      label="Add to your diary"
+                      Icon={NotebookPen}
+                      contentClass="min-w-1/3"
+                    >
+                      <DiaryLogForm mediaId={mediaId} />
+                    </DialogWrapper>
+                    <DialogWrapper
+                      title={`Your review of ${title}`}
+                      label="Add or manage your review"
+                      Icon={Star}
+                      contentClass="min-w-1/3"
+                    >
+                      <ReviewDialog mediaId={mediaId} />
+                    </DialogWrapper>
+                    <DialogWrapper
+                      title={`${title} in your lists`}
+                      label="Add or remove from lists"
+                      Icon={List}
+                      contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
+                    >
+                      <ListMovieDialog mediaId={mediaId} />
+                    </DialogWrapper>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-          <MovieDetailsList>
-            <MovieDetail title="Release year">
-              <Calendar />
-              {new Date(
-                movie.release_date || movie.first_air_date,
-              ).getFullYear()}
-            </MovieDetail>
-            {movie.number_of_seasons && (
-              <MovieDetail title="Seasons">
-                <Tv />
-                {movie.number_of_seasons} Seasons
+            <MovieDetailsList>
+              <MovieDetail title="Release year">
+                <Calendar />
+                {new Date(
+                  movie.release_date || movie.first_air_date,
+                ).getFullYear()}
               </MovieDetail>
-            )}
-            {movie.number_of_seasons && (
-              <MovieDetail title="Episodes">
-                <Tv />
-                {movie.number_of_episodes} Episodes
-              </MovieDetail>
-            )}
-            {movie.runtime > 0 && (
-              <MovieDetail title="Runtime">
-                <Clock4 />
-                {runtime}
-              </MovieDetail>
-            )}
-            <MovieRating
-              source="TMDB"
-              value={movie.vote_average.toFixed(2)}
-              logo="/tmdb_short.svg"
-            />
-            <MovieRating
-              source="TMDB"
-              value={`${movie.vote_count} votes`}
-              logo="/tmdb_short.svg"
-            />
-            {movie.spoken_languages?.map((lang) => (
-              <MovieDetailLink
-                key={lang.iso_639_1}
-                href={`/${linkPath}?with_original_language=${lang.iso_639_1}`}
-              >
-                <Languages />
-                {lang.english_name}
-              </MovieDetailLink>
-            ))}
-            {movie.genres?.map((genre) => (
-              <MovieDetailLink
-                key={genre.id}
-                href={`/${linkPath}?with_genres=${genre.id}`}
-              >
-                <LibraryBig />
-                {genre.name}
-              </MovieDetailLink>
-            ))}
-          </MovieDetailsList>
-          <MovieDescriptionContainer description={movie.overview} />
-          <div className="flex flex-wrap pb-3 lg:pb-0 justify-start gap-3">
-            {tabs.map((tab) => (
-              <MovieTab
-                key={tab}
-                title={tab}
-                isActive={activeTab === tab}
-                setActiveTab={setActiveTab}
+              {movie.number_of_seasons && (
+                <MovieDetail title="Seasons">
+                  <Tv />
+                  {movie.number_of_seasons} Seasons
+                </MovieDetail>
+              )}
+              {movie.number_of_seasons && (
+                <MovieDetail title="Episodes">
+                  <Tv />
+                  {movie.number_of_episodes} Episodes
+                </MovieDetail>
+              )}
+              {movie.runtime > 0 && (
+                <MovieDetail title="Runtime">
+                  <Clock4 />
+                  {runtime}
+                </MovieDetail>
+              )}
+              <MovieRating
+                source="TMDB"
+                value={movie.vote_average.toFixed(2)}
+                logo="/tmdb_short.svg"
               />
-            ))}
+              <MovieRating
+                source="TMDB"
+                value={`${movie.vote_count} votes`}
+                logo="/tmdb_short.svg"
+              />
+              {movie.spoken_languages?.map((lang) => (
+                <MovieDetailLink
+                  key={lang.iso_639_1}
+                  href={`/${linkPath}?with_original_language=${lang.iso_639_1}`}
+                >
+                  <Languages />
+                  {lang.english_name}
+                </MovieDetailLink>
+              ))}
+              {movie.genres?.map((genre) => (
+                <MovieDetailLink
+                  key={genre.id}
+                  href={`/${linkPath}?with_genres=${genre.id}`}
+                >
+                  <LibraryBig />
+                  {genre.name}
+                </MovieDetailLink>
+              ))}
+            </MovieDetailsList>
+            <MovieDescriptionContainer description={movie.overview} />
+            <div className="flex flex-wrap pb-3 lg:pb-0 justify-start gap-3">
+              {tabs.map((tab) => (
+                <MovieTab
+                  key={tab}
+                  title={tab}
+                  isActive={activeTab === tab}
+                  setActiveTab={setActiveTab}
+                />
+              ))}
+            </div>
+            <ActiveTab movie={movie} tab={activeTab} isTv={isTv} />
           </div>
-          <ActiveTab movie={movie} tab={activeTab} isTv={isTv} />
-        </div>
       </div>
       <Reviews movie={movie} mediaId={mediaId} />
     </div>

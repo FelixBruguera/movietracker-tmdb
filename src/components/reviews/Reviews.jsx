@@ -67,7 +67,7 @@ export default function Reviews({ movie, mediaId }) {
   const averageRatingColor = data.averageRating && Math.ceil(data.averageRating)
 
   return (
-    <div id="reviews" className="max-w-400 mt-10 mx-auto lg:w-8/10 2xl:w-7/10">
+    <div id="reviews" className="max-w-400 mt-10 mx-auto w-full lg:w-8/10">
       <ListHeading>
         <ListHeadingTitle title="Reviews">
           <Total total={totalReviews} label="Total Reviews" />

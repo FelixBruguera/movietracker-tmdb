@@ -34,7 +34,7 @@ const ProfileReview = ({ data, color, profileId }) => {
       key={data.id}
     >
       <Link to={linkTo} className="p-1 rounded-t-2xl  md:p-auto">
-        <Poster src={data.media.poster_path} alt={data.media.title} size="xs" />
+        <Poster src={data.media.poster_path} alt={data.media.title} size="small" />
       </Link>
       <Review
         data={data}
