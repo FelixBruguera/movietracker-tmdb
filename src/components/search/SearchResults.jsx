@@ -20,20 +20,20 @@ const SearchResults = () => {
   const title = `Results for "${query}"`
   if (isLoading) {
     return (
-      <>
+      <div className="min-h-dvh">
         <title>{title}</title>
         <h1 className="text-xl font-semibold text-center mb-5">{title}</h1>
         <ul className="flex flex-wrap">
           <MovieSearchSkeleton />
         </ul>
-      </>
+      </div>
     )
   }
   if (isError) {
     return <ErrorMessage />
   }
   return (
-    <section aria-label="search results" className="flex flex-col gap-5">
+    <section aria-label="search results" className="flex flex-col gap-5 min-h-dvh">
       <title>{title}</title>
       <h1 className="text-xl font-semibold text-center">{title}</h1>
       <ul className="flex flex-wrap">

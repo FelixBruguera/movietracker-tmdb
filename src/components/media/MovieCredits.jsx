@@ -38,7 +38,7 @@ const MovieCredits = ({ path = "movies" }) => {
   const title = data.title || data.name
   const date = data.release_date || data.first_air_date
   return (
-    <div className="lg:px-9 mx-auto">
+    <div className="lg:px-9 mx-auto min-h-dvh">
       <div className="py-3">
         <h1 className="text-2xl lg:text-3xl font-bold text-center">
           {title} ({new Date(date).getFullYear()})

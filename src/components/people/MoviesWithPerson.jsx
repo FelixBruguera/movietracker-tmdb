@@ -48,7 +48,7 @@ const MoviesWithPerson = () => {
   const type = scope === "TV Shows" ? "tv" : "movies"
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-start min-h-dvh">
       <title>{personData.name}</title>
       <PersonInfo data={personData} isLoading={personDataLoading} />
       <PersonMenu />

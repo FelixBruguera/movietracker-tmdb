@@ -21,7 +21,7 @@ const SearchItem = ({ itemData, setOpen }) => {
         to={`/${path}/${itemData.id}`}
         title={name}
         className="w-full flex flex-col gap-2"
-        onClick={() => setOpen(false)}
+        onClick={setOpen ? () => setOpen(false) : null}
       >
         <SearchItemContent
           name={name}
