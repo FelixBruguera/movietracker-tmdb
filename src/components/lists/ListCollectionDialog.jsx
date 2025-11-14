@@ -6,7 +6,7 @@ import ReviewSkeleton from "../reviews/ReviewSkeleton"
 import ErrorMessage from "../shared/ErrorMessage"
 import UserLists from "./UserLists"
 
-const ListCollectionDialog = ({ collectionId }) => {
+const ListCollectionDialog = ({ mediaIds, collectionId }) => {
   const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const currentUser = session.user
@@ -17,14 +17,12 @@ const ListCollectionDialog = ({ collectionId }) => {
   } = useQuery({
     queryKey: ["user_lists", currentUser.id],
     queryFn: () =>
-      axios.get(`/api/lists/user/0`).then((response) => response.data),
+      axios.get(`/api/lists/user/collection/${mediaIds.join(",")}`).then((response) => response.data),
   })
 
   const addToListMutation = useMutation({
     mutationFn: (listId) =>
-      axios.post(`/api/lists/${listId}/collection`, {
-        collectionId: collectionId,
-      }),
+      axios.post(`/api/lists/${listId}/collection/${collectionId}`),
     onSuccess: (data, listId) => {
       queryClient.invalidateQueries({
         queryKey: ["user_lists", currentUser.id],
@@ -33,6 +31,24 @@ const ListCollectionDialog = ({ collectionId }) => {
         queryKey: ["list_media", listId],
       })
       toast("Succesfully Added")
+    },
+    onError: (error) => {
+      const message = error.response.data || error.response.statusText
+      return toast(message)
+    },
+  })
+
+  const removeFromListMutation = useMutation({
+    mutationFn: (listId) =>
+      axios.delete(`/api/lists/${listId}/collection/${mediaIds.join(",")}`),
+    onSuccess: (data, listId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["user_lists", currentUser.id],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["list_media", listId],
+      })
+      toast("Succesfully Removed")
     },
     onError: (error) => {
       const message = error.response.data || error.response.statusText
@@ -52,7 +68,7 @@ const ListCollectionDialog = ({ collectionId }) => {
     return <ErrorMessage />
   }
 
-  return <UserLists lists={lists} addToListMutation={addToListMutation} />
+  return <UserLists lists={lists} addToListMutation={addToListMutation} removeFromListMutation={removeFromListMutation} />
 }
 
 export default ListCollectionDialog

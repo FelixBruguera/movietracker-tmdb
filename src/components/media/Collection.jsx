@@ -32,6 +32,7 @@ const Collection = ({}) => {
     return <ErrorMessage />
   }
   const backdropUrl = `${baseUrl}w1280${data.backdrop_path}`
+  const mediaIds = data.parts.map(part => `movies_${part.id}`)
   return (
     <div className="min-h-dvh py-5 lg:w-300 mx-auto">
       <title>{data.name}</title>
@@ -42,16 +43,16 @@ const Collection = ({}) => {
         <span className="absolute left-0 w-full bg-linear-to-b from-transparent to-background h-full z-0"></span>
       </div>
       <div className="flex items-start justify-between gap-3 mt-3 mx-auto w-full">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4 w-9/10">
           <span className="flex items-end w-4/10 md:w-fit">
             <Poster src={data.poster_path} size="small" type="movie" />
           </span>
-          <div className="w-fit flex-col">
+          <div className="w-8/10 flex-col">
             <h2 className="text-2xl lg:text-3xl font-bold w-fit">
               {data.name}
             </h2>
             {data.overview && (
-              <p className="text-muted-foreground text-sm lg:text-base text-justify w-full lg:max-w-7/10">
+              <p className="text-muted-foreground text-sm lg:text-base text-justify w-full">
                 {data.overview}
               </p>
             )}
@@ -63,7 +64,7 @@ const Collection = ({}) => {
           Icon={List}
           contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
         >
-          <ListCollectionDialog collectionId={id} />
+          <ListCollectionDialog mediaIds={mediaIds} collectionId={data.id} />
         </DialogWrapper>
       </div>
       <ListHeading>
@@ -73,7 +74,7 @@ const Collection = ({}) => {
       </ListHeading>
       {data.parts?.map((movie) => {
         return (
-          <Link to={`/movies/${movie.id}`}>
+          <Link key={movie.id} to={`/movies/${movie.id}`}>
             <MediaCard
               id={movie.id}
               title={movie.title}

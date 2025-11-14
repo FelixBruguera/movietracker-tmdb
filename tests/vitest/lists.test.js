@@ -76,9 +76,29 @@ describe("the lists endpoint", async () => {
     )
     expect(response.status).toBe(401)
   })
+  it("doesn't allow to add collections to another users list", async () => {
+    const response = await fetch(
+      "http://localhost:3000/api/lists/4887fcf8-194c-457d-82b8-06eb032051c4/collection/399",
+      {
+        method: "POST",
+        headers: { Cookie: cookie, "Content-Type": "application/json" },
+      },
+    )
+    expect(response.status).toBe(401)
+  })
   it("doesn't allow to delete media from another users list", async () => {
     const response = await fetch(
       "http://localhost:3000/api/lists/4887fcf8-194c-457d-82b8-06eb032051c4/media/movies_5",
+      {
+        method: "DELETE",
+        headers: { Cookie: cookie, "Content-Type": "application/json" },
+      },
+    )
+    expect(response.status).toBe(401)
+  })
+  it("doesn't allow to delete collections from another users list", async () => {
+    const response = await fetch(
+      "http://localhost:3000/api/lists/4887fcf8-194c-457d-82b8-06eb032051c4/collection/movies_355,movies_567",
       {
         method: "DELETE",
         headers: { Cookie: cookie, "Content-Type": "application/json" },

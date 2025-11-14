@@ -17,6 +17,7 @@ import { formatValidationError, getSort } from "../functions"
 import { mapFilterCondition } from "./functions"
 import {
   deleteList,
+  deleteListCollection,
   deleteListMedia,
   followList,
   getList,
@@ -25,6 +26,7 @@ import {
   getListOwner,
   getLists,
   getUserLists,
+  getUserListsWithCollectionCheck,
   insertList,
   insertListMedia,
   unfollowList,
@@ -350,11 +352,19 @@ app.delete("/:listId/follow", auth, async (c) => {
   }
 })
 
-app.post("/:listId/collection", auth, async (c) => {
-  const validation = listCollectionSchema.safeParse(await c.req.json())
-  if (!validation.success) {
-    return c.json(formatValidationError(validation), 400)
+app.get("/user/collection/:mediaIds", auth, async (c) => {
+  const session = c.get("session")
+  const mediaIds = c.req.param("mediaIds")
+  const db = drizzle(c.env.DB, { schema: schema })
+  const result = await getUserListsWithCollectionCheck(db, mediaIds.split(","), session.user.id)
+  if (result) {
+    return c.json(result)
+  } else {
+    throw new HTTPException(404)
   }
+})
+
+app.post("/:listId/collection/:collectionId", auth, async (c) => {
   const session = c.get("session")
   const db = drizzle(c.env.DB, { schema: schema })
   const userId = session.user.id
@@ -364,7 +374,7 @@ app.post("/:listId/collection", auth, async (c) => {
   if (list?.at(0)?.userId !== userId) {
     return c.newResponse("Unauthorized", 401)
   }
-  const { collectionId } = validation.data
+  const collectionId = c.req.param("collectionId")
   try {
     const response = await axios.get(
       `https://api.themoviedb.org/3/collection/${collectionId}`,
@@ -400,6 +410,25 @@ app.post("/:listId/collection", auth, async (c) => {
     ) {
       throw new HTTPException(404, { message: "Invalid mediaId" })
     }
+    throw new HTTPException(404)
+  }
+})
+
+app.delete("/:listId/collection/:mediaIds", auth, async (c) => {
+  const session = c.get("session")
+  const listId = c.req.param("listId")
+  const mediaIds = c.req.param("mediaIds")
+  const db = drizzle(c.env.DB, { schema: schema })
+  const userId = session.user.id
+  const list = await getListOwner(db, listId, userId)
+  if (list?.at(0)?.userId !== userId) {
+    return c.newResponse("Unauthorized", 401)
+  }
+  const result = await deleteListCollection(db, mediaIds.split(","), listId)
+  if (result.meta.changes > 0) {
+    return c.newResponse(null, 204)
+  } else {
+    console.log(result)
     throw new HTTPException(404)
   }
 })

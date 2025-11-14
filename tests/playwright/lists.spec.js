@@ -147,42 +147,6 @@ test.describe("as a logged in user", () => {
       await expect(page.getByText("Succesfully removed")).toBeVisible()
       await expect(page.getByText("The Matrix")).not.toBeVisible()
     })
-    test("Adding a collection to a list", async ({ page }) => {
-      await page.goto("/movies/collection/119")
-      await page.getByLabel("Add or remove from lists").click()
-      await page.getByLabel("Add to list").first().click()
-      await expect(page.getByText("Succesfully Added")).toBeVisible()
-      await page.goto("/lists")
-      await page.getByText("My updated list").click()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Fellowship of the Ring"),
-      ).toBeVisible()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Two Towers"),
-      ).toBeVisible()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Return of the King"),
-      ).toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("3")
-    })
-    test("Adding a duplicated collection to a list", async ({ page }) => {
-      await page.goto("/movies/collection/119")
-      await page.getByLabel("Add or remove from lists").click()
-      await page.getByLabel("Add to list").first().click()
-      await expect(page.getByText("Duplicated Media")).toBeVisible()
-      await page.goto("/lists")
-      await page.getByText("My updated list").click()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Fellowship of the Ring"),
-      ).toBeVisible()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Two Towers"),
-      ).toBeVisible()
-      await expect(
-        page.getByAltText("The Lord of the Rings: The Return of the King"),
-      ).toBeVisible()
-      await expect(page.getByLabel("Total Media")).toHaveText("3")
-    })
     test("Deleting a list", async ({ page }) => {
       await page.getByText("My updated list").click()
       await page.getByLabel("Delete").click()
@@ -247,6 +211,60 @@ test.describe("as a logged in user", () => {
         page.getByAltText("The Super Mario Bros. Movie"),
       ).toBeVisible()
       await expect(page.getByLabel("Total Media")).toHaveText("1")
+    })
+  })
+  test.describe("collections", () => {
+    test.describe.configure({ mode: "serial" })
+    test.beforeEach(async ({ page }) => {
+      await page.goto("/movies/collection/399")
+    })
+    test("Adding a collection to a list", async ({ page }) => {
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByLabel("Add to list").first().click()
+      await expect(page.getByText("Succesfully Added")).toBeVisible()
+      await page.goto("/lists")
+      await page.getByRole("link", {name: "Public List"}).click()
+      await expect(page.getByAltText("Predator", {exact: true})).toBeVisible()
+      await expect(page.getByAltText("Predator 2", {exact: true})).toBeVisible()
+      await expect(page.getByAltText("Predators", {exact: true})).toBeVisible()
+      await expect(page.getByAltText("The Predator", {exact: true})).toBeVisible()
+      await expect(page.getByAltText("Prey", {exact: true})).toBeVisible()
+      await expect(page.getByAltText("Predator: Badlands", {exact: true})).toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("34")
+    })
+    test("Removing a collection from a list", async ({ page }) => {
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByLabel("Remove from list", { exact: true}).first().click()
+      await expect(page.getByText("Succesfully Removed")).toBeVisible()
+      await page.goto("/lists")
+      await page.getByRole("link", {name: "Public List"}).click()
+      await expect(page.getByAltText("Predator", {exact: true})).not.toBeVisible()
+      await expect(page.getByAltText("Predator 2", {exact: true})).not.toBeVisible()
+      await expect(page.getByAltText("Predators", {exact: true})).not.toBeVisible()
+      await expect(page.getByAltText("The Predator", {exact: true})).not.toBeVisible()
+      await expect(page.getByAltText("Prey", {exact: true})).not.toBeVisible()
+      await expect(page.getByAltText("Predator: Badlands", {exact: true})).not.toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("28")
+    })
+    test("The remove button is rendered even when there's only 1 movie from the collection in the list", async ({ page }) => {
+      await page.getByRole("link", {name: "Prey"}).click()
+      await page.getByLabel("Add or remove from lists").click()
+      await page.getByLabel("Add to list").first().click()
+      await expect(page.getByText("Succesfully Added")).toBeVisible()
+      await page.goto("/movies/collection/399")
+      await page.getByLabel("Add or remove from lists").click()
+      await expect(page.getByLabel("Remove from list", { exact: true })).toBeVisible()
+      await expect(page.getByLabel("Add to list")).not.toBeVisible()
+    })
+    test("Removes the single movie from the list", async ({ page }) => {
+      await page.getByLabel("Add or remove from lists").click()
+      await expect(page.getByLabel("Remove from list", { exact: true })).toBeVisible()
+      await page.getByLabel("Remove from list", { exact: true }).click()
+      await expect(page.getByText("Succesfully Removed")).toBeVisible()
+      await page.goto("/lists")
+       await page.getByRole("link", {name: "Public List"}).click()
+      await expect(page.getByAltText("Prey", {exact: true})).not.toBeVisible()
+      await expect(page.getByLabel("Total Media")).toHaveText("28")
     })
   })
   test.describe("creating a copy of a list", () => {

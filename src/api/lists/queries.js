@@ -170,6 +170,27 @@ export function getUserLists(db, mediaId, userId) {
     .where(eq(lists.userId, userId))
 }
 
+export function getUserListsWithCollectionCheck(db, mediaIds, userId) {
+  return db
+    .select({
+      id: lists.id,
+      name: lists.name,
+      isPrivate: lists.isPrivate,
+      isWatchlist: lists.isWatchlist,
+      includesMedia:
+        sql`case when ${mediaToLists.mediaId} is not null then true else false end`.as(
+          "includesMedia",
+        ),
+    })
+    .from(lists)
+    .leftJoin(
+      mediaToLists,
+      and(eq(mediaToLists.listId, lists.id), inArray(mediaToLists.mediaId, mediaIds)),
+    )
+    .where(eq(lists.userId, userId))
+    .groupBy(lists.id)
+}
+
 export function insertList(db, id, data, userId) {
   const newListId = id ?? crypto.randomUUID()
   return db.insert(lists).values({
@@ -194,6 +215,14 @@ export function deleteListMedia(db, mediaId, listId) {
     .delete(mediaToLists)
     .where(
       and(eq(mediaToLists.listId, listId), eq(mediaToLists.mediaId, mediaId)),
+    )
+}
+
+export function deleteListCollection(db, mediaIds, listId) {
+  return db
+    .delete(mediaToLists)
+    .where(
+      and(eq(mediaToLists.listId, listId), inArray(mediaToLists.mediaId, mediaIds)),
     )
 }
 
