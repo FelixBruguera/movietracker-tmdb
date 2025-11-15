@@ -1,6 +1,5 @@
 const Heatmap = ({ values, data, tooltipTitle }) => {
   const dataMax = Object.values(data).sort((a, b) => b - a)[0]
-  console.log(dataMax)
   return (
     <ul className="w-4/5 lg:w-full flex flex-wrap items-center justify-center mx-auto gap-0">
       {values.map((value, i) => {

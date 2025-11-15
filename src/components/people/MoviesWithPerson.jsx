@@ -27,7 +27,6 @@ const MoviesWithPerson = () => {
         .get(`/api/people/${person}/credits`, { params: searchParams })
         .then((response) => response.data),
   })
-  console.log(data)
 
   if (isLoading || personDataLoading) {
     return (

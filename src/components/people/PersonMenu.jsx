@@ -30,7 +30,6 @@ const SelectTriggerWrapper = (props) => (
 
 const PersonMenu = ({ title = null }) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  console.log(searchParams)
   const currentScope = searchParams.get("scope") || "Movies"
   const currentDepartment = searchParams.get("department") || "All"
   const departments = filtersData.departments
@@ -42,7 +41,6 @@ const PersonMenu = ({ title = null }) => {
   }
   const currentSort = searchParams.get("sort_by") || "Most recent"
   const handleChange = (newValue, field) => {
-    console.log(newValue)
     setSearchParams((params) => {
       params.set(field, newValue)
       params.set("page", "1")

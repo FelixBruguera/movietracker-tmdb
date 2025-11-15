@@ -141,7 +141,6 @@ const NewSearch = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            console.log(searchParams)
             mutation.mutate({
               name: e.target.name.value,
               path: location.pathname,

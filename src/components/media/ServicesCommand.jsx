@@ -12,7 +12,6 @@ import useRegion from "@stores/region"
 import ServiceList from "./ServiceList"
 
 const ServicesCommand = ({ title, selected, setSelected }) => {
-  console.log(selected)
   const [searchValue, setSearchValue] = useState("")
   const region = useRegion((state) => state.details.code)
   const [open, setOpen] = useState(false)

@@ -36,7 +36,6 @@ const Media = ({ isTv }) => {
   const location = useLocation()
   const [activeTab, setActiveTab] = useState("Cast")
   const region = useRegion((state) => state.details.code)
-  console.log(id)
   const { data: session } = authClient.useSession()
   const endpoint = isTv ? "tv" : "movies"
   const cacheKey = isTv ? "tv" : "movie"

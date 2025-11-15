@@ -46,7 +46,6 @@ export default function Reviews({ movie, mediaId }) {
     onError: (error) =>
       toast(error.response.statusText) || toast("Something went wrong"),
   })
-  console.log(data)
   const sortOptions = reviewsInfo.sortOptions
   const ratingScale = reviewsInfo.ratingScale
 

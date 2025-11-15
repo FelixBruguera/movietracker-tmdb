@@ -16,7 +16,6 @@ const Movies = ({ path = "movies" }) => {
         .get(`/api/${path}`, { params: searchParams })
         .then((response) => response.data),
   })
-  console.log(data)
 
   if (isLoading) {
     return (

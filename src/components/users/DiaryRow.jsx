@@ -3,7 +3,6 @@ import Poster from "../shared/Poster"
 import { Link } from "react-router"
 
 const DiaryRow = ({ data, group }) => {
-  console.log([data, group])
   const date =
     group === "yearly"
       ? formatInTimeZone(new Date(data.group), "UTC", "yyyy")

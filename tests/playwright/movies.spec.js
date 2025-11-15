@@ -123,7 +123,6 @@ test.describe("the index route", () => {
       await page.getByLabel("Saved searches").click()
       await page.getByText("Test", { exact: true }).click()
       await expect(page.getByAltText("Waiting for the Hearse")).toBeVisible()
-      await page.getByRole("button", { name: "Close", exact: true }).click()
       await page.getByText("Filters").click()
       await expect(
         page.getByRole("combobox", { name: "Languages" }),

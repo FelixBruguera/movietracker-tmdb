@@ -296,6 +296,7 @@ test.describe("as a logged in user", () => {
       await page.getByLabel("Delete").click()
       await page.getByText("Delete").click()
       await expect(page.getByText("Succesfully Deleted")).toBeVisible()
+      await page.goto("/lists")
       await expect(page.getByText("My copy of test list")).not.toBeVisible()
       await expect(page.getByText("test list", { exact: true })).toBeVisible()
     })

@@ -86,7 +86,6 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
             e.preventDefault()
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
-            console.log(data)
             data.with_genres =
               genresAndOr === "and"
                 ? selectedGenres.join(",")
@@ -101,7 +100,6 @@ const MoviesFilters = ({ handleFilter, filterOpen, setFilterOpen }) => {
               ? tvSchema.safeParse(data)
               : moviesSchema.safeParse(data)
             if (!validation.success) {
-              console.log(validation.error)
               return (
                 toast(validation.error._zod.def[0].message) ||
                 toast("Invalid input")

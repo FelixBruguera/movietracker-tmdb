@@ -75,7 +75,6 @@ export default function List() {
     return <ErrorMessage />
   }
   const list = data
-  console.log(media)
   const isFollowed = data.currentUserFollows === 1 ? true : false
 
   return (

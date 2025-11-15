@@ -28,7 +28,6 @@ const MoviesWithParam = ({ endpoint, path = "movies" }) => {
         .get(`/api/${path}/${endpoint}/${id}`, { params: searchParams })
         .then((response) => response.data),
   })
-  console.log(data)
 
   if (isLoading || paramDataLoading) {
     return (

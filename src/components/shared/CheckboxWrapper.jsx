@@ -16,7 +16,6 @@ const CheckboxWrapper = ({
   andOr,
   setAndOr,
 }) => {
-  console.log(selected)
   return (
     <Popover>
       <PopoverTrigger title={title} aria-label={title}>
@@ -56,12 +55,7 @@ const CheckboxWrapper = ({
                     name="with_genres"
                     value={item.id}
                     id={item.id}
-                    onCheckedChange={(checked) => {
-                      console.log([
-                        checked,
-                        selected,
-                        selected.includes(item.id),
-                      ])
+                    onCheckedChange={() => {
                       return selected.includes(item.id)
                         ? setSelected((previousItems) =>
                             previousItems.filter(

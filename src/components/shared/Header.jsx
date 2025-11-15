@@ -20,7 +20,7 @@ const Header = () => {
         to={"/"}
         className="flex items-center gap-1 text-2xl font-bold w-fit"
       >
-        <Clapperboard className="!size-7 text-accent" />
+        <img src="/icon.ico" className="!size-10 text-accent" />
         <h1 className="font-['Ramabhadra'] transition-colors hover:text-accent">
           Movie Tracker
         </h1>

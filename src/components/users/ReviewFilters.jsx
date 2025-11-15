@@ -45,10 +45,8 @@ const ReviewFilters = () => {
             const formData = new FormData(e.target)
             const data = Object.fromEntries(formData.entries())
             data.sort_by = searchParams.get("sort_by") || "date"
-            console.log(data)
             const validation = profileReviewsSchema.safeParse(data)
             if (!validation.success) {
-              console.log(validation.error)
               return (
                 toast(validation.error._zod.def[0].message) ||
                 toast("Invalid input")

@@ -6,7 +6,6 @@ import { Link, useParams } from "react-router"
 
 const Stats = () => {
   const { id, scope } = useParams()
-  console.log(scope)
   return (
     <div>
       <div className="flex items-center mx-auto w-full justify-center gap-10 my-5">
