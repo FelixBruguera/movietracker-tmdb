@@ -15,6 +15,20 @@
         "purpose": "any"
     }
   ],
+  "screenshots": [
+    {
+        "src": "/wide.webp",
+        "type": "image/webp",
+        "form_factor": "wide",
+        "sizes": "1919x869"
+    },
+        {
+        "src": "/mobile.webp",
+        "type": "image/webp",
+        "form_factor": "narrow",
+        "sizes": "425x916"
+    }
+  ],
   "start_url": ".",
    "display": "standalone"
 }

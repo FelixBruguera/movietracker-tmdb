@@ -1,6 +1,5 @@
 import { Route, Routes, ScrollRestoration, useLocation } from "react-router"
 import Header from "./components/shared/Header"
-import "./styles/app.css"
 import Login from "./components/auth/Login"
 import Movies from "./components/media/Movies"
 import Signup from "./components/auth/Signup"
