@@ -20,6 +20,7 @@ export default function UserList() {
 
   return (
     <div className="flex flex-col justify-start items-start min-h-dvh">
+      <title>Movie Tracker</title>
       <UsersMenu />
       <ItemsGrid
         items={users}

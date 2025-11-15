@@ -23,7 +23,7 @@ const PersonInfo = ({ data, isLoading }) => {
     return <PersonInfoSkeleton />
   }
   const imageBaseUrl = "https://image.tmdb.org/t/p/w185"
-  const formattedBirthday = data.birthday && format(data.birthday, "MMMM d Y")
+  const formattedBirthday = data.birthday && format(data.birthday, "MMMM d y")
   return (
     <div className="mb-5 lg:mb-0">
       <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 w-full px-5">

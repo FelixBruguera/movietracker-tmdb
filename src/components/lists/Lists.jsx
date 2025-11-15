@@ -20,6 +20,7 @@ const Lists = () => {
 
   return (
     <div className="flex flex-col justify-start items-start h-full min-h-dvh">
+      <title>Movie Tracker</title>
       <ListsMenu />
       <ItemsGrid
         items={lists}

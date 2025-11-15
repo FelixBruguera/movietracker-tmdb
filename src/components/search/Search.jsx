@@ -68,7 +68,7 @@ const Search = ({ renderFn }) => {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <ul className="h-100 w-full flex flex-wrap items-center justify-evenly gap-3">
+      <ul className="h-100 xl:h-150 w-full flex flex-wrap items-center justify-evenly gap-3">
         <SearchRenderer
           isLoading={isLoading}
           dataLoading={dataLoading}

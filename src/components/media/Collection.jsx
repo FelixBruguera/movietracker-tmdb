@@ -36,6 +36,7 @@ const Collection = ({}) => {
   return (
     <div className="min-h-dvh py-5 lg:w-300 mx-auto">
       <title>{data.name}</title>
+      <meta name="description" content={data.overview}/>
       <div
         className="relative w-full bg-no-repeat bg-center aspect-16/9 lg:aspect-16/4 flex items-center justify-start"
         style={{ backgroundImage: `url(${backdropUrl})` }}

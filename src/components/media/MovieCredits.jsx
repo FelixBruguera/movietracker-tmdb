@@ -12,6 +12,7 @@ const CreditsList = ({ title, list }) => {
       <ul className="flex flex-wrap py-2 justify-center gap-y-2 items-center">
         {list.map((item) => (
           <PersonLink
+            key={item.credit_id}
             name={item.name}
             id={item.id}
             image={item.profile_path}
@@ -39,6 +40,7 @@ const MovieCredits = ({ path = "movies" }) => {
   const date = data.release_date || data.first_air_date
   return (
     <div className="lg:px-9 mx-auto min-h-dvh">
+      <title>{`Credits for ${title}`}</title>
       <div className="py-3">
         <h1 className="text-2xl lg:text-3xl font-bold text-center">
           {title} ({new Date(date).getFullYear()})

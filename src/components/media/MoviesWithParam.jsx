@@ -44,9 +44,11 @@ const MoviesWithParam = ({ endpoint, path = "movies" }) => {
   }
   const movies = data.results
   const totalPages = data.total_pages
+  const title = path === "tv" ? `TV Shows by ${paramData.name}`: `Movies by ${paramData.name}`
 
   return (
     <div className="flex flex-col justify-start min-h-dvh">
+      <title>{title}</title>
       <MoviesMenu title={paramData.name} />
       <PosterList movies={movies} path={path} />
       {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}

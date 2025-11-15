@@ -97,6 +97,7 @@ const Media = ({ isTv }) => {
   return (
     <div className="mx-auto w-9/10 lg:w-full min-h-dvh">
       <title>{title}</title>
+      <meta name="description" content={movie.overview} />
       <div className="max-w-400 mx-auto flex flex-col lg:flex-row gap-8">
         <div className="mx-auto w-8/10 md:w-4/10 lg:w-3/10 h-110 lg:h-170">
           <Poster src={movie.poster_path} alt={title} size="large" />

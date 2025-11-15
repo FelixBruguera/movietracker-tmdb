@@ -20,7 +20,7 @@ const Movies = ({ path = "movies" }) => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col h-dvh">
         <MoviesMenu />
         <MoviesSkeleton />
       </div>
@@ -35,6 +35,8 @@ const Movies = ({ path = "movies" }) => {
 
   return (
     <div className="flex flex-col justify-start min-h-dvh">
+      <title>Movie Tracker</title>
+      <meta name="description" content="Discover, Track and Rate Movies and TV Shows"/>
       <MoviesMenu />
       <PosterList movies={movies} path={path} />
       {totalPages > 1 && <PaginationWrap totalPages={totalPages} />}
