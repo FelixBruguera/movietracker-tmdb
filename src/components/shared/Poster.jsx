@@ -30,6 +30,7 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
         alt={alt}
         title={alt}
         className={`${sizeClass} shadow-md rounded-sm lg:row-span-2 mx-auto`}
+        fetchpriority="high"
       />
     }
     </>
