@@ -14,9 +14,11 @@ import MediaCardDetail from "./MediaCardDetail"
 import ListCollectionDialog from "../lists/ListCollectionDialog"
 import DialogWrapper from "../shared/DialogWrapper"
 import { List } from "lucide-react"
+import { authClient } from "../../../lib/auth-client"
 
 const Collection = ({}) => {
   const { id } = useParams()
+  const { data: session } = authClient.useSession()
   const { data, isLoading, isError } = useQuery({
     queryKey: ["collection", id],
     queryFn: () =>
@@ -59,14 +61,16 @@ const Collection = ({}) => {
             )}
           </div>
         </div>
-        <DialogWrapper
-          title={`${data.name} in your lists`}
-          label="Add or remove from lists"
-          Icon={List}
-          contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
-        >
-          <ListCollectionDialog mediaIds={mediaIds} collectionId={data.id} />
-        </DialogWrapper>
+        {session && (
+          <DialogWrapper
+            title={`${data.name} in your lists`}
+            label="Add or remove from lists"
+            Icon={List}
+            contentClass="min-w-1/3 max-h-8/10 overflow-y-auto"
+          >
+            <ListCollectionDialog mediaIds={mediaIds} collectionId={data.id} />
+          </DialogWrapper>
+        )}
       </div>
       <ListHeading>
         <ListHeadingTitle title="Movies">

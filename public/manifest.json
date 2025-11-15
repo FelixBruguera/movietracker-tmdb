@@ -1,0 +1,20 @@
+{
+  "name": "Movie Tracker",
+  "short_name": "Movie Tracker",
+  "icons": [
+    {
+        "src": "/icon-100px.png",
+        "type": "image/png",
+        "sizes": "100x100",
+        "purpose": "maskable"
+    },
+    {
+        "src": "/icon-512px.png",
+        "type": "image/png",
+        "sizes": "512x512",
+        "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+   "display": "standalone"
+}
