@@ -20,7 +20,7 @@ const SortOrderToggle = memo(() => {
       title={label}
       aria-label={label}
       onClick={() => handleSortOrder()}
-      className="bg-muted dark:bg-card border-1 border-border hover:bg-accent dark:hover:bg-accent hover:cursor-pointer group"
+      className="bg-muted dark:bg-card border-1 border-border hover:bg-input/50 dark:hover:bg-input/50 hover:cursor-pointer group transition-colors"
     >
       {isAscending ? (
         <ArrowUpWideNarrow className="!size-3.5 text-stone-900 dark:text-white group-hover:text-white transition-colors" />
