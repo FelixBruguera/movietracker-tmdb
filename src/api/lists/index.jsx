@@ -201,7 +201,7 @@ app.post("/copy/:listId", auth, async (c) => {
   const session = c.get("session")
   const listId = c.req.param("listId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const mediaToCopy = await getMediaToCopy(db, listId)
+  const mediaToCopy = await getMediaToCopy(db, listId, session.user.id)
   const newListId = crypto.randomUUID()
   const batchStatements = [
     insertList(db, newListId, validation.data, session.user.id),

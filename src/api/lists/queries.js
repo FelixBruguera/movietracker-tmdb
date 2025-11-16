@@ -262,13 +262,13 @@ export function unfollowList(db, listId, userId) {
     )
 }
 
-export function getMediaToCopy(db, listId) {
+export function getMediaToCopy(db, listId, userId) {
   return db.select({
     mediaId: mediaToLists.mediaId,
   })
   .from(mediaToLists)
   .leftJoin(lists, eq(mediaToLists.listId, lists.id))
-  .where(and(eq(mediaToLists.listId, listId), eq(lists.isPrivate, false)))
+  .where(and(eq(mediaToLists.listId, listId), or(eq(lists.isPrivate, false), eq(lists.userId, userId))))
 }
 
 export function insertCopyMedia(db, mediaToInsert, listId) {
