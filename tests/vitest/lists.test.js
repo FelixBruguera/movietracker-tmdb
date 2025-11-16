@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/better-sqlite3"
 import { newReviewSchema, reviewsSchema } from "../../src/utils/reviewsSchema"
 import Database from "better-sqlite3"
 import * as schema from "../../src/db/schema"
-import { deleteList, followList, updateList } from "../../src/api/lists/queries"
+import { deleteList, followList, getMediaToCopy, updateList } from "../../src/api/lists/queries"
 
 const sqlite = new Database(
   ".wrangler/state/v3/d1/miniflare-D1DatabaseObject/eea796519a30eaaaf60d174741657467b3f25c541bde63023800a5f8bb62f591.sqlite",
@@ -30,6 +30,13 @@ describe("The deleteList query", () => {
       "1RIhcRx425vtBSDJt1exA2tswZcFtsTM",
     )
     expect(result.changes).toBe(0)
+  })
+})
+
+describe("The getMediaToCopy query", () => {
+  it("Doesn't get media from private lists", async () => {
+    const result = await getMediaToCopy(db, "4887fcf8-194c-457d-82b8-06eb032051c4")
+    expect(result).toEqual([])
   })
 })
 

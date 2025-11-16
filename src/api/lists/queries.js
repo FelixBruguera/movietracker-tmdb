@@ -18,6 +18,7 @@ import {
   user,
 } from "../../db/schema"
 import { alias } from "drizzle-orm/sqlite-core"
+import { chunkInserts } from "../reviews/functions"
 
 export function watchlistQuery(db, userId, mediaId) {
   const deleteSubquery = db
@@ -122,7 +123,7 @@ export function getListOwner(db, listId, userId) {
     .where(and(eq(lists.id, listId), eq(lists.userId, userId)))
 }
 
-export function getListMedia(db, listId, sort, offset, itemsPerPage, filters) {
+export function getListMedia(db, listId, sort, offset, itemsPerPage, filters, userId) {
   return db
     .select({
       id: media.id,
@@ -132,8 +133,9 @@ export function getListMedia(db, listId, sort, offset, itemsPerPage, filters) {
     })
     .from(mediaToLists)
     .fullJoin(media, eq(mediaToLists.mediaId, media.id))
+    .leftJoin(lists, eq(lists.id, mediaToLists.listId))
     .leftJoin(genresToMedia, eq(genresToMedia.mediaId, mediaToLists.mediaId))
-    .where(and(eq(mediaToLists.listId, listId), ...filters))
+    .where(and(eq(mediaToLists.listId, listId),or(eq(lists.isPrivate, false), eq(lists.userId, userId)), ...filters))
     .groupBy(media.id)
     .orderBy(sort)
     .offset(offset)
@@ -258,4 +260,25 @@ export function unfollowList(db, listId, userId) {
     .where(
       and(eq(listFollowers.listId, listId), eq(listFollowers.userId, userId)),
     )
+}
+
+export function getMediaToCopy(db, listId) {
+  return db.select({
+    mediaId: mediaToLists.mediaId,
+  })
+  .from(mediaToLists)
+  .leftJoin(lists, eq(mediaToLists.listId, lists.id))
+  .where(and(eq(mediaToLists.listId, listId), eq(lists.isPrivate, false)))
+}
+
+export function insertCopyMedia(db, mediaToInsert, listId) {
+  const queries = mediaToInsert.map((media) => {
+    return {
+      listId: listId,
+      mediaId: media.mediaId,
+    }})
+  const chunckedQueries = chunkInserts(queries, 25)
+  return chunckedQueries.map((query) =>
+    db.insert(mediaToLists).values(query)
+  )
 }

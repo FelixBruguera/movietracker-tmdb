@@ -25,8 +25,10 @@ import {
   getListMediaIds,
   getListOwner,
   getLists,
+  getMediaToCopy,
   getUserLists,
   getUserListsWithCollectionCheck,
+  insertCopyMedia,
   insertList,
   insertListMedia,
   unfollowList,
@@ -94,6 +96,9 @@ app.get("/:listId", async (c) => {
 })
 
 app.get("/:listId/media", async (c) => {
+  const session = await getAuth(c.env.DB).api.getSession({
+    headers: c.req.header(),
+  })
   const validation = listSchema.safeParse(c.req.query())
   if (!validation.success) {
     return c.json(formatValidationError(validation), 400)
@@ -119,6 +124,7 @@ app.get("/:listId/media", async (c) => {
     mapMediaType(media_type, mediaToLists),
     ...mapYearRange(yearMin, yearMax, schema.media),
   ]
+  const userId = session?.user?.id || null
   const listMedia = await getListMedia(
     db,
     listId,
@@ -126,6 +132,7 @@ app.get("/:listId/media", async (c) => {
     offset,
     itemsPerPage,
     filters,
+    userId
   )
   const total = listMedia.at(0)?.total || 0
   const totalPages = Math.ceil(total / itemsPerPage)
@@ -194,22 +201,14 @@ app.post("/copy/:listId", auth, async (c) => {
   const session = c.get("session")
   const listId = c.req.param("listId")
   const db = drizzle(c.env.DB, { schema: schema })
-  const mediaToCopy = await db
-    .select({
-      mediaId: mediaToLists.mediaId,
-    })
-    .from(mediaToLists)
-    .where(eq(mediaToLists.listId, listId))
+  const mediaToCopy = await getMediaToCopy(db, listId)
   const newListId = crypto.randomUUID()
   const batchStatements = [
     insertList(db, newListId, validation.data, session.user.id),
   ]
   if (mediaToCopy.length > 0) {
-    const newMediaEntries = mediaToCopy.map((media) => ({
-      listId: newListId,
-      mediaId: media.mediaId,
-    }))
-    batchStatements.push(db.insert(mediaToLists).values(newMediaEntries))
+    const newMediaEntries = insertCopyMedia(db, mediaToCopy, newListId)
+    batchStatements.push(...newMediaEntries)
   }
   const result = await db.batch(batchStatements)
 
