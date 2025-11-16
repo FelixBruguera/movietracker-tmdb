@@ -21,7 +21,7 @@ const Header = () => {
         className="flex items-center gap-1 text-2xl font-bold w-fit"
       >
         <img src="/icon.ico" className="!size-10 text-accent" />
-        <h1 className="font-['Ramabhadra'] transition-colors hover:text-accent">
+        <h1 className="transition-colors hover:text-accent">
           Movie Tracker
         </h1>
       </Link>
