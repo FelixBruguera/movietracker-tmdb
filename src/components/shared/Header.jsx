@@ -37,7 +37,7 @@ const Header = () => {
             title="Search Movies, TV Shows and People"
             label="Search"
             Icon={SearchIcon}
-            contentClass="overflow-auto min-w-2/4"
+            contentClass="overflow-auto min-w-2/4 max-h-4/5"
           >
             <Search
               renderFn={(items, setOpen) =>

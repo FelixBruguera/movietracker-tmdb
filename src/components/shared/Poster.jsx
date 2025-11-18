@@ -5,8 +5,8 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
       sizeClass: "aspect-2/3",
       sizeParam: "w780",
     },
-    base: { sizeClass: "w-40 lg:w-60", sizeParam: "w342" },
-    small: { sizeClass: "h-40 lg:h-49 w-28 lg:w-35", sizeParam: "w185" },
+    base: { sizeClass: "w-40 lg:w-60 min-h-50 lg:min-h-90", sizeParam: "w342" },
+    small: { sizeClass: "h-40 lg:h-49 w-28 lg:w-35 min-h-40", sizeParam: "w185" },
     xs: {
       sizeClass: "aspect-23/34 max-w-22 lg:max-h-30 lg:max-w-22 lg:!min-h-30",
       sizeParam: "w185",
@@ -21,7 +21,7 @@ const Poster = ({ src, alt, size = "base", type = "movie" }) => {
   return (
     <>
     {!src && type === "movie" ?
-      <div className={`${sizeClass} min-h-50 lg:min-h-90 mx-auto h-full px-1 lg:px-3 border-2 rounded-sm border-border flex items-center justify-center`}>
+      <div className={`${sizeClass} mx-auto h-full px-1 lg:px-3 border-2 rounded-sm border-border flex items-center justify-center`}>
         <h2 className="text-xl text-muted-foreground">{alt}</h2>
       </div>
       :
