@@ -1,4 +1,7 @@
-# Movie Tracker
+<div style="display:flex;align-items:center">
+  <img align="left" height="40" width="40" src="public/icon-100px.png">
+  <h1>Movie Tracker</h1>
+</div>
 
 A web app for searching, tracking and rating movies and TV Shows
 
